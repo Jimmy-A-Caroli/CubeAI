@@ -1,0 +1,84 @@
+{
+  "cases": [
+    {
+      "checksums": [
+        5097884409335293886,
+        13234247947473462018,
+        7678454801926991910,
+        17910787609619521534,
+        11390698572586391716,
+        6341679693083488446,
+        12682489651665958660
+      ],
+      "configuration": {
+        "pack_size": 3,
+        "packs_per_seat": 2,
+        "seats": 4
+      },
+      "drafts": 7,
+      "drafts_per_second": 1029.0334446801749,
+      "elapsed_seconds": 0.006802499992772937,
+      "events_per_draft": 24,
+      "mean_elapsed_seconds": 0.0009717857132532767,
+      "peak_tracemalloc_bytes": 12344
+    },
+    {
+      "checksums": [
+        8213816363077719692,
+        8525205105847391164,
+        16189266117878985652,
+        3505504281156723340,
+        12007715769437167274,
+        5136292477808086578,
+        5910807661573292370
+      ],
+      "configuration": {
+        "pack_size": 15,
+        "packs_per_seat": 3,
+        "seats": 8
+      },
+      "drafts": 7,
+      "drafts_per_second": 111.8504154539812,
+      "elapsed_seconds": 0.06258358515333384,
+      "events_per_draft": 360,
+      "mean_elapsed_seconds": 0.008940512164761978,
+      "peak_tracemalloc_bytes": 206496
+    },
+    {
+      "checksums": [
+        172252759388900682,
+        2684293949654361588,
+        2898584592466521830,
+        10170264609867194890,
+        13050467389088228304,
+        11143609067155990096,
+        9339881357307357670
+      ],
+      "configuration": {
+        "pack_size": 18,
+        "packs_per_seat": 5,
+        "seats": 8
+      },
+      "drafts": 7,
+      "drafts_per_second": 52.784193580278504,
+      "elapsed_seconds": 0.1326154578709975,
+      "events_per_draft": 720,
+      "mean_elapsed_seconds": 0.018945065410142497,
+      "peak_tracemalloc_bytes": 314992
+    }
+  ],
+  "command": "python3 -m experiments.draft_engine --seed 20260828 --repetitions 7 --output experiments/results/draft-engine.json",
+  "environment": {
+    "architecture": "arm64",
+    "implementation": "CPython",
+    "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+    "python_version": "3.14.0"
+  },
+  "limitations": [
+    "Uses synthetic integer card IDs and in-memory lists only.",
+    "Measures mechanics, not production serialization, persistence, or bot quality.",
+    "tracemalloc records Python allocations and is not total process memory."
+  ],
+  "repetitions": 7,
+  "seed": 20260828
+}

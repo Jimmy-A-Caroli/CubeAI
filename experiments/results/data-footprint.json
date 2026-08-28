@@ -1,0 +1,79 @@
+{
+  "cases": [
+    {
+      "bytes_per_card": 193.0222222222222,
+      "cards": 90,
+      "elapsed_seconds": 0.005153916077688336,
+      "kind": "synthetic_cube",
+      "mean_elapsed_seconds": 0.0010307832155376673,
+      "retained_bytes": 17372
+    },
+    {
+      "bytes_per_card": 190.51111111111112,
+      "cards": 180,
+      "elapsed_seconds": 0.008157376199960709,
+      "kind": "synthetic_cube",
+      "mean_elapsed_seconds": 0.0016314752399921417,
+      "retained_bytes": 34292
+    },
+    {
+      "bytes_per_card": 189.25555555555556,
+      "cards": 360,
+      "elapsed_seconds": 0.02095545898191631,
+      "kind": "synthetic_cube",
+      "mean_elapsed_seconds": 0.0041910917963832615,
+      "retained_bytes": 68132
+    },
+    {
+      "bytes_per_card": 188.83703703703705,
+      "cards": 540,
+      "elapsed_seconds": 0.022767542162910104,
+      "kind": "synthetic_cube",
+      "mean_elapsed_seconds": 0.004553508432582021,
+      "retained_bytes": 101972
+    },
+    {
+      "bytes_per_card": 188.62777777777777,
+      "cards": 720,
+      "elapsed_seconds": 0.04592404107097536,
+      "kind": "synthetic_cube",
+      "mean_elapsed_seconds": 0.009184808214195072,
+      "retained_bytes": 135812
+    },
+    {
+      "bytes_per_card": 188.4185185185185,
+      "cards": 1080,
+      "elapsed_seconds": 0.06792195793241262,
+      "kind": "synthetic_cube",
+      "mean_elapsed_seconds": 0.013584391586482525,
+      "retained_bytes": 203492
+    },
+    {
+      "bytes_per_event": 230.04444444444445,
+      "configuration": {
+        "pack_size": 15,
+        "packs_per_seat": 3,
+        "seats": 8
+      },
+      "elapsed_seconds": 0.03445629111956805,
+      "events": 360,
+      "kind": "standard_draft_result",
+      "mean_elapsed_seconds": 0.00689125822391361,
+      "retained_bytes": 82816
+    }
+  ],
+  "command": "python3 -m experiments.data_footprint --seed 20260828 --output experiments/results/data-footprint.json",
+  "environment": {
+    "architecture": "arm64",
+    "implementation": "CPython",
+    "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+    "python_version": "3.14.0"
+  },
+  "limitations": [
+    "Python retained size is runtime-specific and excludes interpreter overhead.",
+    "The recursive estimator is a synthetic in-memory estimate, not serialized storage size.",
+    "Synthetic cards do not represent imported Cube metadata, printings, or provenance."
+  ],
+  "repetitions": 5,
+  "seed": 20260828
+}
