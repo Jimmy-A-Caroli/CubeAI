@@ -2,6 +2,10 @@
 
 This file is the source backlog until a remote issue tracker is intentionally configured. Issue IDs are stable references. An issue is `READY` only when every dependency is complete and no listed human decision remains.
 
+## Planning authority and remote-tracker transition
+
+`INITIAL_BACKLOG.md` owns planning scope during early M0 and is the planning source of truth. When a remote issue is created, the Markdown entry records its URL and stops duplicating execution state; the remote issue owns execution state: assignee, status, discussion, and closure.
+
 ## Labels
 
 - Components: `component::lab`, `component::game`, `component::ui`, `component::infra`, `component::docs`
@@ -30,9 +34,9 @@ This file is the source backlog until a remote issue tracker is intentionally co
 - **Labels/state:** `component::lab`, `component::infra`, `type::feature`, `priority::high`, `agent::safe`, `BLOCKED`
 - **Dependencies:** M0-001.
 - **Goal/context:** Create the first executable domain boundary using the approved Python toolchain.
-- **Scope:** Package metadata and lockfile; `cubeai.domain` and `cubeai.application` packages; one trivial framework-free domain value and smoke test; documented install and test commands.
+- **Scope:** Package metadata and lockfile; `cubeai.lab.domain` and `cubeai.lab.application` packages; one trivial framework-free domain value and smoke test; prepare the backend half of the M0 `GET /health` connectivity proof; documented install and test commands.
 - **Out of scope:** Cards, Cubes, drafts, FastAPI endpoints, SQL, external calls, and Docker.
-- **Acceptance criteria:** Clean environment installs reproducibly; package imports without path hacks; smoke test passes; no framework or adapter import exists in the domain package.
+- **Acceptance criteria:** Clean environment installs reproducibly; package imports without path hacks; smoke test passes; no framework or adapter import exists in the domain package; the workspace can expose the M0 `GET /health` status response through the outer API boundary once M0-006 joins the slice.
 - **Required tests:** Package import test, domain smoke unit test, build/install check.
 - **Expected artifacts/areas:** `backend/`, backend README or root development documentation.
 
@@ -41,9 +45,9 @@ This file is the source backlog until a remote issue tracker is intentionally co
 - **Labels/state:** `component::ui`, `component::infra`, `type::feature`, `priority::high`, `agent::safe`, `BLOCKED`
 - **Dependencies:** M0-001.
 - **Goal/context:** Create a minimal, tested UI workspace using the approved frontend toolchain.
-- **Scope:** Locked dependencies, strict TypeScript configuration, one accessible status component, unit test, development/build commands.
+- **Scope:** Locked dependencies, strict TypeScript configuration, one accessible status component showing the M0 `Backend connected` state, unit test, development/build commands; prepare the frontend half of the connectivity proof.
 - **Out of scope:** Cube import, drafting, API client generation, design system, routing beyond what the smoke slice needs.
-- **Acceptance criteria:** Clean install is reproducible; dev and production builds start; strict type check passes; test asserts user-visible status content; no backend implementation types are copied into the UI.
+- **Acceptance criteria:** Clean install is reproducible; dev and production builds start; strict type check passes; test asserts the user-visible `Backend connected` status content; no backend implementation types are copied into the UI.
 - **Required tests:** Component unit/accessibility smoke test, TypeScript check, production build.
 - **Expected artifacts/areas:** `frontend/`, development documentation.
 
@@ -74,9 +78,9 @@ This file is the source backlog until a remote issue tracker is intentionally co
 - **Labels/state:** `component::infra`, `type::feature`, `priority::high`, `agent::safe`, `BLOCKED`
 - **Dependencies:** M0-004, M0-005.
 - **Goal/context:** Give humans and agents stable commands instead of tool-specific guesswork.
-- **Scope:** Add cross-platform-enough entry points for setup, format, check, test, and development; delegate to workspace tools without hiding errors.
+- **Scope:** Add cross-platform-enough entry points for setup, format, check, test, and development; join the backend health endpoint and frontend status view into the M0 connectivity slice; delegate to workspace tools without hiding errors.
 - **Out of scope:** Production packaging and deployment.
-- **Acceptance criteria:** Root documentation lists each command; aggregate check returns nonzero on any child failure; focused backend/frontend commands remain available; no command modifies unrelated source unexpectedly.
+- **Acceptance criteria:** Root documentation lists each command; aggregate check returns nonzero on any child failure; focused backend/frontend commands remain available; the documented development entry point joins `GET /health` with the `Backend connected` status view; no command modifies unrelated source unexpectedly.
 - **Required tests:** Clean setup followed by aggregate validation; inject one controlled failure to verify propagation.
 - **Expected artifacts/areas:** root task runner or scripts, README.
 
@@ -85,9 +89,9 @@ This file is the source backlog until a remote issue tracker is intentionally co
 - **Labels/state:** `component::infra`, `type::feature`, `priority::high`, `agent::safe`, `BLOCKED`
 - **Dependencies:** M0-006.
 - **Goal/context:** Run the same repository validation on proposed changes.
-- **Scope:** Minimal GitHub Actions workflow with dependency caching, locked installs, aggregate checks, least necessary permissions, and cancellation of superseded runs.
+- **Scope:** Minimal GitHub Actions workflow with dependency caching, locked installs, aggregate checks, least necessary permissions, cancellation of superseded runs, and M0 connectivity-slice validation where practical in CI.
 - **Out of scope:** Deployment, release publishing, coverage services, multi-platform matrices without evidence.
-- **Acceptance criteria:** CI invokes documented commands rather than duplicating logic; lockfile changes invalidate caches; workflow has read-only default permissions; status is documented.
+- **Acceptance criteria:** CI invokes documented commands rather than duplicating logic; lockfile changes invalidate caches; workflow has read-only default permissions; the connectivity slice is validated in CI where practical; status is documented.
 - **Required tests:** Local workflow syntax validation where supported and one successful remote run before issue acceptance.
 - **Expected artifacts/areas:** `.github/workflows/`, README.
 
@@ -129,9 +133,9 @@ This file is the source backlog until a remote issue tracker is intentionally co
 - **Labels/state:** `component::infra`, `type::feature`, `priority::medium`, `agent::safe`, `BLOCKED`
 - **Dependencies:** M0-006.
 - **Goal/context:** Start the first meaningful backend/frontend development slice with a simple command.
-- **Scope:** Add local process orchestration and, if justified, a small Compose configuration; include health/status behavior and clean shutdown; preserve native commands.
+- **Scope:** Add local process orchestration and, if justified, a small Compose configuration; run the M0 connectivity slice locally with health/status behavior and clean shutdown; preserve native commands.
 - **Out of scope:** PostgreSQL, reverse proxies, authentication, production images, Kubernetes, observability stacks.
-- **Acceptance criteria:** Documented start command brings up the status slice; ports/config are explicit; shutdown leaves no persistent mystery state; native tests do not require Docker.
+- **Acceptance criteria:** Documented start command brings up `GET /health` and the `Backend connected` status slice locally; ports/config are explicit; shutdown leaves no persistent mystery state; native tests do not require Docker.
 - **Required tests:** Startup/health/shutdown smoke test and configuration validation.
 - **Expected artifacts/areas:** root scripts/task runner, optional `compose.yaml`, README.
 

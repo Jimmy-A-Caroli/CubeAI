@@ -9,6 +9,7 @@ Turn the documentation-only repository into a coherent, reproducible development
 - A clean clone has one documented setup path for supported developer platforms.
 - Python and frontend version floors and dependency managers are explicit and locked.
 - Backend domain and frontend smoke tests run through documented commands.
+- A vertical smoke slice proves connectivity: backend `GET /health` returns `{"status": "ok"}` and the frontend status view shows `Backend connected`.
 - Formatting, linting, type checking, tests, and documentation checks share one aggregate validation entry point.
 - CI executes the same validation without hidden CI-only behavior.
 - Package boundaries prevent the domain from importing API, persistence, or provider implementations.
@@ -35,12 +36,23 @@ Turn the documentation-only repository into a coherent, reproducible development
 
 Full issue definitions are in [the initial backlog](../issues/INITIAL_BACKLOG.md).
 
+## Vertical smoke slice
+
+M0's smallest integrated proof is:
+
+```text
+backend GET /health → {"status": "ok"}
+frontend status view → "Backend connected"
+```
+
+M0-002 prepares the backend side, M0-003 prepares the frontend side, M0-006 joins them under one developer entry point, M0-007 validates the slice in CI where practical, and M0-011 runs it locally. M0-001 may refine the endpoint wording or response schema while selecting the toolchains. This is a connectivity proof only; it does not introduce product functionality.
+
 ## Supported initial boundaries
 
 M0 should create the smallest useful workspaces:
 
-- `backend/src/cubeai/domain/` for framework-independent code;
-- `backend/src/cubeai/application/` for use-case orchestration and ports;
+- `backend/src/cubeai/lab/domain/` for framework-independent code;
+- `backend/src/cubeai/lab/application/` for use-case orchestration and ports;
 - `backend/src/cubeai/api/` only when an API smoke test is justified;
 - `backend/src/cubeai/adapters/` for later persistence and providers;
 - `backend/tests/` organized primarily by behavior/boundary;

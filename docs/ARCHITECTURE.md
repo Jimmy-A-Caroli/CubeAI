@@ -33,7 +33,7 @@ Directories are created only when an issue supplies working contents:
 ```text
 CubeAI/
 ├── backend/                 # Python workspace when M0 establishes it
-│   ├── src/cubeai/          # domain, application, API, adapters
+│   ├── src/cubeai/          # lab, API, adapters
 │   └── tests/
 ├── frontend/                # React/TypeScript workspace when established
 ├── fixtures/                # synthetic and sanitized integration fixtures
@@ -47,19 +47,32 @@ CubeAI/
 └── compose.yaml             # only when it runs a useful local slice
 ```
 
-CubeLab initially lives within the Python workspace as framework-independent packages rather than a separate deployable service. A future Forge adapter may use a separate Java build because its runtime and license boundary differ.
+### Conceptual CubeLab package layout
+
+The Python workspace will use `cubeai.lab` as CubeLab's first-class bounded-context namespace. This is a conceptual layout, not authorization to create empty package trees before their M0 issues supply working contents:
+
+```text
+backend/src/cubeai/
+├── lab/
+│   ├── domain/
+│   └── application/
+├── api/
+└── adapters/
+```
+
+`cubeai.lab.domain` and `cubeai.lab.application` keep CubeLab framework-independent inside the modular monorepo rather than making it a separate deployable service. `cubeai.api` and `cubeai.adapters` are outer boundaries around that bounded context: transport, persistence, and external-provider details must not flow inward. CubeLab remains useful without CubeGame or any particular game engine. A future Forge adapter may use a separate Java build because its runtime and license boundary differ.
 
 ## Components and dependencies
 
-### CubeLab domain
+### `cubeai.lab.domain` (CubeLab domain)
 
 Owns domain entities, invariants, deterministic draft rules, bot strategy contracts, metrics, and simulation concepts. It depends only on small standard or domain-focused libraries approved through M0. It does not import FastAPI, SQL models, HTTP clients, React types, or Forge classes.
 
-### Application layer
+### `cubeai.lab.application` (application layer)
 
 Coordinates use cases and transactions: import a Cube, resolve metadata, start a draft, submit a pick, complete bots' turns, and query a player-safe view. It consumes domain and repository ports and maps errors into transport-neutral results.
 
-### CubeAI API
+### `cubeai.api` (CubeAI API)
 
 Provides a versioned local HTTP boundary, proposed as FastAPI with Pydantic DTOs. API DTOs are not domain entities. Initial APIs have no authentication and bind for local development according to explicit configuration.
 
@@ -71,7 +84,7 @@ Provides Cube loading, validation, drafting, pool visualization, and later analy
 
 Repository protocols describe required storage behavior. SQLite is the proposed first implementation because the product is local and transactional. Domain behavior cannot depend on SQLite-specific features. Schema migrations and PostgreSQL suitability remain M0 decisions.
 
-### External adapters
+### `cubeai.adapters` (external adapters)
 
 CubeCobra and Scryfall payloads terminate at adapters. Adapters preserve raw source identifiers, map into explicit import candidates, cache responsibly, and expose structured failures. Saved, sanitized fixtures detect contract changes. Provider assumptions do not leak into stable domain identities.
 

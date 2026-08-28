@@ -27,13 +27,22 @@ M0 ─────────────────────────�
                                 M9 Public Platform / Deployment
 ```
 
-CubeLab milestones do not depend on adopting Forge. M5 may proceed after M0 when deliberately prioritized, but it does not block M1–M4.
+CubeLab milestones do not depend on adopting Forge. M5 has no code dependency on M1–M4, but it is behind a product-priority gate until M1 succeeds, unless explicitly overridden by a human. The gate controls product sequencing rather than technical feasibility: after M0, M5 may be worked deliberately when that override is recorded, and it does not block M1–M4.
 
 ## M0 — Repository Foundation
 
 **Outcome:** A contributor can clone the repository, run documented validation, understand component boundaries, and implement focused issues through a consistent workflow.
 
 Capabilities include validated Python and frontend toolchains, domain and UI smoke tests, formatting/linting/type checking, CI, local orchestration, fixture policy, ADR and issue conventions, and dependency/license reporting. M0 must not implement drafting.
+
+The M0 vertical smoke slice proves connectivity, not product functionality:
+
+```text
+backend GET /health → {"status": "ok"}
+frontend status view → "Backend connected"
+```
+
+Its wording and schema may change during M0-001 when the toolchains and contracts are selected. The acceptance purpose is an end-to-end connectivity proof, not a product API or draft behavior.
 
 **Success:** One supported setup path and one aggregate validation command work from a clean clone; CI runs the same checks; architecture-import boundaries have automated enforcement; agent-safe issues can be selected from explicit dependencies.
 
