@@ -1,0 +1,126 @@
+{
+  "command": "python3 -m experiments.data_volume --sample-drafts 1000 --targets 1000 10000 100000 1000000 --seed 20260828 --output experiments/results/data-volume.json",
+  "environment": {
+    "architecture": "arm64",
+    "implementation": "CPython",
+    "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+    "python_version": "3.14.0"
+  },
+  "geometry": {
+    "cards_per_draft": 360,
+    "pack_size": 15,
+    "packs_per_seat": 3,
+    "seats": 8
+  },
+  "limitations": [
+    "Uses deterministic synthetic cards and draft events only; it is not a production persistence design.",
+    "Compact NDJSON is measured as UTF-8 array records; gzip uses gzip.compress with compresslevel=6.",
+    "SQLite is a VACUUMed temporary normalized file with identity keys but no query-specific secondary indexes or WAL sidecars.",
+    "Projections are linear estimates from the measured sample, not additional measurements.",
+    "No Parquet dependency or numeric Parquet estimate is included."
+  ],
+  "measured_sample": {
+    "byte_counts": {
+      "compact_ndjson_bytes": 70859281,
+      "gzip_ndjson_bytes": 12173922,
+      "pick_rows_bytes": 8034400,
+      "pool_data_bytes": 6610400,
+      "run_metadata_bytes": 25890,
+      "seen_rows_bytes": 56188591,
+      "sqlite_bytes": 126828544
+    },
+    "drafts": 1000,
+    "record_type": "measured_sample",
+    "row_counts": {
+      "pick_rows": 360000,
+      "pool_rows": 360000,
+      "run_metadata_rows": 1000,
+      "seen_rows": 2880000
+    },
+    "seed": 20260828
+  },
+  "projections": [
+    {
+      "byte_counts": {
+        "compact_ndjson_bytes": 70859281,
+        "gzip_ndjson_bytes": 12173922,
+        "pick_rows_bytes": 8034400,
+        "pool_data_bytes": 6610400,
+        "run_metadata_bytes": 25890,
+        "seen_rows_bytes": 56188591,
+        "sqlite_bytes": 126828544
+      },
+      "record_type": "projection",
+      "row_counts": {
+        "pick_rows": 360000,
+        "pool_rows": 360000,
+        "run_metadata_rows": 1000,
+        "seen_rows": 2880000
+      },
+      "source_sample_drafts": 1000,
+      "target_drafts": 1000
+    },
+    {
+      "byte_counts": {
+        "compact_ndjson_bytes": 708592810,
+        "gzip_ndjson_bytes": 121739220,
+        "pick_rows_bytes": 80344000,
+        "pool_data_bytes": 66104000,
+        "run_metadata_bytes": 258900,
+        "seen_rows_bytes": 561885910,
+        "sqlite_bytes": 1268285440
+      },
+      "record_type": "projection",
+      "row_counts": {
+        "pick_rows": 3600000,
+        "pool_rows": 3600000,
+        "run_metadata_rows": 10000,
+        "seen_rows": 28800000
+      },
+      "source_sample_drafts": 1000,
+      "target_drafts": 10000
+    },
+    {
+      "byte_counts": {
+        "compact_ndjson_bytes": 7085928100,
+        "gzip_ndjson_bytes": 1217392200,
+        "pick_rows_bytes": 803440000,
+        "pool_data_bytes": 661040000,
+        "run_metadata_bytes": 2589000,
+        "seen_rows_bytes": 5618859100,
+        "sqlite_bytes": 12682854400
+      },
+      "record_type": "projection",
+      "row_counts": {
+        "pick_rows": 36000000,
+        "pool_rows": 36000000,
+        "run_metadata_rows": 100000,
+        "seen_rows": 288000000
+      },
+      "source_sample_drafts": 1000,
+      "target_drafts": 100000
+    },
+    {
+      "byte_counts": {
+        "compact_ndjson_bytes": 70859281000,
+        "gzip_ndjson_bytes": 12173922000,
+        "pick_rows_bytes": 8034400000,
+        "pool_data_bytes": 6610400000,
+        "run_metadata_bytes": 25890000,
+        "seen_rows_bytes": 56188591000,
+        "sqlite_bytes": 126828544000
+      },
+      "record_type": "projection",
+      "row_counts": {
+        "pick_rows": 360000000,
+        "pool_rows": 360000000,
+        "run_metadata_rows": 1000000,
+        "seen_rows": 2880000000
+      },
+      "source_sample_drafts": 1000,
+      "target_drafts": 1000000
+    }
+  ],
+  "schema_version": 1,
+  "seed": 20260828
+}
