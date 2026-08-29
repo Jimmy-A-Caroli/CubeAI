@@ -1,0 +1,118 @@
+{
+  "cases": [
+    {
+      "drafts": 100,
+      "event_count": 600,
+      "python": {
+        "elapsed_seconds": [
+          0.017893042066134512,
+          0.013956416980363429,
+          0.014428999973461032
+        ],
+        "mean_elapsed_seconds": 0.01542615300665299,
+        "peak_tracemalloc_bytes": 181024,
+        "result_checksum": "5ab1b8ea5f5d6e820fbd6c233e970d4c1605cbf57e20767c5ae39a866e1b0511"
+      },
+      "serialized_input_bytes": 47484,
+      "sqlite": {
+        "database": {
+          "database_bytes": 143360,
+          "page_count": 35,
+          "page_size": 4096
+        },
+        "elapsed_seconds": [
+          0.017552583012729883,
+          0.018107375013642013,
+          0.01626741699874401
+        ],
+        "mean_elapsed_seconds": 0.017309125008371968,
+        "peak_tracemalloc_bytes": 381404,
+        "result_checksum": "5ab1b8ea5f5d6e820fbd6c233e970d4c1605cbf57e20767c5ae39a866e1b0511"
+      }
+    },
+    {
+      "drafts": 1000,
+      "event_count": 6000,
+      "python": {
+        "elapsed_seconds": [
+          0.1284155830508098,
+          0.1213023338932544,
+          0.11248712509404868
+        ],
+        "mean_elapsed_seconds": 0.1207350140127043,
+        "peak_tracemalloc_bytes": 252760,
+        "result_checksum": "df9566a4e1ec99bb162e02ab46c63c54b69892ccc075de8820a275f1c7bf8795"
+      },
+      "serialized_input_bytes": 474906,
+      "sqlite": {
+        "database": {
+          "database_bytes": 946176,
+          "page_count": 231,
+          "page_size": 4096
+        },
+        "elapsed_seconds": [
+          0.7830526669276878,
+          0.77150787494611,
+          0.7748094580601901
+        ],
+        "mean_elapsed_seconds": 0.7764566666446626,
+        "peak_tracemalloc_bytes": 2843866,
+        "result_checksum": "df9566a4e1ec99bb162e02ab46c63c54b69892ccc075de8820a275f1c7bf8795"
+      }
+    },
+    {
+      "drafts": 10000,
+      "event_count": 60000,
+      "python": {
+        "elapsed_seconds": [
+          1.2077411659993231,
+          1.273749832995236,
+          1.1863195420010015
+        ],
+        "mean_elapsed_seconds": 1.222603513665187,
+        "peak_tracemalloc_bytes": 1133448,
+        "result_checksum": "016a67f365616d50776aee326b34e9a23e91aef6eead31553ebd23e5fe143745"
+      },
+      "serialized_input_bytes": 4748775,
+      "sqlite": {
+        "database": {
+          "database_bytes": 9531392,
+          "page_count": 2327,
+          "page_size": 4096
+        },
+        "elapsed_seconds": [
+          86.9552377089858,
+          88.76310462492984,
+          82.9700057079317
+        ],
+        "mean_elapsed_seconds": 86.22944934728245,
+        "peak_tracemalloc_bytes": 29754929,
+        "result_checksum": "016a67f365616d50776aee326b34e9a23e91aef6eead31553ebd23e5fe143745"
+      }
+    }
+  ],
+  "command": "python3 -m experiments.analytics --drafts 100 1000 10000 --seed 20260828 --repetitions 3 --output experiments/results/analytics.json",
+  "environment": {
+    "architecture": "arm64",
+    "implementation": "CPython",
+    "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+    "python_version": "3.14.0"
+  },
+  "installed_dataframe_versions": {},
+  "limitations": [
+    "Uses synthetic deterministic drafts and in-memory data only.",
+    "Pick values are one-based within each synthetic pack.",
+    "A wheel is synthetically defined as one seat seeing a card again at least seat_count picks later.",
+    "Co-occurrence considers only the first twelve chronological cards in each synthetic pool.",
+    "tracemalloc tracks Python allocations, not total process or SQLite native memory."
+  ],
+  "repetitions": 3,
+  "seed": 20260828,
+  "workload": {
+    "cards_available": 24,
+    "cooccurrence_pool_card_limit": 12,
+    "pack_size": 3,
+    "packs_per_seat": 1,
+    "seats": 2
+  }
+}
