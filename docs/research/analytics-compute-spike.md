@@ -72,9 +72,9 @@ Measured values below are the three-repetition means in
 
 | Drafts | Events | Serialized input | Python mean / peak | SQLite mean / peak | SQLite DB | Checksum |
 |---:|---:|---:|---:|---:|---:|---|
-| 100 | 300 | 23,484 B | 0.0077 s / 67,633 B | 0.0100 s / 182,740 B | 86,016 B | `207c89ac…0107fae` |
-| 1,000 | 3,000 | 234,815 B | 0.0655 s / 99,968 B | 0.3963 s / 1,555,738 B | 499,712 B | `d6b7a47d…a63f025` |
-| 10,000 | 30,000 | 2,347,771 B | 0.6795 s / 542,240 B | 34.8411 s / 17,394,409 B | 4,673,536 B | `08486dc7…65761a1` |
+| 100 | 300 | 23,484 B | 0.0062 s / 67,248 B | 0.0080 s / 183,516 B | 86,016 B | `207c89ac…0107fae` |
+| 1,000 | 3,000 | 234,815 B | 0.0492 s / 99,968 B | 0.3210 s / 1,555,738 B | 499,712 B | `d6b7a47d…a63f025` |
+| 10,000 | 30,000 | 2,347,771 B | 0.5612 s / 542,240 B | 28.5279 s / 17,394,409 B | 4,673,536 B | `08486dc7…65761a1` |
 
 Each row's full SHA-256 result checksum is recorded in the JSON, and the
 Python and SQLite checksum is identical for every row.  SQLite size is page

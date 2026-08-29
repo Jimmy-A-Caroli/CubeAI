@@ -1,6 +1,8 @@
 import unittest
+import json
+from pathlib import Path
 
-from experiments.analytics import aggregate_python, aggregate_sqlite
+from experiments.analytics import aggregate_python, aggregate_sqlite, build_result_document
 from experiments.model import PickEvent, SyntheticCard
 
 
@@ -111,6 +113,19 @@ class AnalyticsTests(unittest.TestCase):
         # detection, the synthetic wheel threshold, and pool pair boundaries.
         self.assertEqual(self.expected, aggregate_python(self.events, self.cards))
         self.assertEqual(self.expected, aggregate_sqlite(self.events, self.cards))
+
+    def test_recorded_benchmark_uses_the_generator_workload(self):
+        """Detect a checked-in measurement from a stale benchmark configuration."""
+        generated = build_result_document((1,), seed=20260828, repetitions=1)
+        recorded = json.loads(
+            Path("experiments/results/analytics.json").read_text(encoding="utf-8")
+        )
+
+        self.assertEqual(generated["workload"], recorded["workload"])
+        self.assertEqual(
+            generated["cases"][0]["event_count"],
+            recorded["cases"][0]["event_count"] // recorded["cases"][0]["drafts"],
+        )
 
 
 if __name__ == "__main__":

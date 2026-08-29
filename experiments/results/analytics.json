@@ -2,92 +2,92 @@
   "cases": [
     {
       "drafts": 100,
-      "event_count": 600,
+      "event_count": 300,
       "python": {
         "elapsed_seconds": [
-          0.017893042066134512,
-          0.013956416980363429,
-          0.014428999973461032
+          0.008160457946360111,
+          0.005544374929741025,
+          0.005005875020287931
         ],
-        "mean_elapsed_seconds": 0.01542615300665299,
-        "peak_tracemalloc_bytes": 181024,
-        "result_checksum": "5ab1b8ea5f5d6e820fbd6c233e970d4c1605cbf57e20767c5ae39a866e1b0511"
+        "mean_elapsed_seconds": 0.006236902632129689,
+        "peak_tracemalloc_bytes": 67248,
+        "result_checksum": "207c89acc8cbe5911858928a20e61e0212fd6c3c8c467ee49c626014d0107fae"
       },
-      "serialized_input_bytes": 47484,
+      "serialized_input_bytes": 23484,
       "sqlite": {
         "database": {
-          "database_bytes": 143360,
-          "page_count": 35,
+          "database_bytes": 86016,
+          "page_count": 21,
           "page_size": 4096
         },
         "elapsed_seconds": [
-          0.017552583012729883,
-          0.018107375013642013,
-          0.01626741699874401
+          0.010512457927688956,
+          0.006933082942850888,
+          0.006626583053730428
         ],
-        "mean_elapsed_seconds": 0.017309125008371968,
-        "peak_tracemalloc_bytes": 381404,
-        "result_checksum": "5ab1b8ea5f5d6e820fbd6c233e970d4c1605cbf57e20767c5ae39a866e1b0511"
+        "mean_elapsed_seconds": 0.00802404130809009,
+        "peak_tracemalloc_bytes": 183516,
+        "result_checksum": "207c89acc8cbe5911858928a20e61e0212fd6c3c8c467ee49c626014d0107fae"
       }
     },
     {
       "drafts": 1000,
-      "event_count": 6000,
+      "event_count": 3000,
       "python": {
         "elapsed_seconds": [
-          0.1284155830508098,
-          0.1213023338932544,
-          0.11248712509404868
+          0.047568249981850386,
+          0.05282141698990017,
+          0.047256584046408534
         ],
-        "mean_elapsed_seconds": 0.1207350140127043,
-        "peak_tracemalloc_bytes": 252760,
-        "result_checksum": "df9566a4e1ec99bb162e02ab46c63c54b69892ccc075de8820a275f1c7bf8795"
+        "mean_elapsed_seconds": 0.04921541700605303,
+        "peak_tracemalloc_bytes": 99968,
+        "result_checksum": "d6b7a47d1571781880f43a79a531e3ba79d9b628a3511739ef98060faa63f025"
       },
-      "serialized_input_bytes": 474906,
+      "serialized_input_bytes": 234815,
       "sqlite": {
         "database": {
-          "database_bytes": 946176,
-          "page_count": 231,
+          "database_bytes": 499712,
+          "page_count": 122,
           "page_size": 4096
         },
         "elapsed_seconds": [
-          0.7830526669276878,
-          0.77150787494611,
-          0.7748094580601901
+          0.3107819160213694,
+          0.31345141609199345,
+          0.3388608329696581
         ],
-        "mean_elapsed_seconds": 0.7764566666446626,
-        "peak_tracemalloc_bytes": 2843866,
-        "result_checksum": "df9566a4e1ec99bb162e02ab46c63c54b69892ccc075de8820a275f1c7bf8795"
+        "mean_elapsed_seconds": 0.321031388361007,
+        "peak_tracemalloc_bytes": 1555738,
+        "result_checksum": "d6b7a47d1571781880f43a79a531e3ba79d9b628a3511739ef98060faa63f025"
       }
     },
     {
       "drafts": 10000,
-      "event_count": 60000,
+      "event_count": 30000,
       "python": {
         "elapsed_seconds": [
-          1.2077411659993231,
-          1.273749832995236,
-          1.1863195420010015
+          0.5510754999704659,
+          0.5757726250449196,
+          0.5567555000307038
         ],
-        "mean_elapsed_seconds": 1.222603513665187,
-        "peak_tracemalloc_bytes": 1133448,
-        "result_checksum": "016a67f365616d50776aee326b34e9a23e91aef6eead31553ebd23e5fe143745"
+        "mean_elapsed_seconds": 0.5612012083486965,
+        "peak_tracemalloc_bytes": 542240,
+        "result_checksum": "08486dc78e14266a0b10de9f3d6f345dbd8249751f57ab3eeddc918b065761a1"
       },
-      "serialized_input_bytes": 4748775,
+      "serialized_input_bytes": 2347771,
       "sqlite": {
         "database": {
-          "database_bytes": 9531392,
-          "page_count": 2327,
+          "database_bytes": 4673536,
+          "page_count": 1141,
           "page_size": 4096
         },
         "elapsed_seconds": [
-          86.9552377089858,
-          88.76310462492984,
-          82.9700057079317
+          28.6915617500199,
+          28.26123987499159,
+          28.631001208908856
         ],
-        "mean_elapsed_seconds": 86.22944934728245,
-        "peak_tracemalloc_bytes": 29754929,
-        "result_checksum": "016a67f365616d50776aee326b34e9a23e91aef6eead31553ebd23e5fe143745"
+        "mean_elapsed_seconds": 28.527934277973447,
+        "peak_tracemalloc_bytes": 17394409,
+        "result_checksum": "08486dc78e14266a0b10de9f3d6f345dbd8249751f57ab3eeddc918b065761a1"
       }
     }
   ],
@@ -109,10 +109,10 @@
   "repetitions": 3,
   "seed": 20260828,
   "workload": {
-    "cards_available": 24,
+    "cards_available": 12,
     "cooccurrence_pool_card_limit": 12,
     "pack_size": 3,
     "packs_per_seat": 1,
-    "seats": 2
+    "seats": 1
   }
 }
