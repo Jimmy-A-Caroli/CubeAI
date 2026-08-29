@@ -439,7 +439,7 @@ def _measure(
     measurement: dict[str, Any] = {
         "mean_elapsed_seconds": sum(elapsed_samples) / len(elapsed_samples),
         "elapsed_seconds": elapsed_samples,
-        "peak_tracemalloc_bytes": max(peak_samples),
+        "peak_traced_aggregation_bytes": max(peak_samples),
         "result_checksum": checksums[0],
     }
     if database_sizes:
@@ -517,6 +517,7 @@ def build_result_document(
             "Pick values are one-based within each synthetic pack.",
             "A wheel is synthetically defined as one seat seeing a card again at least seat_count picks later.",
             "Co-occurrence considers only the first twelve chronological cards in each synthetic pool.",
+            "Peak traced allocations cover aggregation only; tracing starts after the benchmark input is built, so pre-built input allocations are excluded.",
             "tracemalloc tracks Python allocations, not total process or SQLite native memory.",
         ],
     }

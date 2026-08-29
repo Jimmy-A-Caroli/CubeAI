@@ -68,9 +68,12 @@ inspection identified an unindexed per-draft wheel self-join, so the composite
 ## Measurements
 
 Measured values below are the three-repetition means in
-`experiments/results/analytics.json`; peak memory is `tracemalloc` bytes.
+`experiments/results/analytics.json`. Peak traced aggregation allocations are
+`tracemalloc` bytes captured only while each aggregation backend runs: tracing
+starts after the synthetic event input is built, so these values exclude
+pre-built input allocations and are not total process memory.
 
-| Drafts | Events | Serialized input | Python mean / peak | SQLite mean / peak | SQLite DB | Checksum |
+| Drafts | Events | Serialized input | Python mean / peak traced aggregation allocations | SQLite mean / peak traced aggregation allocations | SQLite DB | Checksum |
 |---:|---:|---:|---:|---:|---:|---|
 | 100 | 300 | 23,484 B | 0.0062 s / 67,248 B | 0.0080 s / 183,516 B | 86,016 B | `207c89ac…0107fae` |
 | 1,000 | 3,000 | 234,815 B | 0.0492 s / 99,968 B | 0.3210 s / 1,555,738 B | 499,712 B | `d6b7a47d…a63f025` |
@@ -100,7 +103,7 @@ This measures synthetic cards, deterministic choices, in-memory data, and a
 very small draft configuration only.  It does not measure real card data,
 production persistence, UI work, concurrent users, total resident memory, or
 the eventual product meaning of these metrics.  `tracemalloc` excludes native
-SQLite allocations.  The synthetic wheel and co-occurrence definitions need a
+SQLite allocations and pre-built input allocations.  The synthetic wheel and co-occurrence definitions need a
 future product issue and provenance-aware data model before adoption.
 
 ## Risks

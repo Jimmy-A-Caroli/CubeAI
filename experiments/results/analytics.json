@@ -10,7 +10,7 @@
           0.005005875020287931
         ],
         "mean_elapsed_seconds": 0.006236902632129689,
-        "peak_tracemalloc_bytes": 67248,
+        "peak_traced_aggregation_bytes": 67248,
         "result_checksum": "207c89acc8cbe5911858928a20e61e0212fd6c3c8c467ee49c626014d0107fae"
       },
       "serialized_input_bytes": 23484,
@@ -26,7 +26,7 @@
           0.006626583053730428
         ],
         "mean_elapsed_seconds": 0.00802404130809009,
-        "peak_tracemalloc_bytes": 183516,
+        "peak_traced_aggregation_bytes": 183516,
         "result_checksum": "207c89acc8cbe5911858928a20e61e0212fd6c3c8c467ee49c626014d0107fae"
       }
     },
@@ -40,7 +40,7 @@
           0.047256584046408534
         ],
         "mean_elapsed_seconds": 0.04921541700605303,
-        "peak_tracemalloc_bytes": 99968,
+        "peak_traced_aggregation_bytes": 99968,
         "result_checksum": "d6b7a47d1571781880f43a79a531e3ba79d9b628a3511739ef98060faa63f025"
       },
       "serialized_input_bytes": 234815,
@@ -56,7 +56,7 @@
           0.3388608329696581
         ],
         "mean_elapsed_seconds": 0.321031388361007,
-        "peak_tracemalloc_bytes": 1555738,
+        "peak_traced_aggregation_bytes": 1555738,
         "result_checksum": "d6b7a47d1571781880f43a79a531e3ba79d9b628a3511739ef98060faa63f025"
       }
     },
@@ -70,7 +70,7 @@
           0.5567555000307038
         ],
         "mean_elapsed_seconds": 0.5612012083486965,
-        "peak_tracemalloc_bytes": 542240,
+        "peak_traced_aggregation_bytes": 542240,
         "result_checksum": "08486dc78e14266a0b10de9f3d6f345dbd8249751f57ab3eeddc918b065761a1"
       },
       "serialized_input_bytes": 2347771,
@@ -86,7 +86,7 @@
           28.631001208908856
         ],
         "mean_elapsed_seconds": 28.527934277973447,
-        "peak_tracemalloc_bytes": 17394409,
+        "peak_traced_aggregation_bytes": 17394409,
         "result_checksum": "08486dc78e14266a0b10de9f3d6f345dbd8249751f57ab3eeddc918b065761a1"
       }
     }
@@ -104,6 +104,7 @@
     "Pick values are one-based within each synthetic pack.",
     "A wheel is synthetically defined as one seat seeing a card again at least seat_count picks later.",
     "Co-occurrence considers only the first twelve chronological cards in each synthetic pool.",
+    "Peak traced allocations cover aggregation only; tracing starts after the benchmark input is built, so pre-built input allocations are excluded.",
     "tracemalloc tracks Python allocations, not total process or SQLite native memory."
   ],
   "repetitions": 3,

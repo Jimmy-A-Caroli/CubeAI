@@ -126,6 +126,29 @@ class AnalyticsTests(unittest.TestCase):
             generated["cases"][0]["event_count"],
             recorded["cases"][0]["event_count"] // recorded["cases"][0]["drafts"],
         )
+        self.assertEqual(
+            67_248,
+            recorded["cases"][0]["python"]["peak_traced_aggregation_bytes"],
+        )
+        self.assertIn(
+            "Peak traced allocations cover aggregation only; tracing starts after "
+            "the benchmark input is built, so pre-built input allocations are excluded.",
+            recorded["limitations"],
+        )
+
+    def test_benchmark_labels_peak_traced_aggregation_allocations(self):
+        # This catches a label that could be misread as total process memory or
+        # memory needed to generate the already-built benchmark input.
+        document = build_result_document((1,), seed=11, repetitions=1)
+
+        measurement = document["cases"][0]["python"]
+        self.assertIn("peak_traced_aggregation_bytes", measurement)
+        self.assertNotIn("peak_tracemalloc_bytes", measurement)
+        self.assertIn(
+            "Peak traced allocations cover aggregation only; tracing starts after "
+            "the benchmark input is built, so pre-built input allocations are excluded.",
+            document["limitations"],
+        )
 
 
 if __name__ == "__main__":

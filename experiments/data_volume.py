@@ -29,7 +29,7 @@ class StorageRows:
     pick_rows: int
     seen_rows: int
     pool_rows: int
-    run_metadata_rows: int
+    draft_metadata_rows: int
 
 
 @dataclass(frozen=True)
@@ -39,7 +39,7 @@ class StorageBytes:
     pick_rows_bytes: int
     seen_rows_bytes: int
     pool_data_bytes: int
-    run_metadata_bytes: int
+    draft_metadata_bytes: int
     compact_ndjson_bytes: int
     gzip_ndjson_bytes: int
     sqlite_bytes: int
@@ -134,7 +134,7 @@ def measure_sample(drafts: int, seed: int) -> StorageSample:
     """Emit and measure a real deterministic synthetic draft sample.
 
     The NDJSON uses short array records: ``p`` picks, ``s`` seen-card rows,
-    ``o`` pool entries, and ``r`` per-draft run metadata.  SQLite holds the
+    ``o`` pool entries, and ``r`` per-draft metadata.  SQLite holds the
     same normalized facts in a temporary file.  Both files are discarded after
     their byte counts have been observed.
     """
@@ -142,14 +142,17 @@ def measure_sample(drafts: int, seed: int) -> StorageSample:
         raise ValueError("drafts must be positive")
 
     cards = make_cards(_CARDS_PER_DRAFT, seed)
-    row_counts = {name: 0 for name in ("pick_rows", "seen_rows", "pool_rows", "run_metadata_rows")}
+    row_counts = {
+        name: 0
+        for name in ("pick_rows", "seen_rows", "pool_rows", "draft_metadata_rows")
+    }
     component_bytes = {
         name: 0
         for name in (
             "pick_rows_bytes",
             "seen_rows_bytes",
             "pool_data_bytes",
-            "run_metadata_bytes",
+            "draft_metadata_bytes",
         )
     }
     with tempfile.TemporaryDirectory(prefix="cubeai-data-volume-") as temporary_directory:
@@ -174,10 +177,10 @@ def measure_sample(drafts: int, seed: int) -> StorageSample:
                         "INSERT INTO drafts VALUES (?, 0, ?, ?, ?, ?)",
                         (draft_id, draft_seed, _SEATS, _PACKS_PER_SEAT, _PACK_SIZE),
                     )
-                    component_bytes["run_metadata_bytes"] += _write_line(
+                    component_bytes["draft_metadata_bytes"] += _write_line(
                         output, ["r", draft_id, draft_seed, _SEATS, _PACKS_PER_SEAT, _PACK_SIZE]
                     )
-                    row_counts["run_metadata_rows"] += 1
+                    row_counts["draft_metadata_rows"] += 1
 
                     pick_rows: list[tuple[int, int, int, int, int, int]] = []
                     seen_rows: list[tuple[int, int, int, int, int]] = []

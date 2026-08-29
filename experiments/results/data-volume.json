@@ -25,7 +25,7 @@
       "gzip_ndjson_bytes": 12173922,
       "pick_rows_bytes": 8034400,
       "pool_data_bytes": 6610400,
-      "run_metadata_bytes": 25890,
+      "draft_metadata_bytes": 25890,
       "seen_rows_bytes": 56188591,
       "sqlite_bytes": 126828544
     },
@@ -34,7 +34,7 @@
     "row_counts": {
       "pick_rows": 360000,
       "pool_rows": 360000,
-      "run_metadata_rows": 1000,
+      "draft_metadata_rows": 1000,
       "seen_rows": 2880000
     },
     "seed": 20260828
@@ -46,7 +46,7 @@
         "gzip_ndjson_bytes": 12173922,
         "pick_rows_bytes": 8034400,
         "pool_data_bytes": 6610400,
-        "run_metadata_bytes": 25890,
+        "draft_metadata_bytes": 25890,
         "seen_rows_bytes": 56188591,
         "sqlite_bytes": 126828544
       },
@@ -54,7 +54,7 @@
       "row_counts": {
         "pick_rows": 360000,
         "pool_rows": 360000,
-        "run_metadata_rows": 1000,
+        "draft_metadata_rows": 1000,
         "seen_rows": 2880000
       },
       "source_sample_drafts": 1000,
@@ -66,7 +66,7 @@
         "gzip_ndjson_bytes": 121739220,
         "pick_rows_bytes": 80344000,
         "pool_data_bytes": 66104000,
-        "run_metadata_bytes": 258900,
+        "draft_metadata_bytes": 258900,
         "seen_rows_bytes": 561885910,
         "sqlite_bytes": 1268285440
       },
@@ -74,7 +74,7 @@
       "row_counts": {
         "pick_rows": 3600000,
         "pool_rows": 3600000,
-        "run_metadata_rows": 10000,
+        "draft_metadata_rows": 10000,
         "seen_rows": 28800000
       },
       "source_sample_drafts": 1000,
@@ -86,7 +86,7 @@
         "gzip_ndjson_bytes": 1217392200,
         "pick_rows_bytes": 803440000,
         "pool_data_bytes": 661040000,
-        "run_metadata_bytes": 2589000,
+        "draft_metadata_bytes": 2589000,
         "seen_rows_bytes": 5618859100,
         "sqlite_bytes": 12682854400
       },
@@ -94,7 +94,7 @@
       "row_counts": {
         "pick_rows": 36000000,
         "pool_rows": 36000000,
-        "run_metadata_rows": 100000,
+        "draft_metadata_rows": 100000,
         "seen_rows": 288000000
       },
       "source_sample_drafts": 1000,
@@ -106,7 +106,7 @@
         "gzip_ndjson_bytes": 12173922000,
         "pick_rows_bytes": 8034400000,
         "pool_data_bytes": 6610400000,
-        "run_metadata_bytes": 25890000,
+        "draft_metadata_bytes": 25890000,
         "seen_rows_bytes": 56188591000,
         "sqlite_bytes": 126828544000
       },
@@ -114,7 +114,7 @@
       "row_counts": {
         "pick_rows": 360000000,
         "pool_rows": 360000000,
-        "run_metadata_rows": 1000000,
+        "draft_metadata_rows": 1000000,
         "seen_rows": 2880000000
       },
       "source_sample_drafts": 1000,

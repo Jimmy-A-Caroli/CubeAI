@@ -1,5 +1,6 @@
 import json
 import unittest
+from pathlib import Path
 
 from experiments.data_volume import (
     StorageBytes,
@@ -19,13 +20,13 @@ class DataVolumeTests(unittest.TestCase):
                 pick_rows=360_000,
                 seen_rows=2_880_000,
                 pool_rows=360_000,
-                run_metadata_rows=1_000,
+                draft_metadata_rows=1_000,
             ),
             byte_counts=StorageBytes(
                 pick_rows_bytes=12_000_000,
                 seen_rows_bytes=72_000_000,
                 pool_data_bytes=11_000_000,
-                run_metadata_bytes=40_000,
+                draft_metadata_bytes=40_000,
                 compact_ndjson_bytes=95_040_000,
                 gzip_ndjson_bytes=13_000_000,
                 sqlite_bytes=82_000_000,
@@ -42,11 +43,11 @@ class DataVolumeTests(unittest.TestCase):
         self.assertEqual(3_600_000, projected.row_counts.pick_rows)
         self.assertEqual(28_800_000, projected.row_counts.seen_rows)
         self.assertEqual(3_600_000, projected.row_counts.pool_rows)
-        self.assertEqual(10_000, projected.row_counts.run_metadata_rows)
+        self.assertEqual(10_000, projected.row_counts.draft_metadata_rows)
         self.assertEqual(120_000_000, projected.byte_counts.pick_rows_bytes)
         self.assertEqual(720_000_000, projected.byte_counts.seen_rows_bytes)
         self.assertEqual(110_000_000, projected.byte_counts.pool_data_bytes)
-        self.assertEqual(400_000, projected.byte_counts.run_metadata_bytes)
+        self.assertEqual(400_000, projected.byte_counts.draft_metadata_bytes)
         self.assertEqual(950_400_000, projected.byte_counts.compact_ndjson_bytes)
         self.assertEqual(130_000_000, projected.byte_counts.gzip_ndjson_bytes)
         self.assertEqual(820_000_000, projected.byte_counts.sqlite_bytes)
@@ -68,14 +69,34 @@ class DataVolumeTests(unittest.TestCase):
         self.assertEqual(360, measured.row_counts.pick_rows)
         self.assertEqual(2_880, measured.row_counts.seen_rows)
         self.assertEqual(360, measured.row_counts.pool_rows)
-        self.assertEqual(1, measured.row_counts.run_metadata_rows)
+        self.assertEqual(1, measured.row_counts.draft_metadata_rows)
         self.assertGreater(measured.byte_counts.pick_rows_bytes, 0)
         self.assertGreater(measured.byte_counts.seen_rows_bytes, 0)
         self.assertGreater(measured.byte_counts.pool_data_bytes, 0)
-        self.assertGreater(measured.byte_counts.run_metadata_bytes, 0)
+        self.assertGreater(measured.byte_counts.draft_metadata_bytes, 0)
         self.assertGreater(measured.byte_counts.compact_ndjson_bytes, 0)
         self.assertGreater(measured.byte_counts.gzip_ndjson_bytes, 0)
         self.assertGreater(measured.byte_counts.sqlite_bytes, 0)
+
+    def test_draft_metadata_is_distinct_from_the_sqlite_run_record(self):
+        # This catches a misleading name for rows associated with individual
+        # drafts when SQLite separately stores the one true run row.
+        measured = measure_sample(1, seed=23)
+        rendered = json.dumps(measured.to_dict())
+
+        self.assertIn('"draft_metadata_rows"', rendered)
+        self.assertIn('"draft_metadata_bytes"', rendered)
+        self.assertNotIn("run_metadata", rendered)
+
+    def test_recorded_artifact_keeps_draft_metadata_bytes_after_key_migration(self):
+        recorded = json.loads(
+            Path("experiments/results/data-volume.json").read_text(encoding="utf-8")
+        )
+        measured = recorded["measured_sample"]
+
+        self.assertEqual(1_000, measured["row_counts"]["draft_metadata_rows"])
+        self.assertEqual(25_890, measured["byte_counts"]["draft_metadata_bytes"])
+        self.assertNotIn("run_metadata", json.dumps(recorded))
 
 
 if __name__ == "__main__":

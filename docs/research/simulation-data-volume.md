@@ -14,7 +14,7 @@ This non-production probe generated 1,000 deterministic synthetic drafts with
 the committed experiment engine. Each draft has eight seats, three packs per
 seat, and fifteen cards per pack (360 picks per draft). For every generated
 draft it streamed compact UTF-8 NDJSON arrays for pick rows, seen-card rows,
-pool-entry rows, and one per-draft run-metadata row. It populated the same
+pool-entry rows, and one per-draft metadata row. It populated the same
 facts into a temporary normalized SQLite database.
 
 The SQLite schema has `runs`, `drafts`, `picks`, `seen`, and `pool_entries`
@@ -23,6 +23,11 @@ query-specific secondary indexes. The probe commits and runs `VACUUM` before
 measuring the main database file, so the result is a compact baseline rather
 than an on-line operational database. The NDJSON payload was compressed with
 `gzip.compress(..., compresslevel=6)`.
+
+The single SQLite `runs` row is true run metadata. The one-per-draft compact
+NDJSON `r` records mirror fields held by SQLite `drafts` rows; `r` is only the
+fixed one-character record tag, while the measured component is named draft
+metadata rather than run metadata.
 
 ## Environment and command
 
@@ -47,7 +52,7 @@ counts, not estimates.
 | Pick-row NDJSON | 8,034,400 | 7.66 |
 | Seen-row NDJSON | 56,188,591 | 53.59 |
 | Pool-data NDJSON | 6,610,400 | 6.30 |
-| Per-draft run-metadata NDJSON | 25,890 | 0.02 |
+| Per-draft metadata NDJSON | 25,890 | 0.02 |
 | Combined compact NDJSON | 70,859,281 | 67.58 |
 | Gzip level-6 NDJSON | 12,173,922 | 11.61 |
 | Compact normalized SQLite main file | 126,828,544 | 120.95 |
