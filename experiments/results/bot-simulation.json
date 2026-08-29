@@ -1,0 +1,288 @@
+{
+  "cases": [
+    {
+      "checksum": 7788792921317202750,
+      "checksum_samples": [
+        7788792921317202750,
+        7788792921317202750,
+        7788792921317202750
+      ],
+      "completed_drafts": [
+        100,
+        100,
+        100
+      ],
+      "drafts": 100,
+      "drafts_per_second": 340.9856030891959,
+      "elapsed_seconds": 0.8798025408759713,
+      "mean_elapsed_seconds": 0.2932675136253238,
+      "peak_tracemalloc_bytes": 212764,
+      "repetition_elapsed_seconds": [
+        0.3665391659596935,
+        0.26151979190763086,
+        0.25174358300864697
+      ],
+      "repetitions_completed": 3,
+      "repetitions_requested": 3,
+      "seed": 20260828,
+      "stopped_at_time_limit": false,
+      "strategy": "bot0",
+      "time_limit_seconds": null
+    },
+    {
+      "checksum": 11943675501771462790,
+      "checksum_samples": [
+        11943675501771462790,
+        11943675501771462790,
+        11943675501771462790
+      ],
+      "completed_drafts": [
+        1000,
+        1000,
+        1000
+      ],
+      "drafts": 1000,
+      "drafts_per_second": 401.2119766981854,
+      "elapsed_seconds": 7.47734408301767,
+      "mean_elapsed_seconds": 2.4924480276725567,
+      "peak_tracemalloc_bytes": 130596,
+      "repetition_elapsed_seconds": [
+        2.482402375084348,
+        2.4688831249950454,
+        2.5260585829382762
+      ],
+      "repetitions_completed": 3,
+      "repetitions_requested": 3,
+      "seed": 20260828,
+      "stopped_at_time_limit": false,
+      "strategy": "bot0",
+      "time_limit_seconds": null
+    },
+    {
+      "checksum": 5511054195656919338,
+      "checksum_samples": [
+        5511054195656919338,
+        5511054195656919338,
+        5511054195656919338
+      ],
+      "completed_drafts": [
+        10000,
+        10000,
+        10000
+      ],
+      "drafts": 10000,
+      "drafts_per_second": 394.8027733061258,
+      "elapsed_seconds": 75.98730816598982,
+      "mean_elapsed_seconds": 25.329102721996605,
+      "peak_tracemalloc_bytes": 130564,
+      "repetition_elapsed_seconds": [
+        24.75566266698297,
+        25.989933333010413,
+        25.241712165996432
+      ],
+      "repetitions_completed": 3,
+      "repetitions_requested": 3,
+      "seed": 20260828,
+      "stopped_at_time_limit": false,
+      "strategy": "bot0",
+      "time_limit_seconds": 600.0
+    },
+    {
+      "checksum": 17648810157792754756,
+      "checksum_samples": [
+        17648810157792754756,
+        17648810157792754756,
+        17648810157792754756
+      ],
+      "completed_drafts": [
+        100,
+        100,
+        100
+      ],
+      "drafts": 100,
+      "drafts_per_second": 148.2056098451312,
+      "elapsed_seconds": 2.0242148749530315,
+      "mean_elapsed_seconds": 0.6747382916510105,
+      "peak_tracemalloc_bytes": 131028,
+      "repetition_elapsed_seconds": [
+        0.70311162492726,
+        0.6608016659738496,
+        0.660301584051922
+      ],
+      "repetitions_completed": 3,
+      "repetitions_requested": 3,
+      "seed": 20260828,
+      "stopped_at_time_limit": false,
+      "strategy": "bot1",
+      "time_limit_seconds": null
+    },
+    {
+      "checksum": 158585835923404106,
+      "checksum_samples": [
+        158585835923404106,
+        158585835923404106,
+        158585835923404106
+      ],
+      "completed_drafts": [
+        1000,
+        1000,
+        1000
+      ],
+      "drafts": 1000,
+      "drafts_per_second": 149.31091953529574,
+      "elapsed_seconds": 20.092301415978,
+      "mean_elapsed_seconds": 6.697433805326,
+      "peak_tracemalloc_bytes": 130620,
+      "repetition_elapsed_seconds": [
+        6.86324999993667,
+        6.623922333004884,
+        6.605129083036445
+      ],
+      "repetitions_completed": 3,
+      "repetitions_requested": 3,
+      "seed": 20260828,
+      "stopped_at_time_limit": false,
+      "strategy": "bot1",
+      "time_limit_seconds": null
+    },
+    {
+      "checksum": 8838557780695726458,
+      "checksum_samples": [
+        8838557780695726458,
+        8838557780695726458,
+        8838557780695726458
+      ],
+      "completed_drafts": [
+        10000,
+        10000,
+        10000
+      ],
+      "drafts": 10000,
+      "drafts_per_second": 148.20218153499084,
+      "elapsed_seconds": 202.42617004201747,
+      "mean_elapsed_seconds": 67.47539001400582,
+      "peak_tracemalloc_bytes": 130588,
+      "repetition_elapsed_seconds": [
+        68.65119587501977,
+        67.22995299997274,
+        66.54502116702497
+      ],
+      "repetitions_completed": 3,
+      "repetitions_requested": 3,
+      "seed": 20260828,
+      "stopped_at_time_limit": false,
+      "strategy": "bot1",
+      "time_limit_seconds": 600.0
+    },
+    {
+      "checksum": 6708021895044125410,
+      "checksum_samples": [
+        6708021895044125410,
+        6708021895044125410,
+        6708021895044125410
+      ],
+      "completed_drafts": [
+        100,
+        100,
+        100
+      ],
+      "drafts": 100,
+      "drafts_per_second": 131.66677574212085,
+      "elapsed_seconds": 2.278479125117883,
+      "mean_elapsed_seconds": 0.759493041705961,
+      "peak_tracemalloc_bytes": 130980,
+      "repetition_elapsed_seconds": [
+        0.7934361250372604,
+        0.7419013750040904,
+        0.7431416250765324
+      ],
+      "repetitions_completed": 3,
+      "repetitions_requested": 3,
+      "seed": 20260828,
+      "stopped_at_time_limit": false,
+      "strategy": "bot2",
+      "time_limit_seconds": null
+    },
+    {
+      "checksum": 17969312738145488384,
+      "checksum_samples": [
+        17969312738145488384,
+        17969312738145488384,
+        17969312738145488384
+      ],
+      "completed_drafts": [
+        1000,
+        1000,
+        1000
+      ],
+      "drafts": 1000,
+      "drafts_per_second": 132.4992142211806,
+      "elapsed_seconds": 22.64164370810613,
+      "mean_elapsed_seconds": 7.54721456936871,
+      "peak_tracemalloc_bytes": 130620,
+      "repetition_elapsed_seconds": [
+        7.687737041036598,
+        7.469391959020868,
+        7.484514708048664
+      ],
+      "repetitions_completed": 3,
+      "repetitions_requested": 3,
+      "seed": 20260828,
+      "stopped_at_time_limit": false,
+      "strategy": "bot2",
+      "time_limit_seconds": null
+    },
+    {
+      "checksum": 3143057243534818870,
+      "checksum_samples": [
+        3143057243534818870,
+        3143057243534818870,
+        3143057243534818870
+      ],
+      "completed_drafts": [
+        10000,
+        10000,
+        10000
+      ],
+      "drafts": 10000,
+      "drafts_per_second": 130.45939845367377,
+      "elapsed_seconds": 229.95660225010943,
+      "mean_elapsed_seconds": 76.65220075003647,
+      "peak_tracemalloc_bytes": 130652,
+      "repetition_elapsed_seconds": [
+        78.43341679207515,
+        75.61154708301183,
+        75.91163837502245
+      ],
+      "repetitions_completed": 3,
+      "repetitions_requested": 3,
+      "seed": 20260828,
+      "stopped_at_time_limit": false,
+      "strategy": "bot2",
+      "time_limit_seconds": 600.0
+    }
+  ],
+  "command": "python3 -m experiments.bot_simulation --drafts 100 1000 10000 --strategies bot0 bot1 bot2 --seed 20260828 --repetitions 3 --output experiments/results/bot-simulation.json",
+  "counts": [
+    100,
+    1000,
+    10000
+  ],
+  "environment": {
+    "architecture": "arm64",
+    "implementation": "CPython",
+    "logical_cpu_count": 10,
+    "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+    "processor": "arm",
+    "python_version": "3.14.0"
+  },
+  "limitations": [
+    "Uses the deterministic synthetic card generator and in-memory draft engine only.",
+    "Pool color and curve shares reconstruct attributes from synthetic card IDs because the injected chooser receives pool IDs.",
+    "tracemalloc records Python allocations and is not total process memory.",
+    "This measures transparent baseline strategy cost, not bot quality or production throughput."
+  ],
+  "repetitions": 3,
+  "seed": 20260828,
+  "sequential": true
+}
