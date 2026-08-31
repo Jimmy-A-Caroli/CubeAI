@@ -174,6 +174,8 @@ Forge is a Java, GPL-3.0 candidate rules engine. Current public capabilities do 
 
 ## Unresolved decisions
 
+Task 9 feasibility synthesis confirms that the current local-first boundaries remain appropriate: sequential simulation, pure Python aggregation for bounded local workloads, SQLite for ordinary local state, compressed exports for large archives, bounded co-occurrence, and explicit provider/cache and bot-information boundaries. These are evidence-supported planning constraints, not new production dependencies.
+
 - Toolchain versions, dependency managers, lint/format commands, and CI matrix.
 - Final Python package layout and whether one or multiple distributable packages are useful.
 - API contract generation and client strategy.

@@ -20,7 +20,7 @@ This file is the source backlog until a remote issue tracker is intentionally co
 
 ### M0-001 — Select and record the initial toolchains
 
-- **Labels/state:** `component::infra`, `type::proposal`, `priority::high`, `human::decision`, `READY`
+- **Labels/state:** `component::infra`, `type::proposal`, `priority::high`, `human::decision`, `AWAITING HUMAN DECISION`
 - **Dependencies:** None.
 - **Goal/context:** Turn the provisional Python/FastAPI and React/TypeScript direction into exact, supportable version floors, dependency managers, lockfile policy, package layout, and developer commands.
 - **Scope:** Compare maintained versions and boring tooling; document Python, Node, package managers, test/lint/type/format tools, lockfiles, and local/CI compatibility; create accepted ADRs only after review.
@@ -28,6 +28,8 @@ This file is the source backlog until a remote issue tracker is intentionally co
 - **Acceptance criteria:** A proposal recommends one coherent toolchain; alternatives and migration cost are recorded; licenses and platform support are checked; approval converts decisions into ADRs without treating Forge as adopted.
 - **Required tests:** Documentation link check and command/version examples manually validated against upstream documentation.
 - **Expected artifacts/areas:** `docs/research/`, `docs/adr/`, README development prerequisites.
+
+The proposal is documented in [the toolchain evaluation](../research/toolchain-evaluation.md) and awaits explicit human approval. M0-002 and M0-003 remain blocked until that decision is recorded.
 
 ### M0-002 — Establish the Python CubeLab workspace
 

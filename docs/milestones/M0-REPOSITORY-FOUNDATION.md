@@ -21,7 +21,7 @@ Turn the documentation-only repository into a coherent, reproducible development
 
 | ID | Outcome | Depends on | Initial state |
 |---|---|---|---|
-| M0-001 | Record toolchain and dependency-management decision | — | READY |
+| M0-001 | Record toolchain and dependency-management decision | — | AWAITING HUMAN DECISION |
 | M0-002 | Establish Python CubeLab workspace with a smoke test | M0-001 | BLOCKED |
 | M0-003 | Establish React/TypeScript workspace with a smoke test | M0-001 | BLOCKED |
 | M0-004 | Add backend quality and boundary checks | M0-002 | BLOCKED |

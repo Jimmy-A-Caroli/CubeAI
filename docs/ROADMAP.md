@@ -135,6 +135,8 @@ Potential scope includes authentication, hosted persistence, deployment, observa
 
 ## Cross-cutting risks
 
+Task 9 reconciliation keeps the milestone order and M5 product-priority gate unchanged. Measured draft and heuristic throughput support sequential local work and do not justify distributed simulation, heavier analytics dependencies, accelerated ML, or gameplay scope. Storage planning should budget seen-card history and prefer compressed exports for large archives.
+
 - CubeCobra contracts and historical-data availability may change or lack guarantees.
 - Custom cards and ambiguous printings complicate identity resolution.
 - Scryfall usage, attribution, images, and bulk-data refresh need a responsible cache design.
