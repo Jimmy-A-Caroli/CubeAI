@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" style="font-family:Pretendard, Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">
+  <title>CubeAI: a local-first path from Cube data to explainable draft learning</title>
+  <desc>A component overview separating current evidence and planned milestones from future machine-learning and gameplay evaluation scope.</desc>
+  <defs>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%"><feDropShadow dx="0" dy="4" stdDeviation="7" flood-color="#252B35" flood-opacity="0.10"/></filter>
+    <marker id="arrow" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" refX="10" refY="5.5" orient="auto"><path d="M2 1.5 L10 5.5 L2 9.5" data-stroke-role="edge-line" stroke="#2E6DA4" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></marker>
+  </defs>
+  <rect width="1600" height="900" data-fill-role="canvas" fill="#F7F7F5"/>
+  <line x1="92" y1="178" x2="220" y2="178" stroke-width="4" stroke-linecap="round" data-stroke-role="focus" stroke="#2E6DA4"/>
+  <text x="92" y="82" font-size="14" font-weight="700" letter-spacing="2" data-fill-role="focus" fill="#2E6DA4">CUBEAI · PROJECT OVERVIEW</text>
+  <text x="92" y="126" font-size="42" font-weight="700" data-fill-role="ink" fill="#252B35">From Cube data to explainable draft learning—one boundary at a time</text>
+  <text x="92" y="158" font-size="17" data-fill-role="muted" fill="#636A75">CubeLab stays useful independently: import, resolve, draft, simulate and analyze before any gameplay or ML claim.</text>
+
+  <rect x="64" y="194" width="220" height="626" rx="20" data-fill-role="external-fill" data-stroke-role="external-line" fill="#F9F9F9" stroke="#B9BCC1"/>
+  <text x="88" y="230" font-size="15" font-weight="700" letter-spacing="1" data-fill-role="muted" fill="#636A75">ENTRY / PROVIDERS</text>
+  <g filter="url(#shadow)">
+    <rect x="88" y="260" width="172" height="116" rx="14" data-fill-role="surface" data-stroke-role="external-line" fill="#FFFFFF" stroke="#B9BCC1"/>
+    <rect x="88" y="408" width="172" height="116" rx="14" data-fill-role="surface" data-stroke-role="external-line" fill="#FFFFFF" stroke="#B9BCC1"/>
+    <rect x="88" y="556" width="172" height="116" rx="14" data-fill-role="surface" data-stroke-role="external-line" fill="#FFFFFF" stroke="#B9BCC1"/>
+  </g>
+  <circle cx="174" cy="294" r="22" data-fill-role="icon-tint" fill="#EAF0F6"/><text x="174" y="301" text-anchor="middle" font-size="24" font-weight="700" data-fill-role="edge-ink" fill="#193C5A">C</text>
+  <text x="174" y="335" text-anchor="middle" font-size="18" font-weight="700" data-fill-role="ink" fill="#252B35">CubeCobra</text><text x="174" y="358" text-anchor="middle" font-size="13" data-fill-role="muted" fill="#636A75">Cube import contract</text>
+  <circle cx="174" cy="442" r="22" data-fill-role="icon-tint" fill="#EAF0F6"/><text x="174" y="449" text-anchor="middle" font-size="24" font-weight="700" data-fill-role="edge-ink" fill="#193C5A">S</text>
+  <text x="174" y="483" text-anchor="middle" font-size="18" font-weight="700" data-fill-role="ink" fill="#252B35">Scryfall</text><text x="174" y="506" text-anchor="middle" font-size="13" data-fill-role="muted" fill="#636A75">Card resolution</text>
+  <circle cx="174" cy="590" r="22" data-fill-role="icon-tint" fill="#EAF0F6"/><text x="174" y="597" text-anchor="middle" font-size="22" font-weight="700" data-fill-role="edge-ink" fill="#193C5A">ID</text>
+  <text x="174" y="631" text-anchor="middle" font-size="17" font-weight="700" data-fill-role="ink" fill="#252B35">Identity model</text><text x="174" y="654" text-anchor="middle" font-size="12" data-fill-role="muted" fill="#636A75">Oracle ≠ print ≠ instance</text>
+  <rect x="88" y="710" width="172" height="76" rx="12" data-fill-role="edge-fill" data-stroke-role="edge-line" fill="#EAF0F6" stroke="#2E6DA4"/>
+  <text x="174" y="741" text-anchor="middle" font-size="15" font-weight="700" data-fill-role="edge-ink" fill="#193C5A">TASK 7 EVIDENCE</text><text x="174" y="765" text-anchor="middle" font-size="12" data-fill-role="edge-ink" fill="#193C5A">Explicit provider limits</text>
+
+  <rect x="320" y="194" width="830" height="626" rx="20" data-fill-role="edge-fill" data-stroke-role="edge-line" fill="#EAF0F6" stroke="#2E6DA4"/>
+  <text x="344" y="230" font-size="15" font-weight="700" letter-spacing="1" data-fill-role="edge-ink" fill="#193C5A">CUBELAB · CURRENT EVIDENCE + M1–M3 DIRECTION</text>
+  <rect x="344" y="252" width="782" height="116" rx="14" data-fill-role="surface" data-stroke-role="api-line" fill="#FFFFFF" stroke="#5B54A8" filter="url(#shadow)"/>
+  <text x="374" y="286" font-size="20" font-weight="700" data-fill-role="api-ink" fill="#322E5C">Import + normalize</text><text x="374" y="314" font-size="15" data-fill-role="muted" fill="#636A75">Boundary adapters validate external payloads; provenance and distinct identities survive normalization.</text>
+  <rect x="928" y="270" width="170" height="66" rx="12" data-fill-role="api-fill" data-stroke-role="api-line" fill="#EFEEF6" stroke="#5B54A8"/><text x="1013" y="296" text-anchor="middle" font-size="15" font-weight="700" data-fill-role="api-ink" fill="#322E5C">M1</text><text x="1013" y="319" text-anchor="middle" font-size="13" data-fill-role="api-ink" fill="#322E5C">Cube + card model</text>
+  <path d="M735 376 V400" data-stroke-role="edge-line" stroke="#2E6DA4" stroke-width="2.5" fill="none" marker-end="url(#arrow)"/>
+  <rect x="344" y="414" width="244" height="154" rx="14" data-fill-role="surface" data-stroke-role="edge-line" fill="#FFFFFF" stroke="#2E6DA4" filter="url(#shadow)"/>
+  <rect x="613" y="414" width="244" height="154" rx="14" data-fill-role="surface" data-stroke-role="compute-line" fill="#FFFFFF" stroke="#3F8F72" filter="url(#shadow)"/>
+  <rect x="882" y="414" width="244" height="154" rx="14" data-fill-role="surface" data-stroke-role="data-line" fill="#FFFFFF" stroke="#636A75" filter="url(#shadow)"/>
+  <circle cx="466" cy="454" r="22" data-fill-role="icon-tint" fill="#EAF0F6"/><text x="466" y="461" text-anchor="middle" font-size="22" font-weight="700" data-fill-role="edge-ink" fill="#193C5A">D</text>
+  <text x="466" y="495" text-anchor="middle" font-size="20" font-weight="700" data-fill-role="edge-ink" fill="#193C5A">Draft engine</text><text x="466" y="523" text-anchor="middle" font-size="14" data-fill-role="muted" fill="#636A75">Deterministic state, picks,</text><text x="466" y="545" text-anchor="middle" font-size="14" data-fill-role="muted" fill="#636A75">seen packs and replay seams</text>
+  <circle cx="735" cy="454" r="22" data-fill-role="compute-fill" fill="#ECF4F1"/><text x="735" y="461" text-anchor="middle" font-size="22" font-weight="700" data-fill-role="compute-ink" fill="#234F3F">B</text>
+  <text x="735" y="495" text-anchor="middle" font-size="20" font-weight="700" data-fill-role="compute-ink" fill="#234F3F">Bots + simulation</text><text x="735" y="523" text-anchor="middle" font-size="14" data-fill-role="muted" fill="#636A75">Visible-state strategies, fixed</text><text x="735" y="545" text-anchor="middle" font-size="14" data-fill-role="muted" fill="#636A75">seeds and named provenance</text>
+  <circle cx="1004" cy="454" r="22" data-fill-role="data-fill" fill="#F4F5F5"/><text x="1004" y="461" text-anchor="middle" font-size="22" font-weight="700" data-fill-role="data-ink" fill="#363A40">A</text>
+  <text x="1004" y="495" text-anchor="middle" font-size="20" font-weight="700" data-fill-role="data-ink" fill="#363A40">Analytics</text><text x="1004" y="523" text-anchor="middle" font-size="14" data-fill-role="muted" fill="#636A75">Bounded metrics over immutable,</text><text x="1004" y="545" text-anchor="middle" font-size="14" data-fill-role="muted" fill="#636A75">origin-queryable event records</text>
+  <path d="M588 491 H601" data-stroke-role="edge-line" stroke="#2E6DA4" stroke-width="2.5" fill="none" marker-end="url(#arrow)"/><path d="M857 491 H870" data-stroke-role="edge-line" stroke="#2E6DA4" stroke-width="2.5" fill="none" marker-end="url(#arrow)"/>
+  <rect x="344" y="598" width="782" height="188" rx="14" data-fill-role="surface" data-stroke-role="rule" fill="#FFFFFF" stroke="#DEE0E2"/>
+  <text x="370" y="631" font-size="15" font-weight="700" letter-spacing="1" data-fill-role="muted" fill="#636A75">MILESTONE PATH</text>
+  <rect x="370" y="653" width="222" height="102" rx="12" data-fill-role="edge-fill" data-stroke-role="edge-line" fill="#EAF0F6" stroke="#2E6DA4"/><text x="390" y="680" font-size="16" font-weight="700" data-fill-role="edge-ink" fill="#193C5A">M1 · Draft foundation</text><text x="390" y="705" font-size="13" data-fill-role="edge-ink" fill="#193C5A"><tspan x="390">Real identities, replay,</tspan><tspan x="390" dy="20">basic bots + local analytics</tspan></text>
+  <rect x="624" y="653" width="222" height="102" rx="12" data-fill-role="api-fill" data-stroke-role="api-line" fill="#EFEEF6" stroke="#5B54A8"/><text x="644" y="680" font-size="16" font-weight="700" data-fill-role="api-ink" fill="#322E5C">M2 · Product loop</text><text x="644" y="705" font-size="13" data-fill-role="api-ink" fill="#322E5C"><tspan x="644">Stable interfaces, UX,</tspan><tspan x="644" dy="20">validated metric meanings</tspan></text>
+  <rect x="878" y="653" width="222" height="102" rx="12" data-fill-role="compute-fill" data-stroke-role="compute-line" fill="#ECF4F1" stroke="#3F8F72"/><text x="898" y="680" font-size="16" font-weight="700" data-fill-role="compute-ink" fill="#234F3F">M3 · Reproducible bots</text><text x="898" y="705" font-size="13" data-fill-role="compute-ink" fill="#234F3F"><tspan x="898">Strategy evaluation with</tspan><tspan x="898" dy="20">explicit data boundaries</tspan></text>
+
+  <rect x="1186" y="194" width="350" height="626" rx="20" data-fill-role="compute-band" data-stroke-role="compute-line" fill="#F7FBF9" stroke="#3F8F72" stroke-dasharray="8 6" data-layout-container="future-scope" data-min-pad="20" data-min-visual-pad="8" data-symmetry="x" data-symmetry-tol="1" data-layout-count="4"/>
+  <text x="1210" y="230" font-size="14" font-weight="700" letter-spacing="0.7" data-fill-role="compute-ink" fill="#234F3F">FUTURE · NEW EVIDENCE REQUIRED</text>
+  <rect x="1210" y="260" width="302" height="126" rx="14" data-fill-role="surface" data-stroke-role="compute-line" fill="#FFFFFF" stroke="#3F8F72" data-layout-parent="future-scope"/>
+  <text x="1234" y="294" font-size="19" font-weight="700" data-fill-role="compute-ink" fill="#234F3F">Learned ranking</text><text x="1234" y="323" font-size="14" data-fill-role="muted" fill="#636A75"><tspan x="1234">Historical picks can support</tspan><tspan x="1234" dy="22">behavior models—not quality claims.</tspan></text>
+  <rect x="1210" y="414" width="302" height="126" rx="14" data-fill-role="surface" data-stroke-role="warning" fill="#FFFFFF" stroke="#B08434" data-layout-parent="future-scope"/>
+  <text x="1234" y="448" font-size="19" font-weight="700" data-fill-role="ink" fill="#252B35">Gameplay evaluation</text><text x="1234" y="477" font-size="14" data-fill-role="muted" fill="#636A75"><tspan x="1234">Performance claims require linked,</tspan><tspan x="1234" dy="22">controlled outcome provenance.</tspan></text>
+  <rect x="1210" y="568" width="302" height="126" rx="14" data-fill-role="surface" data-stroke-role="danger" fill="#FFFFFF" stroke="#B45A50" data-layout-parent="future-scope"/>
+  <text x="1234" y="602" font-size="19" font-weight="700" data-fill-role="ink" fill="#252B35">Non-negotiable guardrail</text><text x="1234" y="631" font-size="14" data-fill-role="muted" fill="#636A75"><tspan x="1234">No future packs, other seats’ state</tspan><tspan x="1234" dy="22">or outcome-conditioned leakage.</tspan></text>
+  <rect x="1210" y="722" width="302" height="64" rx="12" data-fill-role="external-fill" data-stroke-role="external-line" fill="#F9F9F9" stroke="#B9BCC1" data-layout-parent="future-scope"/>
+  <text x="1361" y="748" text-anchor="middle" font-size="14" font-weight="700" data-fill-role="muted" fill="#636A75">RECOMMENDATION</text><text x="1361" y="770" text-anchor="middle" font-size="13" data-fill-role="muted" fill="#636A75">Earn complexity with measured need.</text>
+  <text x="64" y="858" font-size="13" data-fill-role="muted" fill="#636A75">Solid frame = current evidence / planned milestone · Dashed frame = future scope requiring new data and validation</text>
+</svg>

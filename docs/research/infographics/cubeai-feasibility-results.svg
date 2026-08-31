@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" style="font-family:Pretendard, Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">
+  <title>CubeAI feasibility results support a lean local-first baseline</title>
+  <desc>A measured-evidence dashboard for Tasks 2–5: draft speed, retained state, bot throughput, analytics performance, and measured versus projected storage.</desc>
+  <defs><filter id="shadow" x="-10%" y="-10%" width="120%" height="130%"><feDropShadow dx="0" dy="4" stdDeviation="7" flood-color="#252B35" flood-opacity="0.10"/></filter></defs>
+  <rect width="1600" height="900" data-fill-role="canvas" fill="#F7F7F5"/>
+  <line x1="92" y1="178" x2="220" y2="178" stroke-width="4" stroke-linecap="round" data-stroke-role="focus" stroke="#2E6DA4"/>
+  <text x="92" y="82" font-size="14" font-weight="700" letter-spacing="2" data-fill-role="focus" fill="#2E6DA4">CUBEAI · TASKS 2–5 · SYNTHETIC FEASIBILITY EVIDENCE</text>
+  <text x="92" y="126" font-size="42" font-weight="700" data-fill-role="ink" fill="#252B35">The local-first baseline is fast enough; retained evidence drives scale</text>
+  <text x="92" y="158" font-size="17" data-fill-role="muted" fill="#636A75">Measured values are machine-specific synthetic probes. Storage beyond 1,000 drafts is a linear projection, not a measurement.</text>
+
+  <g filter="url(#shadow)">
+    <rect x="64" y="200" width="352" height="184" rx="16" data-fill-role="surface" data-stroke-role="edge-line" fill="#FFFFFF" stroke="#2E6DA4"/>
+    <rect x="440" y="200" width="352" height="184" rx="16" data-fill-role="surface" data-stroke-role="edge-line" fill="#FFFFFF" stroke="#2E6DA4"/>
+    <rect x="816" y="200" width="720" height="184" rx="16" data-fill-role="surface" data-stroke-role="compute-line" fill="#FFFFFF" stroke="#3F8F72"/>
+  </g>
+  <rect x="84" y="220" width="96" height="26" rx="13" data-fill-role="focus" fill="#2E6DA4"/><text x="132" y="238" text-anchor="middle" font-size="12" font-weight="700" data-fill-role="on-focus" fill="#FFFFFF">MEASURED</text>
+  <text x="88" y="278" font-size="38" font-weight="700" data-fill-role="edge-ink" fill="#193C5A">111.850</text><text x="88" y="305" font-size="16" font-weight="700" data-fill-role="edge-ink" fill="#193C5A">standard drafts / second</text>
+  <text x="88" y="338" font-size="14" data-fill-role="muted" fill="#636A75">8 seats × 3 packs × 15 cards</text><text x="88" y="361" font-size="14" data-fill-role="muted" fill="#636A75">mean 0.008940512 seconds / draft</text>
+  <rect x="460" y="220" width="96" height="26" rx="13" data-fill-role="focus" fill="#2E6DA4"/><text x="508" y="238" text-anchor="middle" font-size="12" font-weight="700" data-fill-role="on-focus" fill="#FFFFFF">MEASURED</text>
+  <text x="464" y="278" font-size="38" font-weight="700" data-fill-role="edge-ink" fill="#193C5A">82,816 B</text><text x="464" y="305" font-size="16" font-weight="700" data-fill-role="edge-ink" fill="#193C5A">retained standard draft state</text>
+  <text x="464" y="338" font-size="14" data-fill-role="muted" fill="#636A75">≈ 80.9 KiB · 360 pick events</text><text x="464" y="361" font-size="14" data-fill-role="muted" fill="#636A75">complete pre-pick pack views retained</text>
+  <rect x="836" y="220" width="96" height="26" rx="13" data-fill-role="positive" fill="#3F8F72"/><text x="884" y="238" text-anchor="middle" font-size="12" font-weight="700" data-fill-role="on-focus" fill="#FFFFFF">MEASURED</text>
+  <text x="836" y="276" font-size="20" font-weight="700" data-fill-role="compute-ink" fill="#234F3F">Bot throughput · 10,000 standard drafts</text>
+  <g>
+    <rect x="836" y="300" width="208" height="58" rx="10" data-fill-role="compute-fill" data-stroke-role="compute-line" fill="#ECF4F1" stroke="#3F8F72"/><text x="856" y="325" font-size="18" font-weight="700" data-fill-role="compute-ink" fill="#234F3F">Bot 0 · 394.8028/s</text><text x="856" y="347" font-size="13" data-fill-role="compute-ink" fill="#234F3F">mean 25.329 s</text>
+    <rect x="1068" y="300" width="208" height="58" rx="10" data-fill-role="compute-fill" data-stroke-role="compute-line" fill="#ECF4F1" stroke="#3F8F72"/><text x="1088" y="325" font-size="18" font-weight="700" data-fill-role="compute-ink" fill="#234F3F">Bot 1 · 148.2022/s</text><text x="1088" y="347" font-size="13" data-fill-role="compute-ink" fill="#234F3F">mean 67.475 s</text>
+    <rect x="1300" y="300" width="212" height="58" rx="10" data-fill-role="compute-fill" data-stroke-role="compute-line" fill="#ECF4F1" stroke="#3F8F72"/><text x="1320" y="325" font-size="18" font-weight="700" data-fill-role="compute-ink" fill="#234F3F">Bot 2 · 130.4594/s</text><text x="1320" y="347" font-size="13" data-fill-role="compute-ink" fill="#234F3F">mean 76.652 s</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="64" y="408" width="728" height="204" rx="16" data-fill-role="surface" data-stroke-role="api-line" fill="#FFFFFF" stroke="#5B54A8"/>
+    <rect x="816" y="408" width="720" height="204" rx="16" data-fill-role="surface" data-stroke-role="data-line" fill="#FFFFFF" stroke="#636A75" data-layout-container="storage-measured" data-min-pad="20" data-min-visual-pad="8" data-symmetry="x" data-symmetry-tol="4" data-layout-count="3"/>
+  </g>
+  <rect x="84" y="428" width="96" height="26" rx="13" data-fill-role="focus" fill="#2E6DA4"/><text x="132" y="446" text-anchor="middle" font-size="12" font-weight="700" data-fill-role="on-focus" fill="#FFFFFF">MEASURED</text>
+  <text x="84" y="484" font-size="20" font-weight="700" data-fill-role="api-ink" fill="#322E5C">Analytics · 10,000 micro-drafts</text>
+  <text x="84" y="515" font-size="14" font-weight="700" data-fill-role="danger" fill="#B45A50">MICRO-WORKLOAD: 1 seat × 1 pack × 3 cards—not a standard draft</text>
+  <rect x="84" y="536" width="322" height="52" rx="10" data-fill-role="api-fill" data-stroke-role="api-line" fill="#EFEEF6" stroke="#5B54A8"/><text x="104" y="558" font-size="17" font-weight="700" data-fill-role="api-ink" fill="#322E5C">Pure Python · 0.5612 s</text><text x="104" y="579" font-size="13" data-fill-role="api-ink" fill="#322E5C">below 2 s interactive threshold</text>
+  <rect x="430" y="536" width="338" height="52" rx="10" data-fill-role="external-fill" data-stroke-role="external-line" fill="#F9F9F9" stroke="#B9BCC1"/><text x="450" y="558" font-size="17" font-weight="700" data-fill-role="ink" fill="#252B35">SQLite · 28.5279 s</text><text x="450" y="579" font-size="13" data-fill-role="muted" fill="#636A75">same checksum; better suited to batch work</text>
+  <rect x="836" y="428" width="96" height="26" rx="13" data-fill-role="focus" fill="#2E6DA4"/><text x="884" y="446" text-anchor="middle" font-size="12" font-weight="700" data-fill-role="on-focus" fill="#FFFFFF">MEASURED</text>
+  <text x="836" y="484" font-size="20" font-weight="700" data-fill-role="data-ink" fill="#363A40">Storage · 1,000 standard drafts</text>
+  <g>
+    <rect x="836" y="508" width="206" height="80" rx="10" data-fill-role="data-fill" data-stroke-role="data-line" fill="#F4F5F5" stroke="#636A75" data-layout-parent="storage-measured"/><text x="856" y="536" font-size="14" font-weight="700" data-fill-role="data-ink" fill="#363A40">Compact NDJSON</text><text x="856" y="570" font-size="24" font-weight="700" data-fill-role="data-ink" fill="#363A40">67.58 MiB</text>
+    <rect x="1064" y="508" width="206" height="80" rx="10" data-fill-role="compute-fill" data-stroke-role="compute-line" fill="#ECF4F1" stroke="#3F8F72" data-layout-parent="storage-measured"/><text x="1084" y="536" font-size="14" font-weight="700" data-fill-role="compute-ink" fill="#234F3F">gzip NDJSON</text><text x="1084" y="570" font-size="24" font-weight="700" data-fill-role="compute-ink" fill="#234F3F">11.61 MiB</text>
+    <rect x="1292" y="508" width="220" height="80" rx="10" data-fill-role="external-fill" data-stroke-role="external-line" fill="#F9F9F9" stroke="#B9BCC1" data-layout-parent="storage-measured"/><text x="1312" y="536" font-size="14" font-weight="700" data-fill-role="ink" fill="#252B35">SQLite</text><text x="1312" y="570" font-size="24" font-weight="700" data-fill-role="ink" fill="#252B35">120.95 MiB</text>
+  </g>
+
+  <rect x="64" y="636" width="1020" height="188" rx="16" data-fill-role="strip" data-stroke-role="rule" fill="#F7F9FB" stroke="#DEE0E2"/>
+  <rect x="84" y="656" width="112" height="26" rx="13" data-fill-role="warning" fill="#B08434"/><text x="140" y="674" text-anchor="middle" font-size="12" font-weight="700" data-fill-role="on-focus" fill="#FFFFFF">PROJECTED</text>
+  <text x="216" y="674" font-size="14" font-weight="700" data-fill-role="muted" fill="#636A75">Linear from the measured 1,000-draft sample · GiB</text>
+  <g data-fill-role="ink" fill="#252B35">
+    <text x="88" y="718" font-size="14" font-weight="700">Target</text><text x="255" y="718" font-size="14" font-weight="700">10,000 drafts</text><text x="510" y="718" font-size="14" font-weight="700">100,000 drafts</text><text x="780" y="718" font-size="14" font-weight="700">1,000,000 drafts</text>
+    <text x="88" y="752" font-size="14" font-weight="700">NDJSON</text><text x="255" y="752" font-size="14">0.66</text><text x="510" y="752" font-size="14">6.60</text><text x="780" y="752" font-size="14">65.99</text>
+    <text x="88" y="780" font-size="14" font-weight="700">gzip</text><text x="255" y="780" font-size="14">0.11</text><text x="510" y="780" font-size="14">1.13</text><text x="780" y="780" font-size="14">11.34</text>
+    <text x="88" y="808" font-size="14" font-weight="700">SQLite</text><text x="255" y="808" font-size="14">1.18</text><text x="510" y="808" font-size="14">11.81</text><text x="780" y="808" font-size="14">118.12</text>
+  </g>
+  <line x1="210" y1="694" x2="210" y2="808" data-stroke-role="rule" stroke="#DEE0E2"/><line x1="454" y1="694" x2="454" y2="808" data-stroke-role="rule" stroke="#DEE0E2"/><line x1="724" y1="694" x2="724" y2="808" data-stroke-role="rule" stroke="#DEE0E2"/>
+
+  <rect x="1108" y="636" width="428" height="188" rx="16" data-fill-role="compute-fill" data-stroke-role="compute-line" fill="#ECF4F1" stroke="#3F8F72"/>
+  <rect x="1128" y="656" width="150" height="26" rx="13" data-fill-role="positive" fill="#3F8F72"/><text x="1203" y="674" text-anchor="middle" font-size="12" font-weight="700" data-fill-role="on-focus" fill="#FFFFFF">RECOMMENDATION</text>
+  <text x="1128" y="714" font-size="18" font-weight="700" data-fill-role="compute-ink" fill="#234F3F">Keep the next step lean</text>
+  <text x="1128" y="743" font-size="14" data-fill-role="compute-ink" fill="#234F3F"><tspan x="1128">• Sequential simulation is feasible.</tspan><tspan x="1128" dy="23">• Pure Python is sufficient for current interactive work.</tspan><tspan x="1128" dy="23">• Plan storage growth; do not infer production capacity.</tspan></text>
+  <text x="64" y="860" font-size="13" data-fill-role="muted" fill="#636A75">All probes: CPython 3.14.0 · macOS 26.5.2 arm64 · seed 20260828 · synthetic data · no production infrastructure conclusion</text>
+</svg>
