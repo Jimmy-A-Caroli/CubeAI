@@ -139,11 +139,11 @@ diagnostic; it must not manufacture an ID or resolve by same-name guesswork.
 
 ## Observed behavior
 
-No live API response was observed. The official bulk-data page was observed to
-list daily archives dated 2026-08-30 with the sizes and timestamps in the table
-above, and the current documentation displayed the 75-reference collection
-limit and endpoint-specific rate limits. This constrains planning but is not a
-runtime availability, latency, or response-shape measurement.
+No live API response was observed. The only observed dynamic provider state was
+the official bulk-data page's dated 2026-08-30 archive listing, with the sizes
+and timestamps in the table above. Collection limits and endpoint-specific rate
+limits are documented behavior, not runtime observations. This reconnaissance
+is not an availability, latency, or response-shape measurement.
 
 ## Assumptions and unknowns
 
@@ -172,7 +172,7 @@ runtime availability, latency, or response-shape measurement.
 
 | Claim | Documented | Observed | Assumption | Source | M1 contract impact |
 | --- | --- | --- | --- | --- | --- |
-| A collection request accepts at most 75 identifiers and runs at 2/second. | Yes | Documentation page only | No | [`POST /cards/collection`](https://scryfall.com/docs/api/cards/collection), [rate limits](https://scryfall.com/docs/api/rate-limits) | Batch exact IDs into at most 75, schedule starts at least 500 ms apart, and cache results. |
+| A collection request accepts at most 75 identifiers and runs at 2/second. | Yes | No live response | No | [`POST /cards/collection`](https://scryfall.com/docs/api/cards/collection), [rate limits](https://scryfall.com/docs/api/rate-limits) | Batch exact IDs into at most 75, schedule starts at least 500 ms apart, and cache results. |
 | Missing collection entries appear in `not_found` and disrupt positional mapping. | Yes | No live response | No | [`POST /cards/collection`](https://scryfall.com/docs/api/cards/collection) | Correlate by requested/returned identities; never zip request and result arrays. |
 | Card `id` and `oracle_id` represent different identity layers. | Yes | No live response | Mapping to CubeAI terminology is architectural | [Card objects](https://scryfall.com/docs/api/cards) | Store provider printing ID separately from Oracle identity and membership. |
 | `oracle_id` lookup preserves the caller's selected printing. | No; it returns a newest edition | No live response | No | [`POST /cards/collection`](https://scryfall.com/docs/api/cards/collection) | Do not use Oracle lookup as exact-printing resolution. |
@@ -248,10 +248,12 @@ does not make that decision on the issue owner's behalf:
    fields, image URIs, `fetched_at`, source, and the original provider reference.
    Make the clock injectable. Retain distinct Cube memberships outside this
    cache.
-5. Reuse cached provider records for at least 24 hours unless the accepted
-   product contract requires a stricter freshness rule. Freeze one import to
-   the responses gathered in its bounded retrieval window so later refreshes
-   cannot rewrite an already-started draft.
+5. Reuse cached provider records for at least 24 hours. Any human-approved
+   cache/freshness decision must be equally or more conservative toward
+   Scryfall, such as longer reuse or less frequent refresh; it must never cause
+   upstream refresh more often than the documented expectation. Freeze one
+   import to the responses gathered in its bounded retrieval window so later
+   refreshes cannot rewrite an already-started draft.
 6. Return a complete structured result for invalid IDs, `not_found`, ID/printing
    conflicts, reversible-card Oracle identity, missing images, transport/API
    errors, and custom cards. The application layer must apply the human-owned
