@@ -134,6 +134,16 @@ Custom cards may lack Oracle or Scryfall IDs. They receive stable local identiti
 - `HUMAN`, `BOT`, `SIMULATION`, and later `GAMEPLAY` origins remain queryable dimensions.
 - Aggregations may combine origins only through an explicit user-selected comparison, never by default.
 
+### Draft inspection and review layers
+
+The Draft Inspector is a cross-milestone projection over three deliberately separate layers:
+
+1. immutable draft events, which are the authoritative record of packs, picks, pools, strategy/version, and configuration;
+2. derived analytics and replay projections, which reconstruct seat-safe decision context from those events; and
+3. human review annotations, which identify an author/source and target decision but never mutate event truth or become objective labels by implication.
+
+M1 supplies reusable pack/pick/pool views, M2 adds full inspection and lightweight annotations, M3 uses reviewed decisions for versioned bot calibration, and M4 selects a small set of simulated cases for drill-down. Deck construction remains a distinct later concern: a reasonable draft can still produce a poor deck.
+
 ## Errors and consistency
 
 - Transport, parsing, resolution, validation, domain-command, and persistence failures use distinct error categories.

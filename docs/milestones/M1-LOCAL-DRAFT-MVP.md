@@ -33,6 +33,8 @@ CubeCobra contract research
 - A focused UI completes the workflow without analytics or gameplay.
 - A fixed fixture and seed reproduce packs, picks, and pools end to end.
 
+The M1 draft UI is a functional, clean, intentionally simple visual foundation that can be reused by later inspection views. Current-pack, chosen-card, drafted-pool, seat, pack-number, and pick-number components should be structured as stable replayable views. This is a reuse constraint, not an M1 requirement for analytics, human annotation, advanced review, or visual polish.
+
 ## Detailed work packages
 
 | ID | Outcome | Depends on | Initial state |

@@ -60,6 +60,8 @@ Explicit non-goals are ML, draft advice, advanced analytics, deck construction, 
 
 Detailed scope: [M1 milestone](milestones/M1-LOCAL-DRAFT-MVP.md).
 
+UI maturity at M1 is functional, clean draft UI: current pack, chosen card, drafted pool, seat, pack, and pick context form reusable visual components. Analytics, annotations, advanced review, and bot explanations remain out of scope.
+
 ## M2 — Draft Intelligence + Analytics
 
 **Outcome:** A drafter can understand what was seen, what wheeled, how the pool developed, and the basic color/curve/archetype implications during and after a draft.
@@ -69,6 +71,8 @@ Capabilities include cards-seen history, wheel detection, tracking/wish cards, c
 **Success:** The UI derives analysis reproducibly from immutable draft events; a user can inspect why each metric exists and filter human versus bot data.
 
 Detailed scope: [M2 milestone](milestones/M2-DRAFT-INTELLIGENCE.md).
+
+M2 delivers the first full Draft Inspector: an informative post-draft replay that reconstructs decision context from immutable events and versioned strategy/configuration data. It may display separate human review annotations, but those annotations are not draft truth.
 
 ## M3 — Improved Draft Bots
 
@@ -84,6 +88,8 @@ Proposed progression:
 
 **Success:** Strategies are reproducible, explain their scored features, and are compared over fixed Cube versions and seed sets. ML remains out of scope until data quality and licensing justify a proposal.
 
+The Draft Inspector and M2 review layer support a human-calibrated loop: versioned strategy → fixed Cube/seed benchmark → simulations → inspect selected decisions → annotate plausible/debatable/bad with provenance → identify systematic scoring mistakes → adjust versioned weights/features → rerun the same benchmark set. Comparison may report changed picks, reviewed decisions changed, new questionable decisions, disagreement rates, or score-margin distributions; none are ML metrics or objective quality labels.
+
 ## M4 — Simulation Framework / CubeLab
 
 **Outcome:** Users run reproducible draft batches and obtain reports on pick position, last-pick rate, wheels, utilization, colors, archetypes, and deck coherence.
@@ -91,6 +97,8 @@ Proposed progression:
 Major capabilities include a CLI or equivalent batch entry point, seed allocation, bounded parallel execution, resumable run records, metric definitions, exportable reports, and before/after Cube-version experiments. Human and simulated data remain separate dimensions.
 
 **Success:** Repeating a run with the same Cube, bot versions, configuration, and seeds produces equivalent events and metrics; performance is measured before parallelism is complicated.
+
+M4 keeps large batches inspectable through selective drill-down: aggregate analytics identify interesting or anomalous drafts/picks, and the Draft Inspector opens selected cases. Candidate signals may include low score margins, abrupt color changes, unusual pools, extreme pick positions, failed archetype assembly, version disagreement, or anomalous curve/color distributions. This does not require manual inspection of every draft and does not implement anomaly detection in M4 planning.
 
 ## M5 — Gameplay Engine Feasibility / Forge Spike
 

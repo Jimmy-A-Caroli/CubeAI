@@ -28,7 +28,9 @@ Make a draft understandable during and after play while preserving the distincti
 
 ### Review and aggregates
 
-- Timeline review of alternatives and signals available at each pick.
+- The first full **Draft Inspector**: a usable post-draft replay/inspection view of alternatives and signals available at each pick.
+- For a selected draft, seat, and pick, reconstruct pack contents, selected card, prior picks/current pool, pack/pick/seat context, derivable cards-seen history, active strategy contributions, alternative scores, and derived color/curve/archetype context from immutable events plus versioned strategy/configuration data.
+- Lightweight human review annotations remain a separate provenance-aware layer and never mutate draft truth.
 - Initial average/median pick, last-pick, seen-to-pick, and wheel metrics.
 - Filters for Cube version, human/bot origin, bot strategy/version, and time/run range.
 - No win-rate claims before gameplay provides valid outcomes.
@@ -44,11 +46,14 @@ Make a draft understandable during and after play while preserving the distincti
 | M2-005 | Define mana-requirement and source-count model | M2-004 |
 | M2-006 | Define versioned archetype/tag vocabulary | M1-007 |
 | M2-007 | Add explainable draft-fit feature scores | M2-004, M2-006 |
-| M2-008 | Build post-draft timeline review | M2-001, M2-007 |
+| M2-008 | Build post-draft Draft Inspector and timeline review | M2-001, M2-007 |
 | M2-009 | Define provenance-aware pick metric schemas | M2-001 |
 | M2-010 | Build initial analytics views and filters | M2-009 |
+| M2-011 | Add lightweight human pick-review annotations | M2-008 |
 
 These issues require refinement after M1 establishes actual event and API schemas.
+
+The Draft Inspector is a replay/inspection tool rather than a text-only timeline. M2 annotations may label a decision Reasonable, Debatable, or Bad, with optional reason categories (power, color commitment, curve, synergy, archetype fit, fixing, narrow payoff, or other) and a note. Each annotation identifies its author/source, Cube version, draft, seat, pick, strategy/version, and configuration. An annotation is a review observation, not objective ground truth or a training-data pipeline.
 
 ## Exit criteria
 

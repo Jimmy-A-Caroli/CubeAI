@@ -426,13 +426,13 @@ M2 issues are intentionally moderate-detail and remain `BLOCKED` until M1-018 an
 - **Required tests:** Fixed-pool feature scenarios and missing-data behavior.
 - **Expected artifacts/areas:** analysis services/API/tests.
 
-### M2-008 — Build post-draft timeline review
+### M2-008 — Build post-draft Draft Inspector and timeline review
 
 - **Labels/state:** `component::ui`, `type::feature`, `priority::medium`, `agent::safe`, `BLOCKED`
 - **Dependencies:** M2-001, M2-007.
-- **Goal/context:** Review each decision with information actually available at that time.
-- **Scope/out of scope:** Timeline, pack/pick/pool snapshot, feature explanations; no hindsight win-rate claims.
-- **Acceptance criteria:** Navigation is accessible and never leaks later information into recorded decision context.
+- **Goal/context:** Provide the first full Draft Inspector by replaying each decision with information actually available at that time.
+- **Scope/out of scope:** Accessible timeline/replay, pack/pick/pool snapshot, seat context, derivable cards-seen history, active strategy contributions, alternative scores, and derived context; no hindsight win-rate claims, annotations, deck construction, or ML.
+- **Acceptance criteria:** A selected draft/seat/pick reconstructs from immutable events plus versioned strategy/configuration data; later information is not inserted into the decision snapshot; repeated inspection is usable.
 - **Required tests:** Timeline ordering, snapshot correctness, browser review flow.
 - **Expected artifacts/areas:** review UI/API/tests.
 
@@ -456,6 +456,16 @@ M2 issues are intentionally moderate-detail and remain `BLOCKED` until M1-018 an
 - **Required tests:** Aggregation fixtures, filter isolation, UI empty/small/normal states.
 - **Expected artifacts/areas:** analytics storage/query/API/UI/tests.
 
+### M2-011 — Add lightweight human pick-review annotations
+
+- **Labels/state:** `component::lab`, `component::ui`, `type::feature`, `priority::medium`, `agent::supervised`, `BLOCKED`
+- **Dependencies:** M2-008.
+- **Goal/context:** Let an inspecting user record a lightweight, provenance-aware review without rewriting immutable draft truth.
+- **Scope/out of scope:** Reasonable/Debatable/Bad labels, optional reason categories (power, color commitment, curve, synergy, archetype fit, fixing, narrow payoff, other), optional note, and author/source plus Cube version, draft, seat, pick, strategy/version, and configuration references; no objective-quality claim, training-data pipeline, ML, or event mutation.
+- **Acceptance criteria:** An annotation is a separate layer, can be queried alongside but not merged into events, preserves its author/source and target identity, and remains usable without ML.
+- **Required tests:** Schema validation, provenance/target identity, event immutability, update/delete policy, and UI empty/normal states.
+- **Expected artifacts/areas:** annotation schema/application port, persistence/API/UI/tests.
+
 ## Later milestone capability backlog
 
 ### M3 — Improved bots
@@ -465,6 +475,7 @@ M2 issues are intentionally moderate-detail and remain `BLOCKED` until M1-018 an
 - Add curve/mana-aware features with explanations.
 - Add versioned archetype/synergy features after M2-006.
 - Create fixed-scenario and seed-set benchmarks that compare strategies without labeling them human-like.
+- Use the Draft Inspector and M2 annotations for human calibration: compare changed picks and reviewed decisions before/after versioned feature/weight changes on the same benchmark set; do not treat agreement as objective draft quality.
 
 ### M4 — Simulation framework
 
@@ -475,6 +486,7 @@ M2 issues are intentionally moderate-detail and remain `BLOCKED` until M1-018 an
 - Benchmark and then add bounded parallel execution if evidence warrants it.
 - Export machine-readable and human-readable reports.
 - Compare two immutable Cube versions over paired seeds as an explicit experiment.
+- Preserve selective drill-down from aggregate or deterministic anomaly signals into the Draft Inspector; do not require manual review of every simulated draft.
 
 ### M5 — Forge feasibility spike
 
