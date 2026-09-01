@@ -12,7 +12,7 @@ This file is the source backlog until a remote issue tracker is intentionally co
 - Types: `type::feature`, `type::bug`, `type::refactor`, `type::test`, `type::research`, `type::proposal`
 - Priorities: `priority::high`, `priority::medium`, `priority::low`
 - Suitability: `agent::safe`, `agent::supervised`, `human::decision`
-- State: `READY`, `BLOCKED`
+- State: `READY`, `BLOCKED`, `COMPLETE`
 
 `agent::safe` means requirements and dependencies are sufficiently bounded for autonomous implementation. `agent::supervised` requires review of assumptions or external contracts. `human::decision` produces or requires an explicit choice.
 
@@ -20,20 +20,20 @@ This file is the source backlog until a remote issue tracker is intentionally co
 
 ### M0-001 — Select and record the initial toolchains
 
-- **Labels/state:** `component::infra`, `type::proposal`, `priority::high`, `human::decision`, `AWAITING HUMAN DECISION`
+- **Labels/state:** `component::infra`, `type::proposal`, `priority::high`, `human::decision`, `COMPLETE`
 - **Dependencies:** None.
 - **Goal/context:** Turn the provisional Python/FastAPI and React/TypeScript direction into exact, supportable version floors, dependency managers, lockfile policy, package layout, and developer commands.
-- **Scope:** Compare maintained versions and boring tooling; document Python, Node, package managers, test/lint/type/format tools, lockfiles, and local/CI compatibility; create accepted ADRs only after review.
+- **Scope:** Compare maintained versions and boring tooling; document Python, Node, package managers, test/lint/type/format tools, lockfiles, and local/CI compatibility; record approved decisions and the web-first/local-capable boundary in an ADR after review.
 - **Out of scope:** Installing workspaces, domain models, APIs, UI, Docker, or CI.
 - **Acceptance criteria:** A proposal recommends one coherent toolchain; alternatives and migration cost are recorded; licenses and platform support are checked; approval converts decisions into ADRs without treating Forge as adopted.
 - **Required tests:** Documentation link check and command/version examples manually validated against upstream documentation.
 - **Expected artifacts/areas:** `docs/research/`, `docs/adr/`, README development prerequisites.
 
-The proposal is documented in [the toolchain evaluation](../research/toolchain-evaluation.md) and awaits explicit human approval. M0-002 and M0-003 remain blocked until that decision is recorded.
+The accepted decision is documented in [the toolchain evaluation](../research/toolchain-evaluation.md) and [ADR-0003](../adr/0003-initial-toolchain-and-web-first-local-capable.md). M0-002 and M0-003 are `READY`; all other dependency relationships are unchanged.
 
 ### M0-002 — Establish the Python CubeLab workspace
 
-- **Labels/state:** `component::lab`, `component::infra`, `type::feature`, `priority::high`, `agent::safe`, `BLOCKED`
+- **Labels/state:** `component::lab`, `component::infra`, `type::feature`, `priority::high`, `agent::safe`, `READY`
 - **Dependencies:** M0-001.
 - **Goal/context:** Create the first executable domain boundary using the approved Python toolchain.
 - **Scope:** Package metadata and lockfile; `cubeai.lab.domain` and `cubeai.lab.application` packages; one trivial framework-free domain value and smoke test; prepare the backend half of the M0 `GET /health` connectivity proof; documented install and test commands.
@@ -44,7 +44,7 @@ The proposal is documented in [the toolchain evaluation](../research/toolchain-e
 
 ### M0-003 — Establish the React and TypeScript workspace
 
-- **Labels/state:** `component::ui`, `component::infra`, `type::feature`, `priority::high`, `agent::safe`, `BLOCKED`
+- **Labels/state:** `component::ui`, `component::infra`, `type::feature`, `priority::high`, `agent::safe`, `READY`
 - **Dependencies:** M0-001.
 - **Goal/context:** Create a minimal, tested UI workspace using the approved frontend toolchain.
 - **Scope:** Locked dependencies, strict TypeScript configuration, one accessible status component showing the M0 `Backend connected` state, unit test, development/build commands; prepare the frontend half of the connectivity proof.
@@ -526,4 +526,4 @@ M2 issues are intentionally moderate-detail and remain `BLOCKED` until M1-018 an
 
 ## Recommended first issue
 
-Start with **M0-001 — Select and record the initial toolchains**. Every executable foundation issue depends on exact runtime, dependency-manager, and validation choices. Resolving it first prevents parallel sessions from creating incompatible Python, Node, lockfile, and command conventions.
+M0-001 is complete. **M0-002 — Establish the Python CubeLab workspace** and **M0-003 — Establish the React and TypeScript workspace** are now the next eligible foundation issues, subject to explicit authorization to begin either one.

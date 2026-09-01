@@ -80,6 +80,8 @@ Provides a versioned local HTTP boundary, proposed as FastAPI with Pydantic DTOs
 
 Provides Cube loading, validation, drafting, pool visualization, and later analytics. It consumes generated or explicitly maintained API contracts, never database or engine objects. State authoritative to a draft remains in the backend.
 
+CubeUI is web-first: online operation is its default and primary deployment model. It must remain local-capable through the same React/TypeScript codebase, not through a second frontend. Future frontend/application boundaries must permit suitable local implementations of application ports or adapters without assuming permanent connectivity, but M0 selects no PWA, service-worker, browser-storage, synchronization, replication, or desktop-wrapper technology. Those implementation decisions require a later evidence-backed milestone.
+
 ### Persistence
 
 Repository protocols describe required storage behavior. SQLite is the proposed first implementation because the product is local and transactional. Domain behavior cannot depend on SQLite-specific features. Schema migrations and PostgreSQL suitability remain M0 decisions.
@@ -184,12 +186,12 @@ Forge is a Java, GPL-3.0 candidate rules engine. Current public capabilities do 
 
 ## Unresolved decisions
 
-Task 9 feasibility synthesis confirms that the current local-first boundaries remain appropriate: sequential simulation, pure Python aggregation for bounded local workloads, SQLite for ordinary local state, compressed exports for large archives, bounded co-occurrence, and explicit provider/cache and bot-information boundaries. These are evidence-supported planning constraints, not new production dependencies.
+Task 9 feasibility synthesis confirms that the current local-capable boundaries remain appropriate: sequential simulation, pure Python aggregation for bounded local workloads, SQLite for ordinary local state, compressed exports for large archives, bounded co-occurrence, and explicit provider/cache and bot-information boundaries. These are evidence-supported planning constraints, not new production dependencies.
 
-- Toolchain versions, dependency managers, lint/format commands, and CI matrix.
 - Final Python package layout and whether one or multiple distributable packages are useful.
 - API contract generation and client strategy.
 - SQLite schema, migrations, and repository implementation.
+- PWA, service-worker, browser-local storage, synchronization, conflict-resolution, and local/remote replication design.
 - Supported CubeCobra contract and fallback imports.
 - Metadata cache format and refresh policy.
 - Initial card-rating source and license.
