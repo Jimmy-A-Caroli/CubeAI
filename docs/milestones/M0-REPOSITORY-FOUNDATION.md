@@ -28,7 +28,7 @@ Turn the documentation-only repository into a coherent, reproducible development
 | M0-005 | Add frontend quality checks | M0-003 | READY |
 | M0-006 | Provide aggregate developer commands | M0-004, M0-005 | BLOCKED |
 | M0-007 | Add continuous integration | M0-006 | BLOCKED |
-| M0-008 | Define fixture and test-data policy | M0-002 | READY |
+| M0-008 | Define fixture and test-data policy | M0-002 | COMPLETE |
 | M0-009 | Add dependency and license reporting | M0-002, M0-003 | READY |
 | M0-010 | Add issue and proposal templates | — | READY |
 | M0-011 | Add minimal local orchestration | M0-006 | BLOCKED |

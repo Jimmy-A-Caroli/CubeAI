@@ -39,7 +39,7 @@ The M1 draft UI is a functional, clean, intentionally simple visual foundation t
 
 | ID | Outcome | Depends on | Initial state |
 |---|---|---|---|
-| M1-001 | Research and freeze the supported CubeCobra import contract | M0-008 | BLOCKED |
+| M1-001 | Research and freeze the supported CubeCobra import contract | M0-008 | READY |
 | M1-002 | Model card identity, printing, Cube, version, and membership | M0-002 | BLOCKED |
 | M1-003 | Define import candidates, diagnostics, and adapter port | M1-001, M1-002 | BLOCKED |
 | M1-004 | Implement the CubeCobra read adapter against fixtures | M1-003 | BLOCKED |
