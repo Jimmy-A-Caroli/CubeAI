@@ -99,7 +99,7 @@ The accepted decision is documented in [the toolchain evaluation](../research/to
 
 ### M0-008 — Define fixture and test-data policy
 
-- **Labels/state:** `component::lab`, `component::docs`, `type::proposal`, `priority::high`, `agent::safe`, `READY`
+- **Labels/state:** `component::lab`, `component::docs`, `type::proposal`, `priority::high`, `agent::safe`, `COMPLETE`
 - **Dependencies:** M0-002.
 - **Goal/context:** Provide safe, deterministic fixtures before external payloads enter the repository.
 - **Scope:** Define synthetic Cube sizes/purposes, naming, provenance, update procedure, sanitization, licensing, and contract-fixture review; add the smallest synthetic fixture with schema/test.
@@ -156,7 +156,7 @@ The accepted decision is documented in [the toolchain evaluation](../research/to
 
 ### M1-001 — Research and freeze the supported CubeCobra import contract
 
-- **Labels/state:** `component::lab`, `type::research`, `priority::high`, `agent::supervised`, `BLOCKED`
+- **Labels/state:** `component::lab`, `type::research`, `priority::high`, `agent::supervised`, `READY`
 - **Dependencies:** M0-008.
 - **Goal/context:** Establish a supported read contract without hardcoding an undocumented route assumption.
 - **Scope:** Review current official API/export documentation and terms; probe public test Cubes; catalog IDs, boards, tags, printings, duplicates, custom cards, errors, caching guidance, and historical-draft availability; save sanitized fixtures and recommend one contract.

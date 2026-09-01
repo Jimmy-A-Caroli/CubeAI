@@ -1,0 +1,32 @@
+{
+  "fixture_type": "cubeai-synthetic",
+  "schema_version": 1,
+  "purpose": "duplicate memberships and unresolved/custom identity",
+  "provenance": {
+    "source": "CubeAI-authored synthetic test data",
+    "license": "MIT"
+  },
+  "memberships": [
+    {
+      "id": "synthetic-membership-001",
+      "display_name": "Synthetic Ember",
+      "printing_id": "synthetic-printing-ember",
+      "oracle_id": "synthetic-oracle-ember",
+      "resolution_status": "resolved"
+    },
+    {
+      "id": "synthetic-membership-002",
+      "display_name": "Synthetic Ember",
+      "printing_id": "synthetic-printing-ember",
+      "oracle_id": "synthetic-oracle-ember",
+      "resolution_status": "resolved"
+    },
+    {
+      "id": "synthetic-membership-003",
+      "display_name": "Synthetic Custom Signal",
+      "printing_id": null,
+      "oracle_id": null,
+      "resolution_status": "unresolved_custom"
+    }
+  ]
+}
