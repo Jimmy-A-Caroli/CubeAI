@@ -6,7 +6,7 @@ The project is focused on the Cube loop: import a Cube, validate it, draft it, u
 
 ## Status
 
-CubeAI is in its planning and repository-foundation phase. No application, API, draft engine, bot, or user interface has been implemented yet. Local development commands will be established during milestone M0.
+CubeAI is in its repository-foundation phase. The `backend/` Python workspace and `frontend/` React/TypeScript workspace are established with locked local commands and smoke tests. No API endpoint, draft engine, bot, persistence layer, or product workflow has been implemented; the root aggregate command and the integrated health slice remain later M0 work.
 
 ## Intended capabilities
 
@@ -41,7 +41,7 @@ Everything beyond documentation is currently unimplemented. CubeCobra integratio
 
 ## Contributing
 
-Contribution processes are not open yet. Until M0 establishes tooling and validation commands, proposed changes should begin as a focused issue or architectural proposal. Agentic contributors must follow [AGENTS.md](AGENTS.md).
+Contribution processes are not open yet. Use the workspace-local commands in [backend/README.md](backend/README.md) and [frontend/README.md](frontend/README.md) for the available foundation checks; root aggregate validation arrives in M0-006. Proposed changes should begin as a focused issue or architectural proposal. Agentic contributors must follow [AGENTS.md](AGENTS.md).
 
 ## License
 
