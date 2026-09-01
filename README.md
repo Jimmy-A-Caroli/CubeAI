@@ -1,6 +1,6 @@
 # CubeAI
 
-CubeAI is an early-stage, open-source, local-first platform for **Magic: The Gathering Cube** design, drafting, analytics, and simulation.
+CubeAI is an early-stage, open-source, web-first, local-capable platform for **Magic: The Gathering Cube** design, drafting, analytics, and simulation.
 
 The project is focused on the Cube loop: import a Cube, validate it, draft it, understand the draft, simulate it, and use the resulting evidence to improve the Cube. It is not intended to compete with Magic Online or Arena as a general-purpose Magic platform.
 
@@ -23,15 +23,15 @@ CubeAI will begin as a modular monorepo:
 
 - **CubeLab:** framework-independent Python domain logic for Cube data, drafting, bots, analytics, and simulation.
 - **CubeAI API:** a proposed FastAPI application exposing versioned DTOs and application services.
-- **CubeUI:** a proposed React and TypeScript client.
+- **CubeUI:** a proposed React and TypeScript web client, designed to preserve a future local/offline path in the same codebase.
 - **CubeGame:** a future engine-neutral gameplay protocol, separated from any Forge adapter.
 - **Persistence:** repository interfaces backed initially by SQLite, if validated during M0.
 
-These are provisional engineering choices. See [Architecture](docs/ARCHITECTURE.md) and the [roadmap](docs/ROADMAP.md).
+The toolchain and the web-first/local-capable constraint are accepted in ADR-0003; offline implementation technology remains deferred. Other choices remain provisional. See [Architecture](docs/ARCHITECTURE.md) and the [roadmap](docs/ROADMAP.md).
 
 ## Development philosophy
 
-CubeAI favors deterministic behavior, explicit data provenance, small replaceable components, strong tests, and simple local operation. It deliberately avoids premature microservices, cloud infrastructure, authentication, billing, and production deployment concerns.
+CubeAI favors deterministic behavior, explicit data provenance, small replaceable components, strong tests, web-first operation, and local capability without a separate frontend. It deliberately avoids premature microservices, cloud infrastructure, authentication, billing, and production deployment concerns.
 
 Development will be issue-driven. M0 and M1 are decomposed in the [initial backlog](docs/issues/INITIAL_BACKLOG.md); later milestones will be refined only after earlier work provides evidence.
 

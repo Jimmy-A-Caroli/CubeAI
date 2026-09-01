@@ -15,3 +15,4 @@ Number ADRs sequentially as `NNNN-short-title.md`. Do not create an ADR merely t
 
 - [ADR-0001: Use a modular monorepo](0001-modular-monorepo.md) — Accepted
 - [ADR-0002: Use the CubeLab bounded-context namespace](0002-cubelab-bounded-context-namespace.md) — Accepted
+- [ADR-0003: Record the initial toolchain and web-first, local-capable boundary](0003-initial-toolchain-and-web-first-local-capable.md) — Accepted
