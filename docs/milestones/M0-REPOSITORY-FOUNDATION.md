@@ -22,14 +22,14 @@ Turn the documentation-only repository into a coherent, reproducible development
 | ID | Outcome | Depends on | Initial state |
 |---|---|---|---|
 | M0-001 | Record toolchain and dependency-management decision | — | COMPLETE |
-| M0-002 | Establish Python CubeLab workspace with a smoke test | M0-001 | READY |
-| M0-003 | Establish React/TypeScript workspace with a smoke test | M0-001 | READY |
-| M0-004 | Add backend quality and boundary checks | M0-002 | BLOCKED |
-| M0-005 | Add frontend quality checks | M0-003 | BLOCKED |
+| M0-002 | Establish Python CubeLab workspace with a smoke test | M0-001 | COMPLETE |
+| M0-003 | Establish React/TypeScript workspace with a smoke test | M0-001 | COMPLETE |
+| M0-004 | Add backend quality and boundary checks | M0-002 | READY |
+| M0-005 | Add frontend quality checks | M0-003 | READY |
 | M0-006 | Provide aggregate developer commands | M0-004, M0-005 | BLOCKED |
 | M0-007 | Add continuous integration | M0-006 | BLOCKED |
-| M0-008 | Define fixture and test-data policy | M0-002 | BLOCKED |
-| M0-009 | Add dependency and license reporting | M0-002, M0-003 | BLOCKED |
+| M0-008 | Define fixture and test-data policy | M0-002 | READY |
+| M0-009 | Add dependency and license reporting | M0-002, M0-003 | READY |
 | M0-010 | Add issue and proposal templates | — | READY |
 | M0-011 | Add minimal local orchestration | M0-006 | BLOCKED |
 | M0-012 | Verify clean-clone onboarding and accept M0 | M0-007, M0-008, M0-009, M0-010, M0-011 | BLOCKED |

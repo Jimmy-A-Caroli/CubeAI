@@ -29,11 +29,11 @@ This file is the source backlog until a remote issue tracker is intentionally co
 - **Required tests:** Documentation link check and command/version examples manually validated against upstream documentation.
 - **Expected artifacts/areas:** `docs/research/`, `docs/adr/`, README development prerequisites.
 
-The accepted decision is documented in [the toolchain evaluation](../research/toolchain-evaluation.md) and [ADR-0003](../adr/0003-initial-toolchain-and-web-first-local-capable.md). M0-002 and M0-003 are `READY`; all other dependency relationships are unchanged.
+The accepted decision is documented in [the toolchain evaluation](../research/toolchain-evaluation.md) and [ADR-0003](../adr/0003-initial-toolchain-and-web-first-local-capable.md). M0-002 and M0-003 are `COMPLETE`; their direct dependent work packages are now eligible as listed below.
 
 ### M0-002 — Establish the Python CubeLab workspace
 
-- **Labels/state:** `component::lab`, `component::infra`, `type::feature`, `priority::high`, `agent::safe`, `READY`
+- **Labels/state:** `component::lab`, `component::infra`, `type::feature`, `priority::high`, `agent::safe`, `COMPLETE`
 - **Dependencies:** M0-001.
 - **Goal/context:** Create the first executable domain boundary using the approved Python toolchain.
 - **Scope:** Package metadata and lockfile; `cubeai.lab.domain` and `cubeai.lab.application` packages; one trivial framework-free domain value and smoke test; prepare the backend half of the M0 `GET /health` connectivity proof; documented install and test commands.
@@ -44,7 +44,7 @@ The accepted decision is documented in [the toolchain evaluation](../research/to
 
 ### M0-003 — Establish the React and TypeScript workspace
 
-- **Labels/state:** `component::ui`, `component::infra`, `type::feature`, `priority::high`, `agent::safe`, `READY`
+- **Labels/state:** `component::ui`, `component::infra`, `type::feature`, `priority::high`, `agent::safe`, `COMPLETE`
 - **Dependencies:** M0-001.
 - **Goal/context:** Create a minimal, tested UI workspace using the approved frontend toolchain.
 - **Scope:** Locked dependencies, strict TypeScript configuration, one accessible status component showing the M0 `Backend connected` state, unit test, development/build commands; prepare the frontend half of the connectivity proof.
@@ -55,7 +55,7 @@ The accepted decision is documented in [the toolchain evaluation](../research/to
 
 ### M0-004 — Add backend quality and architecture-boundary checks
 
-- **Labels/state:** `component::lab`, `component::infra`, `type::test`, `priority::high`, `agent::safe`, `BLOCKED`
+- **Labels/state:** `component::lab`, `component::infra`, `type::test`, `priority::high`, `agent::safe`, `READY`
 - **Dependencies:** M0-002.
 - **Goal/context:** Make formatting, linting, typing, tests, and forbidden dependency directions enforceable.
 - **Scope:** Configure approved formatter/linter/type checker; add a check that domain cannot import API, adapters, persistence, or FastAPI; document commands.
@@ -66,7 +66,7 @@ The accepted decision is documented in [the toolchain evaluation](../research/to
 
 ### M0-005 — Add frontend quality checks
 
-- **Labels/state:** `component::ui`, `component::infra`, `type::test`, `priority::high`, `agent::safe`, `BLOCKED`
+- **Labels/state:** `component::ui`, `component::infra`, `type::test`, `priority::high`, `agent::safe`, `READY`
 - **Dependencies:** M0-003.
 - **Goal/context:** Establish consistent frontend formatting, linting, typing, tests, and accessible component defaults.
 - **Scope:** Configure approved checks with non-overlapping responsibility and document focused commands.
@@ -99,7 +99,7 @@ The accepted decision is documented in [the toolchain evaluation](../research/to
 
 ### M0-008 — Define fixture and test-data policy
 
-- **Labels/state:** `component::lab`, `component::docs`, `type::proposal`, `priority::high`, `agent::safe`, `BLOCKED`
+- **Labels/state:** `component::lab`, `component::docs`, `type::proposal`, `priority::high`, `agent::safe`, `READY`
 - **Dependencies:** M0-002.
 - **Goal/context:** Provide safe, deterministic fixtures before external payloads enter the repository.
 - **Scope:** Define synthetic Cube sizes/purposes, naming, provenance, update procedure, sanitization, licensing, and contract-fixture review; add the smallest synthetic fixture with schema/test.
@@ -110,7 +110,7 @@ The accepted decision is documented in [the toolchain evaluation](../research/to
 
 ### M0-009 — Add dependency and license reporting
 
-- **Labels/state:** `component::infra`, `type::test`, `priority::medium`, `agent::safe`, `BLOCKED`
+- **Labels/state:** `component::infra`, `type::test`, `priority::medium`, `agent::safe`, `READY`
 - **Dependencies:** M0-002, M0-003.
 - **Goal/context:** Make dependency review repeatable before Forge or data packages introduce risk.
 - **Scope:** Document dependency approval criteria; add reproducible inventory/license commands for both workspaces; define failure/allowlist policy.
@@ -167,7 +167,7 @@ The accepted decision is documented in [the toolchain evaluation](../research/to
 
 ### M1-002 — Model card and Cube identities
 
-- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::safe`, `BLOCKED`
+- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::safe`, `READY`
 - **Dependencies:** M0-002.
 - **Goal/context:** Prevent rules identity, printing, Cube membership, and Cube version from being conflated.
 - **Scope:** Immutable domain values/entities for `CardIdentity`, `CardPrinting`, `Cube`, `CubeVersion`, and `CubeCard`; local IDs; source references; duplicates; custom/unresolved resolution status.
@@ -526,4 +526,4 @@ M2 issues are intentionally moderate-detail and remain `BLOCKED` until M1-018 an
 
 ## Recommended first issue
 
-M0-001 is complete. **M0-002 — Establish the Python CubeLab workspace** and **M0-003 — Establish the React and TypeScript workspace** are now the next eligible foundation issues, subject to explicit authorization to begin either one.
+M0-001 through M0-003 are complete. The next eligible work packages are **M0-004 — Add backend quality and architecture-boundary checks**, **M0-005 — Add frontend quality checks**, **M0-008 — Define fixture and test-data policy**, **M0-009 — Add dependency and license reporting**, **M0-010 — Add issue and proposal templates**, and **M1-002 — Model card and Cube identities**. Each still requires explicit authorization before work begins.
