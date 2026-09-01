@@ -1,0 +1,19 @@
+[build-system]
+requires = ["hatchling>=1.28,<2"]
+build-backend = "hatchling.build"
+
+[project]
+name = "cubeai-lab"
+version = "0.1.0"
+description = "Framework-free CubeLab domain workspace."
+readme = "README.md"
+requires-python = ">=3.14,<3.15"
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1,<10",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/cubeai"]
