@@ -35,6 +35,8 @@ class CardIdentity:
 
     def __post_init__(self) -> None:
         _require_nonblank_string(self.id, "id")
+        if not isinstance(self.resolution_status, ResolutionStatus):
+            raise ValueError("resolution_status must be a ResolutionStatus")
         if self.resolution_status is ResolutionStatus.RESOLVED:
             _require_nonblank_string(self.oracle_id, "oracle_id")
         elif self.oracle_id is not None:
@@ -70,6 +72,8 @@ class CubeCard:
 
     def __post_init__(self) -> None:
         _require_nonblank_string(self.id, "id")
+        if not isinstance(self.resolution_status, ResolutionStatus):
+            raise ValueError("resolution_status must be a ResolutionStatus")
         if self.resolution_status is ResolutionStatus.RESOLVED:
             if self.printing is None:
                 raise ValueError("printing is required for a resolved CubeCard")

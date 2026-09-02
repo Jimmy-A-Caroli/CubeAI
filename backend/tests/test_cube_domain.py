@@ -118,6 +118,30 @@ def test_nonresolved_identity_does_not_fabricate_an_oracle_id(
     assert identity.oracle_id is None
 
 
+@pytest.mark.parametrize("invalid_status", ["resolved", None, 17])
+@pytest.mark.parametrize(
+    "factory",
+    [
+        lambda invalid_status: CardIdentity(
+            id="identity-1",
+            name="Lightning Bolt",
+            resolution_status=invalid_status,
+        ),
+        lambda invalid_status: CubeCard(
+            id="membership-1",
+            resolution_status=invalid_status,
+        ),
+    ],
+    ids=["identity", "membership"],
+)
+def test_identity_and_membership_reject_invalid_resolution_status(
+    factory,
+    invalid_status,
+) -> None:
+    with pytest.raises(ValueError, match="resolution_status"):
+        factory(invalid_status)
+
+
 @pytest.mark.parametrize("invalid_id", ["", "   ", 17])
 @pytest.mark.parametrize(
     "factory",
