@@ -20,6 +20,11 @@ from cubeai.lab.domain.draft import (
     DraftStatus,
     PickEvent,
 )
+from cubeai.lab.domain.allocation import (
+    AllocatedPack,
+    InsufficientCubeCapacity,
+    allocate_packs,
+)
 
 __all__ = (
     "CardIdentity",
@@ -38,4 +43,7 @@ __all__ = (
     "DraftSeat",
     "DraftStatus",
     "PickEvent",
+    "AllocatedPack",
+    "InsufficientCubeCapacity",
+    "allocate_packs",
 )
