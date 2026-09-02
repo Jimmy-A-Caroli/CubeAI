@@ -6,7 +6,25 @@ The project is focused on the Cube loop: import a Cube, validate it, draft it, u
 
 ## Status
 
-CubeAI is in its repository-foundation phase. The `backend/` Python workspace and `frontend/` React/TypeScript workspace are established with locked local commands and smoke tests. No API endpoint, draft engine, bot, persistence layer, or product workflow has been implemented; the root aggregate command and the integrated health slice remain later M0 work.
+CubeAI is in its repository-foundation phase, with the first CubeLab domain
+foundation now underway. The completed work packages are M0-001 through
+M0-003, M0-005, M0-008, M1-001, and M1-002. They establish locked Python and
+React/TypeScript workspaces, synthetic-fixture policy, frontend quality checks,
+the supported CubeCobra import contract, and immutable Cube/card identity and
+membership domain types.
+
+The `backend/` workspace provides framework-independent types for source
+references, card and printing identities, Cube memberships, and immutable Cube
+versions. The `frontend/` workspace provides the React/TypeScript foundation
+and independent formatting, lint, typecheck, unit-test, and production-build
+commands. No API endpoint, CubeCobra read adapter, metadata resolver, draft
+engine, bot, persistence layer, or user-facing product workflow has been
+implemented. The root aggregate command and integrated health slice remain later
+M0 work.
+
+The currently eligible work packages are M0-004, M0-009, M0-010, M1-003, and
+M1-009. See the [initial backlog](docs/issues/INITIAL_BACKLOG.md) for their
+dependencies and the canonical task state.
 
 ## Intended capabilities
 
@@ -37,11 +55,38 @@ Development will be issue-driven. M0 and M1 are decomposed in the [initial backl
 
 ## Current limitations
 
-Everything beyond documentation is currently unimplemented. CubeCobra integration contracts, Scryfall usage, the persistence approach, and Forge feasibility still require validation.
+CubeCobra's supported import contract is documented, but its read adapter is
+not implemented. Scryfall metadata/cache policy, persistence, deterministic
+drafting, bots, analytics, simulation, gameplay, Forge feasibility, and all
+hosted-service concerns remain future work or require further validation.
+
+## Available local validation
+
+Run these commands from the repository root:
+
+```powershell
+uv --directory backend sync --locked --all-groups
+uv --directory backend run pytest -q tests
+uv --directory backend build
+
+corepack npm --prefix frontend ci
+corepack npm --prefix frontend run format:check
+corepack npm --prefix frontend run lint
+corepack npm --prefix frontend run typecheck
+corepack npm --prefix frontend test
+corepack npm --prefix frontend run build
+```
+
+There is intentionally no root aggregate command yet; M0-006 depends on the
+remaining backend quality work in M0-004.
 
 ## Contributing
 
-Contribution processes are not open yet. Use the workspace-local commands in [backend/README.md](backend/README.md) and [frontend/README.md](frontend/README.md) for the available foundation checks; root aggregate validation arrives in M0-006. Proposed changes should begin as a focused issue or architectural proposal. Agentic contributors must follow [AGENTS.md](AGENTS.md).
+Contribution processes are not open yet. Use the workspace-local commands in
+[backend/README.md](backend/README.md) and [frontend/README.md](frontend/README.md)
+for the available checks; root aggregate validation arrives in M0-006. Proposed
+changes should begin as a focused issue or architectural proposal. Agentic
+contributors must follow [AGENTS.md](AGENTS.md).
 
 ## License
 
