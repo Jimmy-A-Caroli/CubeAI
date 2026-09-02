@@ -1,0 +1,55 @@
+{
+  "fixture_type": "sanitized-provider-contract",
+  "schema_version": 1,
+  "purpose": "two real mainboard occurrences with the same provider, printing, and Oracle identifiers",
+  "provenance": {
+    "provider": "CubeCobra",
+    "source_url": "https://cubecobra.com/cube/api/cubeJSON/6c078fb9-5559-4296-a57b-5d86ed19ae90",
+    "retrieved_at": "2026-09-02",
+    "source_shape": "current public cubeJSON response",
+    "license_and_terms": "CubeCobra software licensing does not establish a license for response data.",
+    "response_data_licensing": "Not established. This minimal sanitized excerpt is retained only under CubeAI's approved conservative fixture policy; no broader reuse or licensing conclusion is made."
+  },
+  "sanitization": "Removed 448 mainboard rows, all supplementary boards, card name, images, owner, descriptions, user content, and unrelated response fields.",
+  "response_excerpt": {
+    "id": "6c078fb9-5559-4296-a57b-5d86ed19ae90",
+    "name": "Sanitized duplicate source",
+    "visibility": "pu",
+    "cards": {
+      "mainboard": [
+        {
+          "cardID": "054f2276-2dd5-43da-bb26-c57c560861fe",
+          "board": "mainboard",
+          "index": 78,
+          "details": {
+            "scryfall_id": "054f2276-2dd5-43da-bb26-c57c560861fe",
+            "oracle_id": "17039058-822d-409f-938c-b727a366ba63",
+            "set": "gpt",
+            "collector_number": "164",
+            "language": "en"
+          },
+          "tags": null,
+          "notes": null,
+          "status": "Not Owned",
+          "finish": null
+        },
+        {
+          "cardID": "054f2276-2dd5-43da-bb26-c57c560861fe",
+          "board": "mainboard",
+          "index": 364,
+          "details": {
+            "scryfall_id": "054f2276-2dd5-43da-bb26-c57c560861fe",
+            "oracle_id": "17039058-822d-409f-938c-b727a366ba63",
+            "set": "gpt",
+            "collector_number": "164",
+            "language": "en"
+          },
+          "tags": null,
+          "notes": null,
+          "status": "Not Owned",
+          "finish": null
+        }
+      ]
+    }
+  }
+}

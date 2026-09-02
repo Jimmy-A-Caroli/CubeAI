@@ -1,0 +1,31 @@
+{
+  "fixture_type": "sanitized-provider-contract-errors",
+  "schema_version": 1,
+  "purpose": "observed public CubeCobra request failures remain distinguishable from a supported source response",
+  "provenance": {
+    "provider": "CubeCobra",
+    "retrieved_at": "2026-09-02",
+    "source_urls": [
+      "https://cubecobra.com/cube/api/cubeJSON/cubeai-contract-probe-not-a-cube",
+      "https://cubecobra.com/cube/api/cubeJSON/modovintage?date=not-a-milliseconds-timestamp"
+    ],
+    "source_shape": "current public cubeJSON responses",
+    "license_and_terms": "CubeCobra software licensing does not establish a license for response data.",
+    "response_data_licensing": "Not established. This minimal sanitized excerpt is retained only under CubeAI's approved conservative fixture policy; no broader reuse or licensing conclusion is made."
+  },
+  "sanitization": "Contains only status, request category, content type, and exact short text body; no cube content or user data.",
+  "cases": [
+    {
+      "request_category": "missing-or-inaccessible-id",
+      "status": 404,
+      "content_type": "text/html; charset=utf-8",
+      "body": "Cube not found."
+    },
+    {
+      "request_category": "invalid-historical-date",
+      "status": 400,
+      "content_type": "text/html; charset=utf-8",
+      "body": "Invalid date parameter. Must be a unix timestamp in milliseconds."
+    }
+  ]
+}

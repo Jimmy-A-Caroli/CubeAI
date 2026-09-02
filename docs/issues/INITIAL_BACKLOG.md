@@ -156,14 +156,14 @@ The accepted decision is documented in [the toolchain evaluation](../research/to
 
 ### M1-001 — Research and freeze the supported CubeCobra import contract
 
-- **Labels/state:** `component::lab`, `type::research`, `priority::high`, `agent::supervised`, `READY`
+- **Labels/state:** `component::lab`, `type::research`, `priority::high`, `agent::supervised`, `COMPLETE`
 - **Dependencies:** M0-008.
 - **Goal/context:** Establish a supported read contract without hardcoding an undocumented route assumption.
 - **Scope:** Review current official API/export documentation and terms; probe public test Cubes; catalog IDs, boards, tags, printings, duplicates, custom cards, errors, caching guidance, and historical-draft availability; save sanitized fixtures and recommend one contract.
 - **Out of scope:** Write access, production adapter, scraping UI HTML, or bulk dataset download.
 - **Acceptance criteria:** Report distinguishes documented guarantees from observations; fixtures cover normal, duplicate, custom/unresolved, and error cases where available; change-detection/update procedure exists; human approves supported contract.
 - **Required tests:** Fixture schema checks and replayable response parsing probe labeled as research.
-- **Expected artifacts/areas:** `docs/research/cubecobra-import.md`, `fixtures/contracts/cubecobra/`.
+- **Expected artifacts/areas:** `docs/research/cubecobra-import-contract.md`, `fixtures/contracts/cubecobra/`.
 
 ### M1-002 — Model card and Cube identities
 

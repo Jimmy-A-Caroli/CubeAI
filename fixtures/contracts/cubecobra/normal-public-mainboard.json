@@ -1,0 +1,42 @@
+{
+  "fixture_type": "sanitized-provider-contract",
+  "schema_version": 1,
+  "purpose": "minimal public mainboard source shape with separate printing and Oracle evidence",
+  "provenance": {
+    "provider": "CubeCobra",
+    "source_url": "https://cubecobra.com/cube/api/cubeJSON/modovintage",
+    "retrieved_at": "2026-09-02",
+    "source_shape": "current public cubeJSON response",
+    "license_and_terms": "CubeCobra software licensing does not establish a license for response data.",
+    "response_data_licensing": "Not established. This minimal sanitized excerpt is retained only under CubeAI's approved conservative fixture policy; no broader reuse or licensing conclusion is made."
+  },
+  "sanitization": "Removed all but one mainboard row and removed card name, images, owner, descriptions, user content, and unrelated response fields.",
+  "response_excerpt": {
+    "id": "5d2cb3f44153591614458e5d",
+    "shortId": "modovintage",
+    "name": "MTGO Vintage Cube",
+    "visibility": "pu",
+    "version": 9,
+    "dateLastUpdated": 1783303223258,
+    "cards": {
+      "mainboard": [
+        {
+          "cardID": "6681b4a5-d848-4982-a4bf-e18e15b2c1b2",
+          "board": "mainboard",
+          "index": 0,
+          "details": {
+            "scryfall_id": "6681b4a5-d848-4982-a4bf-e18e15b2c1b2",
+            "oracle_id": "4ec85850-f274-4c0c-9a03-0488267caa14",
+            "set": "prm",
+            "collector_number": "91209",
+            "language": "en"
+          },
+          "tags": [],
+          "notes": "",
+          "status": "Not Owned",
+          "finish": "Non-foil"
+        }
+      ]
+    }
+  }
+}
