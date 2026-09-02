@@ -9,7 +9,10 @@ from pathlib import Path
 REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
 CONTRACT_FIXTURES = REPOSITORY_ROOT / "fixtures" / "contracts" / "cubecobra"
 SYNTHETIC_CUSTOM = (
-    REPOSITORY_ROOT / "fixtures" / "synthetic" / "duplicate-membership-unresolved-custom.json"
+    REPOSITORY_ROOT
+    / "fixtures"
+    / "synthetic"
+    / "duplicate-membership-unresolved-custom.json"
 )
 
 
@@ -69,7 +72,9 @@ def test_provider_contract_excerpts_have_required_review_metadata() -> None:
         )
 
 
-def test_normal_excerpt_replays_required_shape_with_optional_card_count_absent() -> None:
+def test_normal_excerpt_replays_required_shape_with_optional_card_count_absent() -> (
+    None
+):
     fixture = load_fixture("normal-public-mainboard.json")
     response = fixture["response_excerpt"]
 

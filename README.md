@@ -8,22 +8,22 @@ The project is focused on the Cube loop: import a Cube, validate it, draft it, u
 
 CubeAI is in its repository-foundation phase, with the first CubeLab domain
 foundation now underway. The completed work packages are M0-001 through
-M0-003, M0-005, M0-008, M1-001, and M1-002. They establish locked Python and
+M0-005, M0-008, M1-001 through M1-003, and M1-009. They establish locked Python and
 React/TypeScript workspaces, synthetic-fixture policy, frontend quality checks,
 the supported CubeCobra import contract, and immutable Cube/card identity and
 membership domain types.
 
 The `backend/` workspace provides framework-independent types for source
-references, card and printing identities, Cube memberships, and immutable Cube
-versions. The `frontend/` workspace provides the React/TypeScript foundation
+references, import candidates, card and printing identities, Cube memberships,
+immutable Cube versions, and draft configuration/identity vocabulary. The `frontend/` workspace provides the React/TypeScript foundation
 and independent formatting, lint, typecheck, unit-test, and production-build
 commands. No API endpoint, CubeCobra read adapter, metadata resolver, draft
 engine, bot, persistence layer, or user-facing product workflow has been
 implemented. The root aggregate command and integrated health slice remain later
 M0 work.
 
-The currently eligible work packages are M0-004, M0-009, M0-010, M1-003, and
-M1-009. See the [initial backlog](docs/issues/INITIAL_BACKLOG.md) for their
+The currently eligible work packages are M0-006, M0-009, M0-010, and M1-004.
+See the [initial backlog](docs/issues/INITIAL_BACKLOG.md) for their
 dependencies and the canonical task state.
 
 ## Intended capabilities
@@ -77,8 +77,8 @@ corepack npm --prefix frontend test
 corepack npm --prefix frontend run build
 ```
 
-There is intentionally no root aggregate command yet; M0-006 depends on the
-remaining backend quality work in M0-004.
+There is intentionally no root aggregate command yet; M0-006 is the next
+work package for joining the independently validated workspaces.
 
 ## Contributing
 

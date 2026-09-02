@@ -10,7 +10,9 @@ from pathlib import Path
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
 FIXTURES_ROOT = REPOSITORY_ROOT / "fixtures"
-SYNTHETIC_FIXTURE = FIXTURES_ROOT / "synthetic" / "duplicate-membership-unresolved-custom.json"
+SYNTHETIC_FIXTURE = (
+    FIXTURES_ROOT / "synthetic" / "duplicate-membership-unresolved-custom.json"
+)
 SECRET_PATTERN = re.compile(
     r'(?i)"?(?:api[_-]?key|authorization|bearer|password|secret|token)"?\s*[:=]'
 )
@@ -55,7 +57,9 @@ def test_synthetic_fixture_preserves_duplicate_and_unresolved_custom_cases() -> 
 
 def test_committed_json_fixtures_contain_no_secret_markers() -> None:
     for fixture_path in FIXTURES_ROOT.rglob("*.json"):
-        assert not SECRET_PATTERN.search(fixture_path.read_text(encoding="utf-8")), fixture_path
+        assert not SECRET_PATTERN.search(fixture_path.read_text(encoding="utf-8")), (
+            fixture_path
+        )
 
 
 def test_secret_pattern_catches_quoted_json_secret_keys() -> None:
