@@ -16,6 +16,8 @@ This file is the source backlog until a remote issue tracker is intentionally co
 
 `agent::safe` means requirements and dependencies are sufficiently bounded for autonomous implementation. `agent::supervised` requires review of assumptions or external contracts. `human::decision` produces or requires an explicit choice.
 
+For a `COMPLETE` task, the corresponding reviewed commit SHA is the completion evidence.
+
 ## M0 — Repository Foundation
 
 ### M0-001 — Select and record the initial toolchains
@@ -66,7 +68,7 @@ The accepted decision is documented in [the toolchain evaluation](../research/to
 
 ### M0-005 — Add frontend quality checks
 
-- **Labels/state:** `component::ui`, `component::infra`, `type::test`, `priority::high`, `agent::safe`, `READY`
+- **Labels/state:** `component::ui`, `component::infra`, `type::test`, `priority::high`, `agent::safe`, `COMPLETE`
 - **Dependencies:** M0-003.
 - **Goal/context:** Establish consistent frontend formatting, linting, typing, tests, and accessible component defaults.
 - **Scope:** Configure approved checks with non-overlapping responsibility and document focused commands.
@@ -167,7 +169,7 @@ The accepted decision is documented in [the toolchain evaluation](../research/to
 
 ### M1-002 — Model card and Cube identities
 
-- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::safe`, `READY`
+- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::safe`, `COMPLETE`
 - **Dependencies:** M0-002.
 - **Goal/context:** Prevent rules identity, printing, Cube membership, and Cube version from being conflated.
 - **Scope:** Immutable domain values/entities for `CardIdentity`, `CardPrinting`, `Cube`, `CubeVersion`, and `CubeCard`; local IDs; source references; duplicates; custom/unresolved resolution status.
@@ -178,7 +180,7 @@ The accepted decision is documented in [the toolchain evaluation](../research/to
 
 ### M1-003 — Define import candidates and the Cube source port
 
-- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::safe`, `BLOCKED`
+- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::safe`, `READY`
 - **Dependencies:** M1-001, M1-002.
 - **Goal/context:** Terminate provider payloads at an explicit boundary before normalization.
 - **Scope:** Provider-neutral source request, source snapshot reference, import candidate, severity-coded diagnostic, and source adapter protocol; preserve raw field references without embedding full payloads in domain entities.
@@ -244,7 +246,7 @@ The accepted decision is documented in [the toolchain evaluation](../research/to
 
 ### M1-009 — Define draft entities and configuration
 
-- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::safe`, `BLOCKED`
+- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::safe`, `READY`
 - **Dependencies:** M1-002.
 - **Goal/context:** Establish lifecycle-specific identities and provenance before algorithms mutate state.
 - **Scope:** `Draft`, configuration, seat, pack, draft-card instance, pick event, pool view, status, actor origin, bot strategy reference; invariants and explicit ordering.
@@ -526,4 +528,4 @@ M2 issues are intentionally moderate-detail and remain `BLOCKED` until M1-018 an
 
 ## Recommended first issue
 
-M0-001 through M0-003 are complete. The next eligible work packages are **M0-004 — Add backend quality and architecture-boundary checks**, **M0-005 — Add frontend quality checks**, **M0-008 — Define fixture and test-data policy**, **M0-009 — Add dependency and license reporting**, **M0-010 — Add issue and proposal templates**, and **M1-002 — Model card and Cube identities**. Each still requires explicit authorization before work begins.
+M0-001 through M0-003, M0-005, and M1-001 through M1-002 are complete. The next eligible work packages are **M0-004 — Add backend quality and architecture-boundary checks**, **M0-008 — Define fixture and test-data policy**, **M0-009 — Add dependency and license reporting**, **M0-010 — Add issue and proposal templates**, **M1-003 — Define import candidates and the Cube source port**, and **M1-009 — Define draft entities and configuration**. Each still requires explicit authorization before work begins.
