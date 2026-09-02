@@ -57,7 +57,7 @@ The accepted decision is documented in [the toolchain evaluation](../research/to
 
 ### M0-004 — Add backend quality and architecture-boundary checks
 
-- **Labels/state:** `component::lab`, `component::infra`, `type::test`, `priority::high`, `agent::safe`, `READY`
+- **Labels/state:** `component::lab`, `component::infra`, `type::test`, `priority::high`, `agent::safe`, `COMPLETE`
 - **Dependencies:** M0-002.
 - **Goal/context:** Make formatting, linting, typing, tests, and forbidden dependency directions enforceable.
 - **Scope:** Configure approved formatter/linter/type checker; add a check that domain cannot import API, adapters, persistence, or FastAPI; document commands.
@@ -65,6 +65,8 @@ The accepted decision is documented in [the toolchain evaluation](../research/to
 - **Acceptance criteria:** Each check has a focused command; an intentionally forbidden import makes the boundary test fail; generated/cache directories are excluded explicitly.
 - **Required tests:** Run all backend checks and a temporary negative boundary fixture/test.
 - **Expected artifacts/areas:** backend configuration and tests, developer docs.
+
+Completion evidence: pending commit for this work package.
 
 ### M0-005 — Add frontend quality checks
 
@@ -184,7 +186,7 @@ Completion evidence: reviewed implementation commits `1fe1561d40fdd839221c7af551
 
 ### M1-003 — Define import candidates and the Cube source port
 
-- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::safe`, `READY`
+- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::safe`, `COMPLETE`
 - **Dependencies:** M1-001, M1-002.
 - **Goal/context:** Terminate provider payloads at an explicit boundary before normalization.
 - **Scope:** Provider-neutral source request, source snapshot reference, import candidate, severity-coded diagnostic, and source adapter protocol; preserve raw field references without embedding full payloads in domain entities.
@@ -192,6 +194,8 @@ Completion evidence: reviewed implementation commits `1fe1561d40fdd839221c7af551
 - **Acceptance criteria:** Candidates represent duplicates, board/location, tags, notes, printing hints, and custom data; failures distinguish transport, unsupported contract, and record diagnostics; no CubeCobra type enters domain entities.
 - **Required tests:** Protocol fake, candidate mapping cases, stable diagnostic codes, malformed input behavior.
 - **Expected artifacts/areas:** application ports/import types and tests.
+
+Completion evidence: pending commit for this work package.
 
 ### M1-004 — Implement the CubeCobra read adapter
 
@@ -250,7 +254,7 @@ Completion evidence: reviewed implementation commits `1fe1561d40fdd839221c7af551
 
 ### M1-009 — Define draft entities and configuration
 
-- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::safe`, `READY`
+- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::safe`, `COMPLETE`
 - **Dependencies:** M1-002.
 - **Goal/context:** Establish lifecycle-specific identities and provenance before algorithms mutate state.
 - **Scope:** `Draft`, configuration, seat, pack, draft-card instance, pick event, pool view, status, actor origin, bot strategy reference; invariants and explicit ordering.
@@ -258,6 +262,8 @@ Completion evidence: reviewed implementation commits `1fe1561d40fdd839221c7af551
 - **Acceptance criteria:** Draft instances are distinct from Cube memberships; configuration supports seat/pack/size/seed; picks carry actor provenance; invalid status/configuration transitions cannot be constructed silently.
 - **Required tests:** Identity scopes, configuration validation, provenance variants, pack/pick invariants, immutable event ordering.
 - **Expected artifacts/areas:** CubeLab draft domain and tests.
+
+Completion evidence: pending commit for this work package.
 
 ### M1-010 — Allocate deterministic packs
 
@@ -532,4 +538,4 @@ M2 issues are intentionally moderate-detail and remain `BLOCKED` until M1-018 an
 
 ## Recommended first issue
 
-M0-001 through M0-003, M0-005, M0-008, and M1-001 through M1-002 are complete. The next eligible work packages are **M0-004 — Add backend quality and architecture-boundary checks**, **M0-009 — Add dependency and license reporting**, **M0-010 — Add issue and proposal templates**, **M1-003 — Define import candidates and the Cube source port**, and **M1-009 — Define draft entities and configuration**. Each still requires explicit authorization before work begins.
+M0-001 through M0-005, M0-008, and M1-001 through M1-003 and M1-009 are complete. The next eligible work packages are **M0-006 — Provide aggregate developer commands**, **M0-009 — Add dependency and license reporting**, **M0-010 — Add issue and proposal templates**, and **M1-004 — Implement the CubeCobra read adapter**. M1-004 remains supervised and requires explicit authorization before implementation.

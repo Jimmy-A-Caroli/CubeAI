@@ -19,11 +19,22 @@ Run the tests:
 uv --directory backend run pytest -q tests
 ```
 
+Run the backend quality and architecture checks:
+
+```powershell
+uv --directory backend run ruff format --check .
+uv --directory backend run ruff check .
+uv --directory backend run mypy --strict src
+uv --directory backend run lint-imports
+```
+
 Build the source distribution and wheel:
 
 ```powershell
 uv --directory backend build
 ```
 
-FastAPI and health endpoints, adapters, persistence, and quality or boundary
-automation are deliberately deferred to later milestones.
+FastAPI and health endpoints, external adapters, persistence, and product
+workflow automation are deliberately deferred to later milestones. The
+architecture check keeps `cubeai.lab.domain` independent from API, adapter,
+persistence, and framework modules.
