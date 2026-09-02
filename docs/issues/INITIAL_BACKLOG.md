@@ -66,7 +66,7 @@ The accepted decision is documented in [the toolchain evaluation](../research/to
 - **Required tests:** Run all backend checks and a temporary negative boundary fixture/test.
 - **Expected artifacts/areas:** backend configuration and tests, developer docs.
 
-Completion evidence: pending commit for this work package.
+Completion evidence: `803d67b`.
 
 ### M0-005 — Add frontend quality checks
 
@@ -195,7 +195,7 @@ Completion evidence: reviewed implementation commits `1fe1561d40fdd839221c7af551
 - **Required tests:** Protocol fake, candidate mapping cases, stable diagnostic codes, malformed input behavior.
 - **Expected artifacts/areas:** application ports/import types and tests.
 
-Completion evidence: pending commit for this work package.
+Completion evidence: `d9f2dd6`.
 
 ### M1-004 — Implement the CubeCobra read adapter
 
@@ -263,7 +263,7 @@ Completion evidence: pending commit for this work package.
 - **Required tests:** Identity scopes, configuration validation, provenance variants, pack/pick invariants, immutable event ordering.
 - **Expected artifacts/areas:** CubeLab draft domain and tests.
 
-Completion evidence: pending commit for this work package.
+Completion evidence: `ce23379`.
 
 ### M1-010 — Allocate deterministic packs
 

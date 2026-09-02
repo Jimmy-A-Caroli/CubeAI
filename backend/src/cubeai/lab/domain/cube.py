@@ -1,7 +1,7 @@
 """Card and Cube identity values for the CubeLab domain."""
 
 from dataclasses import dataclass
-from enum import Enum
+from enum import StrEnum
 
 
 def _require_nonblank_string(value: object, field_name: str) -> None:
@@ -9,7 +9,7 @@ def _require_nonblank_string(value: object, field_name: str) -> None:
         raise ValueError(f"{field_name} must be a nonblank string")
 
 
-class ResolutionStatus(str, Enum):
+class ResolutionStatus(StrEnum):
     RESOLVED = "resolved"
     UNRESOLVED = "unresolved"
     CUSTOM = "custom"
