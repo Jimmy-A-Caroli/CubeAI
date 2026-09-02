@@ -1,8 +1,11 @@
 """Minimal health endpoint for the local connectivity slice."""
+
 import json
+
 
 def health_response() -> dict[str, str]:
     return {"status": "ok"}
+
 
 def application(environ: dict[str, object], start_response: object) -> list[bytes]:
     if environ.get("PATH_INFO") == "/health" and environ.get("REQUEST_METHOD") == "GET":

@@ -6,8 +6,15 @@ export default function App() {
   useEffect(() => {
     if (typeof fetch !== 'function') return;
     void fetch('/health')
-      .then((response) => response.ok && response.json())
-      .then((payload) => setConnected(payload?.status === 'ok'))
+      .then((response) => (response.ok ? response.json() : null))
+      .then((payload: unknown) => {
+        const healthy =
+          typeof payload === 'object' &&
+          payload !== null &&
+          'status' in payload &&
+          payload.status === 'ok';
+        setConnected(healthy);
+      })
       .catch(() => setConnected(false));
   }, []);
   return (
