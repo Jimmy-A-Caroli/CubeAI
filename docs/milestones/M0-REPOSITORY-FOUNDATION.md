@@ -19,7 +19,7 @@ Turn the documentation-only repository into a coherent, reproducible development
 
 ## Work packages
 
-| ID | Outcome | Depends on | Initial state |
+| ID | Outcome | Depends on | State |
 |---|---|---|---|
 | M0-001 | Record toolchain and dependency-management decision | — | COMPLETE |
 | M0-002 | Establish Python CubeLab workspace with a smoke test | M0-001 | COMPLETE |

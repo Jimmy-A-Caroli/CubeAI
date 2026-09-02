@@ -77,6 +77,13 @@ class CubeCard:
         if self.resolution_status is ResolutionStatus.RESOLVED:
             if self.printing is None:
                 raise ValueError("printing is required for a resolved CubeCard")
+            if (
+                self.printing.card_identity.resolution_status
+                is not ResolutionStatus.RESOLVED
+            ):
+                raise ValueError(
+                    "printing.card_identity.resolution_status must be resolved"
+                )
         elif self.printing is not None:
             raise ValueError("printing must be absent for a nonresolved CubeCard")
 

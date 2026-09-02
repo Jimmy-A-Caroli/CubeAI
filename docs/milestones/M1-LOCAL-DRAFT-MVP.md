@@ -37,7 +37,7 @@ The M1 draft UI is a functional, clean, intentionally simple visual foundation t
 
 ## Detailed work packages
 
-| ID | Outcome | Depends on | Initial state |
+| ID | Outcome | Depends on | State |
 |---|---|---|---|
 | M1-001 | Research and freeze the supported CubeCobra import contract | M0-008 | COMPLETE |
 | M1-002 | Model card identity, printing, Cube, version, and membership | M0-002 | COMPLETE |

@@ -77,6 +77,8 @@ The accepted decision is documented in [the toolchain evaluation](../research/to
 - **Required tests:** Run each check and production build from a clean dependency install.
 - **Expected artifacts/areas:** frontend configuration, tests, developer docs.
 
+Completion evidence: reviewed implementation commit `f088c7fc74cd68051cb90154561e0401666bbd39`.
+
 ### M0-006 — Provide aggregate developer commands
 
 - **Labels/state:** `component::infra`, `type::feature`, `priority::high`, `agent::safe`, `BLOCKED`
@@ -177,6 +179,8 @@ The accepted decision is documented in [the toolchain evaluation](../research/to
 - **Acceptance criteria:** Two printings can share one identity; two memberships can reference the same printing; versions are immutable; custom identity need not fabricate Oracle ID; invalid identifiers fail diagnostically.
 - **Required tests:** Identity equality/scope, duplicate memberships, version immutability, custom/unresolved cases, serialization-neutral construction.
 - **Expected artifacts/areas:** CubeLab domain and tests, architecture docs if names change.
+
+Completion evidence: reviewed implementation commits `1fe1561d40fdd839221c7af551538649ae91227d` and `f5c236d6f8b005dc35f0544d90316011bcd8654c`.
 
 ### M1-003 — Define import candidates and the Cube source port
 
@@ -528,4 +532,4 @@ M2 issues are intentionally moderate-detail and remain `BLOCKED` until M1-018 an
 
 ## Recommended first issue
 
-M0-001 through M0-003, M0-005, and M1-001 through M1-002 are complete. The next eligible work packages are **M0-004 — Add backend quality and architecture-boundary checks**, **M0-008 — Define fixture and test-data policy**, **M0-009 — Add dependency and license reporting**, **M0-010 — Add issue and proposal templates**, **M1-003 — Define import candidates and the Cube source port**, and **M1-009 — Define draft entities and configuration**. Each still requires explicit authorization before work begins.
+M0-001 through M0-003, M0-005, M0-008, and M1-001 through M1-002 are complete. The next eligible work packages are **M0-004 — Add backend quality and architecture-boundary checks**, **M0-009 — Add dependency and license reporting**, **M0-010 — Add issue and proposal templates**, **M1-003 — Define import candidates and the Cube source port**, and **M1-009 — Define draft entities and configuration**. Each still requires explicit authorization before work begins.

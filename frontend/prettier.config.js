@@ -1,4 +1,4 @@
 export default {
   singleQuote: true,
-  endOfLine: 'crlf',
+  endOfLine: 'auto',
 };

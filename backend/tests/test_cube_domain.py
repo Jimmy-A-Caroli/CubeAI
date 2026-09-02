@@ -235,6 +235,28 @@ def test_resolved_membership_requires_a_printing() -> None:
 
 
 @pytest.mark.parametrize(
+    "identity_status",
+    [ResolutionStatus.UNRESOLVED, ResolutionStatus.CUSTOM],
+)
+def test_resolved_membership_rejects_printing_with_nonresolved_identity(
+    identity_status: ResolutionStatus,
+) -> None:
+    identity = CardIdentity(
+        id="identity-1",
+        name="Source-only card",
+        resolution_status=identity_status,
+    )
+    printing = CardPrinting(id="printing-1", card_identity=identity)
+
+    with pytest.raises(ValueError, match="printing|resolution_status"):
+        CubeCard(
+            id="membership-1",
+            resolution_status=ResolutionStatus.RESOLVED,
+            printing=printing,
+        )
+
+
+@pytest.mark.parametrize(
     "status",
     [ResolutionStatus.UNRESOLVED, ResolutionStatus.CUSTOM],
 )
