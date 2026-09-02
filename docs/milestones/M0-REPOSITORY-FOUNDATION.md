@@ -19,13 +19,13 @@ Turn the documentation-only repository into a coherent, reproducible development
 
 ## Work packages
 
-| ID | Outcome | Depends on | Initial state |
+| ID | Outcome | Depends on | State |
 |---|---|---|---|
 | M0-001 | Record toolchain and dependency-management decision | — | COMPLETE |
 | M0-002 | Establish Python CubeLab workspace with a smoke test | M0-001 | COMPLETE |
 | M0-003 | Establish React/TypeScript workspace with a smoke test | M0-001 | COMPLETE |
 | M0-004 | Add backend quality and boundary checks | M0-002 | READY |
-| M0-005 | Add frontend quality checks | M0-003 | READY |
+| M0-005 | Add frontend quality checks | M0-003 | COMPLETE |
 | M0-006 | Provide aggregate developer commands | M0-004, M0-005 | BLOCKED |
 | M0-007 | Add continuous integration | M0-006 | BLOCKED |
 | M0-008 | Define fixture and test-data policy | M0-002 | COMPLETE |
