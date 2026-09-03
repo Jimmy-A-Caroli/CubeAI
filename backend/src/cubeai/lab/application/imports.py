@@ -26,6 +26,7 @@ class DiagnosticCode(StrEnum):
     UNSUPPORTED_VISIBILITY = "unsupported_visibility"
     UNSUPPORTED_NON_MAINBOARD = "unsupported_non_mainboard"
     EMPTY_MAINBOARD = "empty_mainboard"
+    CARD_COUNT_MISMATCH = "card_count_mismatch"
     INVALID_SOURCE_RECORD = "invalid_source_record"
     UNKNOWN_SOURCE_SHAPE = "unknown_source_shape"
     OPTIONAL_SOURCE_DATA_MALFORMED = "optional_source_data_malformed"
@@ -52,6 +53,8 @@ class CandidateResolution(StrEnum):
 class SourceFieldState(StrEnum):
     ABSENT = "absent"
     NULL = "null"
+    EMPTY_STRING = "empty_string"
+    EMPTY_ARRAY = "empty_array"
     VALUE = "value"
     MALFORMED = "malformed"
 

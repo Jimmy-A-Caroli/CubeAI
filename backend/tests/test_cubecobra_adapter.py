@@ -234,6 +234,11 @@ def test_injected_retry_delay_is_used_only_for_retryable_failures() -> None:
     assert delays == [0.25]
 
 
+def test_constructor_does_not_accept_an_alternative_remote_origin() -> None:
+    with pytest.raises(TypeError):
+        CubeCobraSource(base_url="https://example.invalid")  # type: ignore[call-arg]
+
+
 def test_timeout_and_unexpected_provider_errors_cannot_escape_port_boundary() -> None:
     source, opener = _source(
         [TimeoutError(), RuntimeError("provider secret")], retries=1
@@ -275,14 +280,25 @@ def test_supplementary_board_is_diagnosed_without_merging_it() -> None:
     assert DiagnosticCode.UNSUPPORTED_NON_MAINBOARD in _codes(result)
 
 
-@pytest.mark.parametrize("mutation", ["missing_identity", "voucher"])
-def test_unknown_custom_or_unresolved_shapes_fail_closed(mutation: str) -> None:
+@pytest.mark.parametrize(
+    ("mutation", "voucher_value"),
+    [
+        ("missing_identity", None),
+        ("voucher", ["provider-specific"]),
+        ("voucher", []),
+        ("voucher", None),
+        ("voucher", "unexpected-shape"),
+    ],
+)
+def test_unknown_custom_or_unresolved_shapes_fail_closed(
+    mutation: str, voucher_value: object
+) -> None:
     payload = _response_fixture("normal-public-mainboard.json")
     row = payload["cards"]["mainboard"][0]
     if mutation == "missing_identity":
         del row["details"]["scryfall_id"]
     elif mutation == "voucher":
-        row["voucher_cards"] = ["provider-specific"]
+        row["voucher_cards"] = voucher_value
     else:
         raise AssertionError(f"unexpected mutation: {mutation}")
     source, _ = _source([FakeResponse(200, _body(payload))])
@@ -292,6 +308,66 @@ def test_unknown_custom_or_unresolved_shapes_fail_closed(mutation: str) -> None:
     assert result.outcome is ImportOutcome.UNKNOWN_SOURCE_SHAPE
     assert result.candidates == ()
     assert _codes(result) == {DiagnosticCode.UNKNOWN_SOURCE_SHAPE}
+
+
+def test_custom_name_remains_allowed_optional_display_metadata() -> None:
+    payload = _response_fixture("normal-public-mainboard.json")
+    payload["cards"]["mainboard"][0]["custom_name"] = "Display override"
+    source, _ = _source([FakeResponse(200, _body(payload))])
+
+    result = source.import_cube(SourceRequest("cubecobra", "modovintage"))
+
+    assert result.outcome is ImportOutcome.SUPPORTED_WITH_OPTIONAL_DATA_ABSENT
+    assert result.candidates[0].custom_name == "Display override"
+
+
+def test_card_count_mismatch_is_nonfatal_and_diagnostic() -> None:
+    payload = _response_fixture("normal-public-mainboard.json")
+    payload["cardCount"] = 2
+    source, _ = _source([FakeResponse(200, _body(payload))])
+
+    result = source.import_cube(SourceRequest("cubecobra", "modovintage"))
+
+    assert result.outcome is ImportOutcome.SUPPORTED_WITH_OPTIONAL_DATA_ABSENT
+    assert len(result.candidates) == 1
+    assert DiagnosticCode.CARD_COUNT_MISMATCH in _codes(result)
+
+
+@pytest.mark.parametrize(
+    ("notes", "expected_state"),
+    [
+        (None, SourceFieldState.NULL),
+        ("", SourceFieldState.EMPTY_STRING),
+        ([], SourceFieldState.EMPTY_ARRAY),
+        (["wrong-type-list"], SourceFieldState.MALFORMED),
+    ],
+)
+def test_optional_notes_observation_preserves_empty_and_malformed_shapes(
+    notes: object, expected_state: SourceFieldState
+) -> None:
+    payload = _response_fixture("normal-public-mainboard.json")
+    payload["cards"]["mainboard"][0]["notes"] = notes
+    source, _ = _source([FakeResponse(200, _body(payload))])
+
+    result = source.import_cube(SourceRequest("cubecobra", "modovintage"))
+
+    observation = next(
+        item for item in result.candidates[0].source_metadata if item.name == "notes"
+    )
+    assert observation.state is expected_state
+
+
+def test_optional_notes_absence_is_preserved_separately_from_null_and_empty() -> None:
+    payload = _response_fixture("normal-public-mainboard.json")
+    del payload["cards"]["mainboard"][0]["notes"]
+    source, _ = _source([FakeResponse(200, _body(payload))])
+
+    result = source.import_cube(SourceRequest("cubecobra", "modovintage"))
+
+    observation = next(
+        item for item in result.candidates[0].source_metadata if item.name == "notes"
+    )
+    assert observation.state is SourceFieldState.ABSENT
 
 
 def test_unlisted_visibility_and_empty_mainboard_are_distinct_unsupported_outcomes() -> (

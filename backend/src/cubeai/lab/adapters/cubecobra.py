@@ -40,6 +40,7 @@ class _HttpResponse(Protocol):
 HttpOpener = Callable[[urllib.request.Request, float], _HttpResponse]
 Clock = Callable[[], datetime]
 Sleeper = Callable[[float], None]
+CUBESCOBRA_ORIGIN = "https://cubecobra.com"
 
 
 def _open_url(request: urllib.request.Request, timeout: float) -> _HttpResponse:
@@ -60,7 +61,6 @@ class CubeCobraSource(CubeSource):
     def __init__(
         self,
         *,
-        base_url: str = "https://cubecobra.com",
         timeout: float = 10.0,
         retries: int = 1,
         retry_delay: float = 0.0,
@@ -73,7 +73,6 @@ class CubeCobraSource(CubeSource):
             raise ValueError("invalid timeout, retries, or retry delay")
         if not user_agent.strip():
             raise ValueError("user_agent must be nonblank")
-        self.base_url = base_url.rstrip("/")
         self.timeout = timeout
         self.retries = retries
         self.retry_delay = retry_delay
@@ -105,7 +104,7 @@ class CubeCobraSource(CubeSource):
                 DiagnosticCode.SOURCE_REQUEST_INVALID,
                 "CubeCobra input must be one nonempty identifier",
             )
-        url = f"{self.base_url}/cube/api/cubeJSON/{urllib.parse.quote(identifier)}"
+        url = f"{CUBESCOBRA_ORIGIN}/cube/api/cubeJSON/{urllib.parse.quote(identifier)}"
         return self._request(identifier, url)
 
     def _request(self, identifier: str, url: str) -> ImportResult:
@@ -300,6 +299,18 @@ class CubeCobraSource(CubeSource):
             )
             for field in malformed_optionals
         ]
+        card_count = next(field for field in metadata if field.name == "cardCount")
+        if card_count.state is SourceFieldState.VALUE and card_count.value != len(
+            mainboard
+        ):
+            diagnostics.append(
+                ImportDiagnostic(
+                    DiagnosticCode.CARD_COUNT_MISMATCH,
+                    DiagnosticSeverity.WARNING,
+                    "CubeCobra cardCount does not match mainboard length",
+                    snapshot,
+                )
+            )
         candidates: list[ImportCandidate] = []
         optional_absent = any(
             field.state in {SourceFieldState.ABSENT, SourceFieldState.NULL}
@@ -408,6 +419,14 @@ class CubeCobraSource(CubeSource):
         value = mapping[key]
         if value is None:
             return SourceFieldObservation(observation_name, SourceFieldState.NULL)
+        if value == "":
+            return SourceFieldObservation(
+                observation_name, SourceFieldState.EMPTY_STRING
+            )
+        if isinstance(value, list) and not value:
+            return SourceFieldObservation(
+                observation_name, SourceFieldState.EMPTY_ARRAY
+            )
         if isinstance(value, (str, int, float, bool)):
             return SourceFieldObservation(
                 observation_name, SourceFieldState.VALUE, value
@@ -453,6 +472,8 @@ class CubeCobraSource(CubeSource):
             fields.append(SourceFieldObservation("tags", SourceFieldState.ABSENT))
         elif row["tags"] is None:
             fields.append(SourceFieldObservation("tags", SourceFieldState.NULL))
+        elif isinstance(row["tags"], list) and not row["tags"]:
+            fields.append(SourceFieldObservation("tags", SourceFieldState.EMPTY_ARRAY))
         elif isinstance(row["tags"], list) and all(
             isinstance(tag, str) for tag in row["tags"]
         ):
@@ -467,8 +488,7 @@ class CubeCobraSource(CubeSource):
 
     @staticmethod
     def _is_custom_or_voucher(row: Mapping[str, object]) -> bool:
-        voucher_cards = row.get("voucher_cards")
-        return isinstance(voucher_cards, list) and bool(voucher_cards)
+        return "voucher_cards" in row
 
     @staticmethod
     def _row_failure(

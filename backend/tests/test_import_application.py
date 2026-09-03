@@ -74,6 +74,7 @@ def test_diagnostic_codes_are_stable_enums(code: DiagnosticCode) -> None:
         "unsupported_visibility",
         "unsupported_non_mainboard",
         "empty_mainboard",
+        "card_count_mismatch",
         "invalid_source_record",
         "unknown_source_shape",
         "optional_source_data_malformed",
