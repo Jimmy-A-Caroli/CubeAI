@@ -83,7 +83,7 @@ Completion evidence: reviewed implementation commit `f088c7fc74cd68051cb90154561
 
 ### M0-006 — Provide aggregate developer commands
 
-- **Labels/state:** `component::infra`, `type::feature`, `priority::high`, `agent::safe`, `READY`
+- **Labels/state:** `component::infra`, `type::feature`, `priority::high`, `agent::safe`, `COMPLETE`
 - **Dependencies:** M0-004, M0-005.
 - **Goal/context:** Give humans and agents stable commands instead of tool-specific guesswork.
 - **Scope:** Add cross-platform-enough entry points for setup, format, check, test, and development; join the backend health endpoint and frontend status view into the M0 connectivity slice; delegate to workspace tools without hiding errors.
@@ -92,9 +92,11 @@ Completion evidence: reviewed implementation commit `f088c7fc74cd68051cb90154561
 - **Required tests:** Clean setup followed by aggregate validation; inject one controlled failure to verify propagation.
 - **Expected artifacts/areas:** root task runner or scripts, README.
 
+Completion evidence: reviewed implementation commits `69ad9eb` and `88b26f2`; a locked clean setup, aggregate check, aggregate test, controlled child-failure regression, direct/proxied health smoke, and frontend status tests passed on the orchestration branch.
+
 ### M0-007 — Add continuous integration
 
-- **Labels/state:** `component::infra`, `type::feature`, `priority::high`, `agent::safe`, `BLOCKED`
+- **Labels/state:** `component::infra`, `type::feature`, `priority::high`, `agent::safe`, `READY`
 - **Dependencies:** M0-006.
 - **Goal/context:** Run the same repository validation on proposed changes.
 - **Scope:** Minimal GitHub Actions workflow with dependency caching, locked installs, aggregate checks, least necessary permissions, cancellation of superseded runs, and M0 connectivity-slice validation where practical in CI.
@@ -140,7 +142,7 @@ Completion evidence: reviewed implementation commits `99325dff3ba1045635469100ba
 
 ### M0-011 — Add minimal local orchestration
 
-- **Labels/state:** `component::infra`, `type::feature`, `priority::medium`, `agent::safe`, `BLOCKED`
+- **Labels/state:** `component::infra`, `type::feature`, `priority::medium`, `agent::safe`, `READY`
 - **Dependencies:** M0-006.
 - **Goal/context:** Start the first meaningful backend/frontend development slice with a simple command.
 - **Scope:** Add local process orchestration and, if justified, a small Compose configuration; run the M0 connectivity slice locally with health/status behavior and clean shutdown; preserve native commands.
@@ -220,6 +222,8 @@ Completion evidence: `d9f2dd6`.
 - **Acceptance criteria:** Policy states exact client behavior and cache invalidation; separates Oracle and printing IDs; documents unavailable/ambiguous resolution; has human approval.
 - **Required tests:** Validate documented example requests and bulk metadata shape with a small sanitized sample.
 - **Expected artifacts/areas:** `docs/research/scryfall-metadata.md`, proposed ADR if warranted.
+
+Research evidence: [Scryfall metadata/cache decision proposal](../research/scryfall-metadata.md) was independently reviewed. It is not adopted; M1-005 remains `READY` and `human::decision` until a human accepts or revises the proposal.
 
 ### M1-006 — Define metadata resolution and implement the Scryfall adapter
 
@@ -540,4 +544,4 @@ M2 issues are intentionally moderate-detail and remain `BLOCKED` until M1-018 an
 
 ## Recommended first issue
 
-M0-001 through M0-005 and M0-008 through M0-009, plus M1-001 through M1-003 and M1-009, are complete. The next eligible agent-safe work packages are **M0-006 — Provide aggregate developer commands** and **M0-010 — Add issue and proposal templates**. **M1-005 — Define the Scryfall metadata and cache policy** is ready for bounded research, but its policy adoption remains a human decision. M1-004 remains blocked pending explicitly authorized supervised repair.
+M0-001 through M0-009, plus M1-001 through M1-003 and M1-009, are complete. The next eligible agent-safe work packages are **M0-007 — Add continuous integration**, **M0-010 — Add issue and proposal templates**, and **M0-011 — Add minimal local orchestration**. M0-007 requires a successful remote run before acceptance and therefore cannot complete without permission to push a branch. **M1-005 — Define the Scryfall metadata and cache policy** has a reviewed proposal, but its adoption remains a human decision. M1-004 remains blocked pending explicitly authorized supervised repair.

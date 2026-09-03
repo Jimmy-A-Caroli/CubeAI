@@ -113,3 +113,33 @@ independent review before integration.
 The streams have separate source areas and may proceed in parallel. Wave 2
 cannot unlock M1-006 without a human decision, and M1-004 remains blocked
 pending explicit supervised-repair authorization.
+
+## Wave 2 evidence and DAG recalculation
+
+- M0-006 implementation `69ad9eb` was independently reviewed as
+  `REPAIR_REQUIRED` only for missing nested `uv run --locked` guards. The
+  original implementer repaired that in `88b26f2`; focused re-review approved
+  it. The integration commits are `40227c3` (M0-006) and `a96b6af` (M1-005).
+  On this orchestration branch, locked setup succeeded; aggregate check passed
+  Ruff format/check, strict source mypy, Import Linter, Prettier, ESLint, and
+  TypeScript; aggregate test passed 93 backend and 3 frontend tests. Direct
+  and Vite-proxied `GET /health` smoke evidence and controlled nonzero-child
+  propagation were reviewed before integration.
+- M1-005 research `ec408e2` was independently reviewed as `REPAIR_REQUIRED`
+  only for a new strict-mypy test error. `a1d0a89` fixed it; focused re-review
+  approved it. The report is decision support, not an adopted provider/cache
+  policy: M1-005 remains `READY`/`human::decision`, and M1-006 remains
+  `BLOCKED`.
+- Checkpoint A is now reached: a developer can run one documented locked root
+  command for validation and another to start the local health/status slice.
+  M0-007 and M0-011 are dependency-ready secondary foundation tasks, but M0-007
+  cannot satisfy its required remote-run evidence without a permitted push, and
+  M0-011 should not duplicate the deliberately minimal M0-006 runner without a
+  distinct need.
+- The shortest Alpha path remains:
+
+  ```text
+  human decision on M1-005 -> M1-006 (supervised)
+  M1-004 supervised repair/acceptance
+  M1-004 + M1-006 -> M1-007 -> M1-008 -> M1-010 -> M1-011
+  ```
