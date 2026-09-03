@@ -75,7 +75,7 @@ class DraftState:
         events = tuple(self.pick_events)
         if any(not isinstance(event, PickEvent) for event in events):
             raise ValueError("pick_events must contain PickEvent values")
-        _validate_pick_events(self.draft, allocation, events)
+        expected_turn = _validate_pick_events(self.draft, allocation, events)
         if not isinstance(self.status, DraftStatus):
             raise ValueError("status must be a DraftStatus")
         if self.status is DraftStatus.COMPLETED:
@@ -95,10 +95,18 @@ class DraftState:
             )
             if len(events) != expected_event_count:
                 raise ValueError("in-progress event count must match the current turn")
-            _validate_active_packs(self.draft, allocation, self.pack_round, active_packs, events)
+            if (
+                self.pack_round,
+                self.pick_number,
+                self.active_seat,
+                active_packs,
+            ) != expected_turn:
+                raise ValueError("in-progress state must match the legal event history")
         if self.status is DraftStatus.COMPLETED:
             if len(events) != self.draft.configuration.card_count:
                 raise ValueError("completed drafts must contain every allocated pick")
+            if expected_turn[0] != self.draft.configuration.packs_per_seat:
+                raise ValueError("completed draft history must exhaust every pack round")
         object.__setattr__(self, "allocation", allocation)
         object.__setattr__(self, "active_packs", active_packs)
         object.__setattr__(self, "pick_events", events)
@@ -299,7 +307,7 @@ def _validate_allocation(draft: Draft, allocation: tuple[AllocatedPack, ...]) ->
 
 def _validate_pick_events(
     draft: Draft, allocation: tuple[AllocatedPack, ...], events: tuple[PickEvent, ...]
-) -> None:
+) -> tuple[int, int, int, tuple[ActiveDraftPack, ...]]:
     allocation_ids = {card.id for allocated in allocation for card in allocated.cards}
     if any(event.draft_id != draft.id for event in events):
         raise ValueError("pick events must belong to the draft")
@@ -312,12 +320,12 @@ def _validate_pick_events(
         raise ValueError("a draft-card instance cannot be picked twice")
     if any(not 0 <= event.seat_number < draft.configuration.seats for event in events):
         raise ValueError("pick event seats must match the draft geometry")
-    _validate_legal_event_sequence(draft, allocation, events)
+    return _validate_legal_event_sequence(draft, allocation, events)
 
 
 def _validate_legal_event_sequence(
     draft: Draft, allocation: tuple[AllocatedPack, ...], events: tuple[PickEvent, ...]
-) -> None:
+) -> tuple[int, int, int, tuple[ActiveDraftPack, ...]]:
     """Replay the command schedule so direct construction cannot forge history."""
 
     pack_round = 0
@@ -356,30 +364,4 @@ def _validate_legal_event_sequence(
         pick_number = 0
         active_seat = 0
         active_packs = _active_packs_for_round(draft, allocation, pack_round)
-
-
-def _validate_active_packs(
-    draft: Draft,
-    allocation: tuple[AllocatedPack, ...],
-    pack_round: int,
-    active_packs: tuple[ActiveDraftPack, ...],
-    events: tuple[PickEvent, ...],
-) -> None:
-    start = pack_round * draft.configuration.seats
-    round_allocation = allocation[start : start + draft.configuration.seats]
-    expected_pack_numbers = {allocated.pack.pack_number for allocated in round_allocation}
-    if {active.pack.pack_number for active in active_packs} != expected_pack_numbers:
-        raise ValueError("active packs must come from the current pack round")
-    picked_ids = {event.card_instance_id for event in events}
-    expected_remaining = {
-        allocated.pack.pack_number: tuple(
-            card.id for card in allocated.cards if card.id not in picked_ids
-        )
-        for allocated in round_allocation
-    }
-    actual_remaining = {
-        active.pack.pack_number: tuple(card.id for card in active.cards)
-        for active in active_packs
-    }
-    if actual_remaining != expected_remaining:
-        raise ValueError("active packs must contain exactly their unpicked allocated cards")
+    return pack_round, pick_number, active_seat, active_packs

@@ -225,3 +225,20 @@ def test_constructor_rejects_a_forged_completed_history() -> None:
             pick_events=forged_events,
             status=DraftStatus.COMPLETED,
         )
+
+
+def test_constructor_rejects_forged_in_progress_pack_positions() -> None:
+    state = _draft_state()
+    state = pick_card(state, 0, "draft-1:card:0:0")
+    state = pick_card(state, 1, "draft-1:card:1:0")
+
+    with pytest.raises(ValueError, match="legal event history"):
+        DraftState(
+            state.draft,
+            state.allocation,
+            state.pack_round,
+            state.pick_number,
+            state.active_seat,
+            tuple(reversed(state.active_packs)),
+            state.pick_events,
+        )
