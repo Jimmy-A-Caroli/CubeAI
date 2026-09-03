@@ -112,6 +112,7 @@ def validate_cube_version(
             )
 
     required = configuration.card_count
+    configuration_description = _configuration_description(configuration)
     if usable_memberships < required:
         diagnostics.append(
             CubeValidationDiagnostic(
@@ -119,7 +120,8 @@ def validate_cube_version(
                 CubeValidationSeverity.ERROR,
                 (
                     f"Draft configuration requires {required} resolved memberships "
-                    f"but this CubeVersion has {usable_memberships}."
+                    f"but this CubeVersion has {usable_memberships} "
+                    f"({configuration_description})."
                 ),
             )
         )
@@ -130,11 +132,19 @@ def validate_cube_version(
                 CubeValidationSeverity.INFO,
                 (
                     f"CubeVersion has {usable_memberships - required} excess resolved "
-                    "memberships; deterministic selection is deferred to M1-010."
+                    "memberships; deterministic selection is deferred to M1-010 "
+                    f"({configuration_description})."
                 ),
             )
         )
 
     return CubeValidationResult(
         version.id, configuration, usable_memberships, tuple(diagnostics)
+    )
+
+
+def _configuration_description(configuration: DraftConfiguration) -> str:
+    return (
+        f"{configuration.seats} seat(s) x {configuration.packs_per_seat} "
+        f"pack(s)/seat x {configuration.pack_size} card(s)/pack"
     )

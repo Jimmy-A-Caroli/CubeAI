@@ -74,6 +74,10 @@ def test_insufficient_resolved_memberships_is_a_stable_error() -> None:
         )
     ]
     assert "requires 3 resolved memberships" in result.diagnostics[0].message
+    assert (
+        "1 seat(s) x 1 pack(s)/seat x 3 card(s)/pack"
+        in result.diagnostics[0].message
+    )
 
 
 def test_excess_resolved_memberships_are_permitted_with_explicit_policy() -> None:
@@ -95,6 +99,10 @@ def test_excess_resolved_memberships_are_permitted_with_explicit_policy() -> Non
         )
     ]
     assert "deferred to M1-010" in result.diagnostics[0].message
+    assert (
+        "1 seat(s) x 1 pack(s)/seat x 3 card(s)/pack"
+        in result.diagnostics[0].message
+    )
 
 
 def test_duplicate_printings_are_distinct_valid_memberships() -> None:
