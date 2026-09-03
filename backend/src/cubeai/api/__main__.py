@@ -1,6 +1,19 @@
-from wsgiref.simple_server import make_server
-from cubeai.api.health import application
+"""Launch the accepted local FastAPI application with caller-local state."""
 
-with make_server("127.0.0.1", 8000, application) as server:
-    print("CubeAI health server listening on http://127.0.0.1:8000/health")
-    server.serve_forever()
+import os
+from pathlib import Path
+
+import uvicorn
+
+from cubeai.api.app import create_default_application
+
+
+def main() -> None:
+    state_directory = Path(os.environ.get("CUBEAI_STATE_DIRECTORY", "cubeai-local"))
+    uvicorn.run(
+        create_default_application(state_directory), host="127.0.0.1", port=8000
+    )
+
+
+if __name__ == "__main__":
+    main()

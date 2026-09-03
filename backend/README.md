@@ -34,20 +34,21 @@ Build the source distribution and wheel:
 uv --directory backend build
 ```
 
-The M0 connectivity proof exposes a minimal WSGI health endpoint. Start it
-directly when developing the backend alone:
+Start the local FastAPI application directly when developing the backend alone:
 
 ```powershell
 uv --directory backend run --locked python -m cubeai.api
 ```
 
-It binds to `http://127.0.0.1:8000` and responds to `GET /health` with
-`{"status": "ok"}`. The root `dev` command also starts CubeUI and is the
-recommended way to verify the full M0 status view.
+It binds to `http://127.0.0.1:8000`, initializes caller-local SQLite state in
+`./cubeai-local/`, and responds to `GET /health` with `{"status": "ok"}`.
+Set `CUBEAI_STATE_DIRECTORY` to choose another local state directory. The
+versioned `/v1/` API exposes bounded Cube import/validation and one human-seat
+draft workflow; it never exposes other seats' current packs or pools.
 
-External adapters, persistence, and product workflow automation remain outside
-this health proof. The architecture check keeps `cubeai.lab.domain` independent
-from API, adapter, persistence, and framework modules.
+The root `dev` command also starts CubeUI and is the recommended way to verify
+the full product flow. The architecture check keeps `cubeai.lab.domain`
+independent from API, adapter, persistence, and framework modules.
 
 ## CubeCobra adapter checks
 

@@ -119,8 +119,11 @@ class BotPickDecision:
 class BotStrategy(Protocol):
     """The narrow replacement boundary for future seat-safe strategies."""
 
-    strategy_id: str
-    strategy_version: str
+    @property
+    def strategy_id(self) -> str: ...
+
+    @property
+    def strategy_version(self) -> str: ...
 
     def choose(self, visible_state: BotVisibleState) -> BotPickDecision: ...
 

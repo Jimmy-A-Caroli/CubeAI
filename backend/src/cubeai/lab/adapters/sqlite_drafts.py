@@ -94,6 +94,18 @@ class SQLiteDraftRepository:
         with self._connect() as connection:
             self._save_draft(connection, cube_version, state)
 
+    def save_cube_version(self, cube_version: CubeVersion) -> None:
+        """Store one immutable CubeVersion before a draft is configured."""
+
+        if not isinstance(cube_version, CubeVersion):
+            raise ValueError("cube_version must be a CubeVersion")
+        with self._connect() as connection:
+            self._store_cube_version(
+                connection,
+                cube_version.id,
+                _encode(_cube_version_payload(cube_version)),
+            )
+
     def transact(self, draft_id: str, transition: DraftTransaction) -> DraftState:
         """Load, transition, and persist one draft under one SQLite transaction."""
 

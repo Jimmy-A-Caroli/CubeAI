@@ -36,6 +36,15 @@ from cubeai.lab.application.ratings import load_raw_ranking_v0_artifact
 from cubeai.lab.application.bot_turns import BotTurnError, advance_bot_turns
 from cubeai.lab.application.repositories import DraftRepository
 from cubeai.lab.application.draft_commands import submit_human_pick_and_advance_bots
+from cubeai.lab.application.draft_sessions import (
+    DraftSeatView,
+    DraftSessionError,
+    human_seat_view,
+    resume_local_draft,
+    start_local_draft,
+    validate_local_cube,
+)
+from cubeai.lab.application.local_imports import LocalCubeImport, import_local_cube
 
 __all__ = (
     "CandidateResolution",
@@ -69,4 +78,12 @@ __all__ = (
     "advance_bot_turns",
     "DraftRepository",
     "submit_human_pick_and_advance_bots",
+    "DraftSeatView",
+    "DraftSessionError",
+    "human_seat_view",
+    "resume_local_draft",
+    "start_local_draft",
+    "validate_local_cube",
+    "LocalCubeImport",
+    "import_local_cube",
 )
