@@ -16,7 +16,16 @@ EXAMPLES = (
 
 
 def load_examples() -> dict[str, object]:
-    return json.loads(EXAMPLES.read_text(encoding="utf-8"))
+    decoded: object = json.loads(EXAMPLES.read_text(encoding="utf-8"))
+    if not isinstance(decoded, dict):
+        raise ValueError("Scryfall metadata research examples must be a JSON object")
+
+    examples: dict[str, object] = {}
+    for key, value in decoded.items():
+        if not isinstance(key, str):
+            raise ValueError("Scryfall metadata research example keys must be strings")
+        examples[key] = value
+    return examples
 
 
 def test_examples_are_cubeai_authored_synthetic_research_data() -> None:
