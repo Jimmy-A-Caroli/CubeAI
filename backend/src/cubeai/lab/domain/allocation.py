@@ -5,7 +5,7 @@ from dataclasses import dataclass
 
 from cubeai.lab.domain.cube import CubeVersion
 from cubeai.lab.domain.draft import DraftCardInstance, DraftPack
-from cubeai.lab.domain.validation import CubeValidationResult
+from cubeai.lab.domain.validation import CubeValidationResult, validate_cube_version
 
 
 @dataclass(frozen=True, slots=True)
@@ -47,10 +47,13 @@ def allocate_packs(
     if validation.cube_version_id != version.id:
         raise ValueError("validation must belong to the supplied CubeVersion")
     configuration = validation.configuration
-    if validation.usable_membership_count < configuration.card_count:
+    verified_validation = validate_cube_version(version, configuration)
+    if verified_validation.usable_membership_count < configuration.card_count:
         raise InsufficientCubeCapacity("Cube has insufficient usable memberships")
-    if not validation.is_draftable:
+    if not verified_validation.is_draftable:
         raise ValueError("CubeVersion validation contains blocking diagnostics")
+    if validation != verified_validation:
+        raise ValueError("validation must match the supplied CubeVersion")
 
     selected = list(version.cards)
     random.Random(configuration.seed).shuffle(selected)

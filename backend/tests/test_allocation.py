@@ -9,6 +9,7 @@ from cubeai.lab.domain import (
     CardPrinting,
     Cube,
     CubeCard,
+    CubeValidationResult,
     CubeVersion,
     DraftConfiguration,
     InsufficientCubeCapacity,
@@ -68,6 +69,23 @@ def test_allocation_is_deterministic_and_uses_validation_geometry() -> None:
     assert len(first) == 4
     assert all(len(pack.cards) == 3 for pack in first)
     assert [pack.pack.owner_seat for pack in first] == [0, 1, 0, 1]
+
+
+def test_golden_seed_preserves_source_order_before_deterministic_shuffle() -> None:
+    version = _version(6)
+    configuration = DraftConfiguration(2, 1, 3, 17)
+
+    allocation = allocate_packs("draft-1", version, _validation(version, configuration))
+
+    assert _membership_ids(allocation) == (
+        "membership-0",
+        "membership-5",
+        "membership-1",
+        "membership-2",
+        "membership-3",
+        "membership-4",
+    )
+    assert set(_membership_ids(allocation)) == {card.id for card in version.cards}
 
 
 def test_different_seed_changes_a_nontrivial_allocation() -> None:
@@ -140,3 +158,26 @@ def test_allocation_rejects_other_version_validation_and_cannot_mutate_inputs() 
         "membership-1",
         "membership-2",
     ]
+
+
+def test_forged_validation_cannot_allocate_unresolved_memberships() -> None:
+    configuration = DraftConfiguration(1, 1, 3, 1)
+    version = CubeVersion(
+        "version-unresolved",
+        Cube("cube-1", "Synthetic Cube"),
+        (
+            _membership("membership-1", printing_id="printing-1"),
+            _membership("membership-2", printing_id="printing-2"),
+            _membership("membership-3", printing_id="printing-3"),
+            CubeCard("membership-4", ResolutionStatus.UNRESOLVED),
+        ),
+    )
+    forged = CubeValidationResult(version.id, configuration, 3)
+
+    with pytest.raises(ValueError, match="blocking"):
+        allocate_packs("draft-1", version, forged)
+
+
+def test_invalid_geometry_cannot_reach_allocation() -> None:
+    with pytest.raises(ValueError, match="pack_size"):
+        DraftConfiguration(1, 1, 0, 1)
