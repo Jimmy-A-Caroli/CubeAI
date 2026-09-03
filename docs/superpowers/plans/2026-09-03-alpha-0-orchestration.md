@@ -170,3 +170,51 @@ pending explicit supervised-repair authorization.
   bulk behavior. Its 150-test default backend suite remains offline.
 - M1-007 is now the next Alpha-path task; it must assemble the reviewed import
   and resolution snapshots into immutable, diagnosable CubeVersions.
+
+## Wave 4 — immutable version integration
+
+- M1-007 implementation `786df60` was independently reviewed as
+  `REPAIR_REQUIRED`: matching a membership key and source snapshot did not
+  establish that the resolved record belonged to the exact imported candidate.
+  The repair `1964005` makes that equality a construction precondition and
+  adds a custom-versus-resolved substitution regression. Independent re-review
+  approved the repair.
+- The integrated default-offline backend suite passed with `157 passed` after
+  the repair. M1-007 is complete, so M1-008 is now the only ready Alpha-path
+  work package. M1-010 and M1-011 remain blocked.
+
+Updated Alpha path:
+
+```text
+M1-008 validation → M1-010 deterministic allocation → M1-011 draft state
+```
+
+## Wave 5 — validation integration and stop
+
+- M1-008 implementation `355ddac` was independently reviewed as
+  `REPAIR_REQUIRED` because capacity diagnostics did not identify the affected
+  draft geometry. The focused repair `ca773e0` adds stable seats,
+  packs-per-seat, and cards-per-pack context for both insufficient and excess
+  diagnostics; independent re-review approved it.
+- The integrated default-offline backend suite passed with `165 passed` after
+  the repair. M1-008 is complete; M1-010 is now ready because M1-009 was
+  already complete. M1-011 remains blocked on M1-010. No M1-010 or M1-011
+  implementation occurred in this wave.
+- The requested opt-in live CORE smoke attempted CubeCobra identifier
+  `modovintage` without retaining its payload. With external network access,
+  the source adapter returned `UNSUPPORTED` because the current public source
+  has a nonempty `basics` board. Under the frozen M1-004 contract, that
+  condition blocks source-to-resolution assembly rather than yielding a
+  mainboard-only import with a visible diagnostic. The live chain therefore
+  did not reach CubeVersion validation; changing that accepted source behavior
+  is outside M1-007/M1-008 and requires human direction.
+
+Updated Alpha path:
+
+```text
+validated CubeVersion boundary
+    ↓
+M1-010 deterministic allocation (READY)
+    ↓
+M1-011 draft state (BLOCKED on M1-010)
+```

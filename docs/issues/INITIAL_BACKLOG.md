@@ -242,7 +242,7 @@ Completion evidence: reviewed commits `452b078` and `65a8b1b`; exact-ID cache/re
 
 ### M1-007 — Assemble immutable Cube versions
 
-- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::safe`, `READY`
+- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::safe`, `COMPLETE`
 - **Dependencies:** M1-004, M1-006.
 - **Goal/context:** Combine source candidates and resolution results into a reviewable version without partial silent acceptance.
 - **Scope:** Import application service, version fingerprint/identity, resolved memberships, diagnostics summary, source snapshot link, explicit usability state.
@@ -251,9 +251,14 @@ Completion evidence: reviewed commits `452b078` and `65a8b1b`; exact-ID cache/re
 - **Required tests:** Normal, duplicate, unresolved/custom, changed-version, and deterministic fingerprint scenarios.
 - **Expected artifacts/areas:** application service/domain tests.
 
+Completion evidence: reviewed commits `786df60` and `1964005`; immutable
+provider-neutral assembly preserves membership occurrences/source order and
+identity scopes, emits deterministic SHA-256 content fingerprints, and makes
+unusable or mismatched source/resolution evidence explicit.
+
 ### M1-008 — Validate Cube contents and draft capacity
 
-- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::safe`, `BLOCKED`
+- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::safe`, `COMPLETE`
 - **Dependencies:** M1-007.
 - **Goal/context:** Explain whether a Cube version supports a requested draft before allocation.
 - **Scope:** Severity-coded validation for usable memberships, unresolved cards, duplicate semantics, configured seats/packs/pack size, excess cards, and unsupported custom behavior.
@@ -261,6 +266,11 @@ Completion evidence: reviewed commits `452b078` and `65a8b1b`; exact-ID cache/re
 - **Acceptance criteria:** Required size is computed safely; too-small Cube is an error; excess is permitted by explicit allocation policy; duplicate names are not inherently errors; messages identify affected membership/configuration.
 - **Required tests:** Exact size, too small, excess, zero/invalid configuration, duplicates, unresolved/custom policy cases.
 - **Expected artifacts/areas:** domain validation and application tests.
+
+Completion evidence: reviewed commits `355ddac` and `ca773e0`; deterministic
+domain validation produces membership- and draft-geometry-aware diagnostics,
+rejects unresolved/custom memberships and insufficient usable capacity, and
+explicitly permits excess memberships pending M1-010 selection policy.
 
 ### M1-009 — Define draft entities and configuration
 
@@ -277,7 +287,7 @@ Completion evidence: `ce23379`.
 
 ### M1-010 — Allocate deterministic packs
 
-- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::safe`, `BLOCKED`
+- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::safe`, `READY`
 - **Dependencies:** M1-008, M1-009.
 - **Goal/context:** Allocate a valid Cube version into packs reproducibly without duplicating membership instances.
 - **Scope:** Seeded sampling/shuffle policy, stable pre-randomization ordering, draft-card instance creation, configurable geometry, and explicit excess-card handling.
