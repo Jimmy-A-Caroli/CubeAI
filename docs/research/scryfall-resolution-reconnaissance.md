@@ -4,6 +4,10 @@ Accessed 2026-08-30. This report uses only Scryfall's official API
 documentation. It did not call a Scryfall API method, download a bulk archive,
 or fetch card images.
 
+For the current decision-ready, explicitly non-adopted M1-005 proposal and its
+offline synthetic shape check, see [Scryfall metadata and cache policy
+proposal](scryfall-metadata.md).
+
 ## Question
 
 What is the smallest plausible M1 Scryfall resolution contract that preserves
