@@ -52,8 +52,8 @@ The M1 draft UI is a functional, clean, intentionally simple visual foundation t
 | M1-011 | Implement draft state transitions and pack rotation | M1-010 | COMPLETE |
 | M1-012 | Define bot strategy port and Bot v0 rating policy | M1-009 | COMPLETE — `70d621f`; reviewed CubeAI-owned artifact and strategy port |
 | M1-013 | Execute deterministic bot turns | M1-011, M1-012 | COMPLETE — `543e8a6`; reviewed deterministic bot turns |
-| M1-014 | Persist Cube versions and drafts in SQLite | M1-007, M1-013 | READY |
-| M1-015 | Expose import, validation, draft command, and view APIs | M1-008, M1-013, M1-014 | BLOCKED |
+| M1-014 | Persist Cube versions and drafts in SQLite | M1-007, M1-013 | COMPLETE — `2bfe017`; reviewed local SQLite restart, provenance, and atomic command persistence |
+| M1-015 | Expose import, validation, draft command, and view APIs | M1-008, M1-013, M1-014 | READY |
 | M1-016 | Build Cube import and validation UI | M1-015, M0-005 | BLOCKED |
 | M1-017 | Build pack, pick, and drafted-pool UI | M1-015, M0-005 | BLOCKED |
 | M1-018 | Verify end-to-end deterministic local draft | M1-016, M1-017 | BLOCKED |

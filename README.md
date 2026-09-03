@@ -6,20 +6,22 @@ The project is focused on the Cube loop: import a Cube, validate it, draft it, u
 
 ## Status
 
-CubeAI has completed the Alpha-0 CubeLab draft-core boundary. In addition to
-the repository foundations, M1-001 through M1-011 now provide a supported
+CubeAI has completed the Alpha-0 CubeLab draft-core boundary and the first
+three Alpha-1 work packages. In addition to the repository foundations,
+M1-001 through M1-014 now provide a supported
 CubeCobra read adapter, exact printing-ID Scryfall resolution with a local
 cache, immutable Cube versions, capacity validation, deterministic allocation,
-and a deterministic local draft state machine. The product remains pre-API and
-pre-UI for importing and drafting; the existing `GET /health`/CubeUI status is
-only a minimal local connectivity proof.
+deterministic local draft state machine, raw-ranking Bot v0, and caller-selected
+SQLite restart persistence. The product remains pre-API and pre-UI for
+importing and drafting; the existing `GET /health`/CubeUI status is only a
+minimal local connectivity proof.
 
 The `backend/` workspace keeps source candidates, card/printing identities,
 Cube memberships, immutable versions, validation, allocation, and transitions
 framework-independent. The `frontend/` workspace supplies the React/TypeScript
 foundation and independent formatting, lint, typecheck, unit-test, and
-production-build commands. No HTTP draft API, persistence, bot strategy, or
-import/draft UI has been implemented.
+production-build commands. No HTTP draft API or import/draft UI has been
+implemented.
 
 The accepted Scryfall policy is exact printing-ID resolution, a durable local
 cache, network calls only for required misses, and explicit
@@ -46,7 +48,8 @@ CubeAI will begin as a modular monorepo:
 - **CubeAI API:** a proposed FastAPI application exposing versioned DTOs and application services.
 - **CubeUI:** a proposed React and TypeScript web client, designed to preserve a future local/offline path in the same codebase.
 - **CubeGame:** a future engine-neutral gameplay protocol, separated from any Forge adapter.
-- **Persistence:** repository interfaces backed initially by SQLite, if validated during M0.
+- **Persistence:** repository interfaces backed by local SQLite snapshots and
+  append-only event histories (ADR-0005).
 
 The toolchain and the web-first/local-capable constraint are accepted in ADR-0003; offline implementation technology remains deferred. Other choices remain provisional. See [Architecture](docs/ARCHITECTURE.md) and the [roadmap](docs/ROADMAP.md).
 
@@ -59,10 +62,11 @@ Development will be issue-driven. M0 and M1 are decomposed in the [initial backl
 ## Current limitations
 
 CubeCobra import and exact-ID metadata resolution are implemented as bounded
-adapters, and deterministic local draft allocation/transitions are available as
-domain code. Persistence, HTTP draft commands/views, import/draft UI, bot
-policy and execution, analytics, simulation, gameplay, Forge feasibility, and
-all hosted-service concerns remain future work or require further validation.
+adapters. Deterministic local allocation/transitions, raw-ranking Bot v0, and
+local SQLite save/resume are available through framework-independent CubeLab
+boundaries. HTTP draft commands/views, import/draft UI, analytics, simulation,
+gameplay, Forge feasibility, and all hosted-service concerns remain future work
+or require further validation.
 
 ## Available local validation
 

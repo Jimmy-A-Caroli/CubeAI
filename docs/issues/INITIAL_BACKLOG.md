@@ -350,7 +350,7 @@ seat-visible current-pack access.
 
 ### M1-014 — Persist Cube versions and drafts in SQLite
 
-- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::supervised`, `READY`
+- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::supervised`, `COMPLETE`
 - **Dependencies:** M1-007, M1-013.
 - **Goal/context:** Support local restart and future schema evolution without leaking SQL models into the domain.
 - **Scope:** Repository ports, approved schema/migration tool, SQLite adapters, transaction boundary for pick plus bot turns, version/event persistence and rehydration.
@@ -358,10 +358,11 @@ seat-visible current-pack access.
 - **Acceptance criteria:** Persisted drafts rehydrate equivalently; immutable events/versions cannot be silently overwritten; transaction failure leaves prior state intact; migrations work from empty database; SQLite types remain in adapter layer.
 - **Required tests:** Temporary-database repository contract suite, rollback injection, restart/rehydration, migration-up test, duplicate ID/conflict behavior.
 - **Expected artifacts/areas:** persistence ports/adapters/migrations and tests; ADR for persistence/migrations after review.
+- **Completion evidence:** `2bfe017` (independent review approved; SQLite 3.37+ migration, immutable CubeVersion and event-history protection, restart rehydration, allocation/version consistency, and atomic human-pick-plus-Bot-turn rollback passed). Unlocks M1-015.
 
 ### M1-015 — Expose the local draft API
 
-- **Labels/state:** `component::lab`, `component::ui`, `type::feature`, `priority::high`, `agent::supervised`, `BLOCKED`
+- **Labels/state:** `component::lab`, `component::ui`, `type::feature`, `priority::high`, `agent::supervised`, `READY`
 - **Dependencies:** M1-008, M1-013, M1-014.
 - **Goal/context:** Provide the smallest versioned HTTP contract needed for import, validation, draft commands, and seat-safe views.
 - **Scope:** Proposed FastAPI app; DTO mapping; endpoints to import/inspect Cube version, start/resume draft, submit a pick, and read current/complete human-seat view; stable error envelope and local configuration.

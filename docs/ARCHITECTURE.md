@@ -84,7 +84,11 @@ CubeUI is web-first: online operation is its default and primary deployment mode
 
 ### Persistence
 
-Repository protocols describe required storage behavior. SQLite is the proposed first implementation because the product is local and transactional. Domain behavior cannot depend on SQLite-specific features. Schema migrations and PostgreSQL suitability remain M0 decisions.
+Repository protocols describe required storage behavior. M1-014 implements the
+first local adapter with standard-library SQLite 3.37+ `STRICT` tables, a small
+versioned migration ledger, immutable Cube snapshots, and append-only draft
+events. Domain behavior cannot depend on SQLite-specific features. PostgreSQL
+suitability remains deferred.
 
 ### `cubeai.adapters` (external adapters)
 
@@ -190,7 +194,6 @@ Task 9 feasibility synthesis confirms that the current local-capable boundaries 
 
 - Final Python package layout and whether one or multiple distributable packages are useful.
 - API contract generation and client strategy.
-- SQLite schema, migrations, and repository implementation.
 - PWA, service-worker, browser-local storage, synchronization, conflict-resolution, and local/remote replication design.
 - Supported CubeCobra contract and fallback imports.
 - Metadata cache format and refresh policy.

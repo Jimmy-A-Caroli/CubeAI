@@ -17,3 +17,4 @@ Number ADRs sequentially as `NNNN-short-title.md`. Do not create an ADR merely t
 - [ADR-0002: Use the CubeLab bounded-context namespace](0002-cubelab-bounded-context-namespace.md) — Accepted
 - [ADR-0003: Record the initial toolchain and web-first, local-capable boundary](0003-initial-toolchain-and-web-first-local-capable.md) — Accepted
 - [ADR-0004: Freeze the initial CubeCobra import contract](0004-freeze-initial-cubecobra-import-contract.md) — Accepted
+- [ADR-0005: Use local SQLite snapshots and append-only draft histories](0005-local-sqlite-draft-persistence.md) — Accepted
