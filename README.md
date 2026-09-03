@@ -80,6 +80,19 @@ corepack npm --prefix frontend run build
 There is intentionally no root aggregate command yet; M0-006 is the next
 work package for joining the independently validated workspaces.
 
+## Dependency and license review
+
+Before adding or upgrading a package, follow the reviewed
+[dependency and license policy](docs/DEPENDENCY-LICENSE-POLICY.md). The
+policy documents the required approval evidence, lockfile-based inventories,
+license reports, failure behavior, and narrow temporary exceptions.
+
+```powershell
+make dependency-inventory
+make license-report
+make dependency-license-test
+```
+
 ## Contributing
 
 Contribution processes are not open yet. Use the workspace-local commands in
