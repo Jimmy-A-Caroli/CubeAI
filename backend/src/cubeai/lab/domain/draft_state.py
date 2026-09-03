@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from cubeai.lab.domain.allocation import AllocatedPack
 from cubeai.lab.domain.draft import (
     ActorOrigin,
+    BotDecisionProvenance,
     Draft,
     DraftCardInstance,
     DraftPack,
@@ -84,12 +85,17 @@ class DraftState:
         else:
             if not 0 <= self.pack_round < self.draft.configuration.packs_per_seat:
                 raise ValueError("in-progress pack_round must be within draft geometry")
-            if self.active_seat is None or not 0 <= self.active_seat < self.draft.configuration.seats:
+            if (
+                self.active_seat is None
+                or not 0 <= self.active_seat < self.draft.configuration.seats
+            ):
                 raise ValueError("in-progress drafts require an active seat")
             if len(active_packs) != self.draft.configuration.seats:
                 raise ValueError("in-progress drafts require one active pack per seat")
             expected_event_count = (
-                self.pack_round * self.draft.configuration.seats * self.draft.configuration.pack_size
+                self.pack_round
+                * self.draft.configuration.seats
+                * self.draft.configuration.pack_size
                 + self.pick_number * self.draft.configuration.seats
                 + self.active_seat
             )
@@ -106,7 +112,9 @@ class DraftState:
             if len(events) != self.draft.configuration.card_count:
                 raise ValueError("completed drafts must contain every allocated pick")
             if expected_turn[0] != self.draft.configuration.packs_per_seat:
-                raise ValueError("completed draft history must exhaust every pack round")
+                raise ValueError(
+                    "completed draft history must exhaust every pack round"
+                )
         object.__setattr__(self, "allocation", allocation)
         object.__setattr__(self, "active_packs", active_packs)
         object.__setattr__(self, "pick_events", events)
@@ -131,7 +139,9 @@ def start_draft(draft: Draft, allocation: tuple[AllocatedPack, ...]) -> DraftSta
     )
 
 
-def available_cards(state: DraftState, seat_number: int) -> tuple[DraftCardInstance, ...]:
+def available_cards(
+    state: DraftState, seat_number: int
+) -> tuple[DraftCardInstance, ...]:
     """Return the current pack only for the active seat's legal pick command."""
 
     _require_active_seat(state, seat_number)
@@ -146,6 +156,7 @@ def pick_card(
     actor_origin: ActorOrigin = ActorOrigin.HUMAN,
     actor_id: str | None = None,
     strategy_ref: str | None = None,
+    bot_provenance: BotDecisionProvenance | None = None,
 ) -> DraftState:
     """Apply one legal pick and return a new state without changing ``state``."""
 
@@ -161,7 +172,9 @@ def pick_card(
         (card for card in current_pack.cards if card.id == card_instance_id), None
     )
     if selected is None:
-        raise DraftTransitionError("card_instance_id is not available to the active seat")
+        raise DraftTransitionError(
+            "card_instance_id is not available to the active seat"
+        )
     event = PickEvent(
         draft_id=state.draft.id,
         sequence=len(state.pick_events),
@@ -172,6 +185,7 @@ def pick_card(
         actor_origin=actor_origin,
         actor_id=actor_id,
         strategy_ref=strategy_ref,
+        bot_provenance=bot_provenance,
     )
     updated_packs = list(state.active_packs)
     updated_packs[seat_number] = ActiveDraftPack(
@@ -289,7 +303,10 @@ def _validate_allocation(draft: Draft, allocation: tuple[AllocatedPack, ...]) ->
     if len(allocation) != expected_pack_count:
         raise ValueError("allocation must contain exactly one pack for each draft pack")
     expected_numbers = tuple(range(expected_pack_count))
-    if tuple(allocated.pack.pack_number for allocated in allocation) != expected_numbers:
+    if (
+        tuple(allocated.pack.pack_number for allocated in allocation)
+        != expected_numbers
+    ):
         raise ValueError("allocation packs must be ordered by contiguous pack number")
     if any(allocated.pack.draft_id != draft.id for allocated in allocation):
         raise ValueError("allocation packs must belong to the draft")
@@ -300,7 +317,9 @@ def _validate_allocation(draft: Draft, allocation: tuple[AllocatedPack, ...]) ->
         raise ValueError("allocation pack owners must match the draft geometry")
     if any(len(allocated.cards) != configuration.pack_size for allocated in allocation):
         raise ValueError("allocation packs must match the configured pack size")
-    instance_ids = tuple(card.id for allocated in allocation for card in allocated.cards)
+    instance_ids = tuple(
+        card.id for allocated in allocation for card in allocated.cards
+    )
     if len(instance_ids) != len(set(instance_ids)):
         raise ValueError("allocation cannot contain duplicate draft-card instance IDs")
 
@@ -341,11 +360,15 @@ def _validate_legal_event_sequence(
         if event.pack_number != active_pack.pack.pack_number:
             raise ValueError("pick event pack does not match the current active pack")
         if not any(card.id == event.card_instance_id for card in active_pack.cards):
-            raise ValueError("pick event card is not available in the current active pack")
+            raise ValueError(
+                "pick event card is not available in the current active pack"
+            )
         updated_packs = list(active_packs)
         updated_packs[active_seat] = ActiveDraftPack(
             active_pack.pack,
-            tuple(card for card in active_pack.cards if card.id != event.card_instance_id),
+            tuple(
+                card for card in active_pack.cards if card.id != event.card_instance_id
+            ),
         )
         active_packs = tuple(updated_packs)
         if active_seat + 1 < draft.configuration.seats:

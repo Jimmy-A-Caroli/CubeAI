@@ -2,6 +2,7 @@
 
 from dataclasses import dataclass
 from math import isfinite
+from typing import Protocol, runtime_checkable
 
 from cubeai.lab.domain.draft import (
     BotDecisionProvenance,
@@ -112,6 +113,16 @@ class BotPickDecision:
         )
         if not isinstance(self.provenance, BotDecisionProvenance):
             raise ValueError("provenance must be a BotDecisionProvenance")
+
+
+@runtime_checkable
+class BotStrategy(Protocol):
+    """The narrow replacement boundary for future seat-safe strategies."""
+
+    strategy_id: str
+    strategy_version: str
+
+    def choose(self, visible_state: BotVisibleState) -> BotPickDecision: ...
 
 
 @dataclass(frozen=True, slots=True)

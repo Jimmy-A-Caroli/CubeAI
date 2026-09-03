@@ -25,6 +25,7 @@ from cubeai.lab.domain.draft import (
 )
 from cubeai.lab.domain.bot import (
     BotPickDecision,
+    BotStrategy,
     BotVisibleCandidate,
     BotVisibleState,
     RatingArtifact,
@@ -74,6 +75,7 @@ __all__ = (
     "PickEvent",
     "RatingLookupOutcome",
     "BotPickDecision",
+    "BotStrategy",
     "BotVisibleCandidate",
     "BotVisibleState",
     "RatingArtifact",

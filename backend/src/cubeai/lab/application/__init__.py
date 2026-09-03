@@ -33,6 +33,7 @@ from cubeai.lab.application.metadata import (
     ScryfallFace,
 )
 from cubeai.lab.application.ratings import load_raw_ranking_v0_artifact
+from cubeai.lab.application.bot_turns import BotTurnError, advance_bot_turns
 
 __all__ = (
     "CandidateResolution",
@@ -62,4 +63,6 @@ __all__ = (
     "SourceRequest",
     "SourceSnapshotReference",
     "load_raw_ranking_v0_artifact",
+    "BotTurnError",
+    "advance_bot_turns",
 )
