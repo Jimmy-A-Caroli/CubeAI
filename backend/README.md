@@ -34,7 +34,17 @@ Build the source distribution and wheel:
 uv --directory backend build
 ```
 
-FastAPI and health endpoints, external adapters, persistence, and product
-workflow automation are deliberately deferred to later milestones. The
-architecture check keeps `cubeai.lab.domain` independent from API, adapter,
-persistence, and framework modules.
+The M0 connectivity proof exposes a minimal WSGI health endpoint. Start it
+directly when developing the backend alone:
+
+```powershell
+uv --directory backend run --locked python -m cubeai.api
+```
+
+It binds to `http://127.0.0.1:8000` and responds to `GET /health` with
+`{"status": "ok"}`. The root `dev` command also starts CubeUI and is the
+recommended way to verify the full M0 status view.
+
+External adapters, persistence, and product workflow automation remain outside
+this health proof. The architecture check keeps `cubeai.lab.domain` independent
+from API, adapter, persistence, and framework modules.
