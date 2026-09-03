@@ -15,6 +15,16 @@ from cubeai.lab.application.imports import (
     SourceRequest,
     SourceSnapshotReference,
 )
+from cubeai.lab.application.metadata import (
+    MetadataDiagnostic,
+    MetadataDiagnosticCode,
+    MetadataResolution,
+    MetadataResolutionOutcome,
+    MetadataResolutionSnapshot,
+    MetadataResolver,
+    ResolvedPrinting,
+    ScryfallFace,
+)
 
 __all__ = (
     "CandidateResolution",
@@ -25,6 +35,14 @@ __all__ = (
     "ImportDiagnostic",
     "ImportOutcome",
     "ImportResult",
+    "MetadataDiagnostic",
+    "MetadataDiagnosticCode",
+    "MetadataResolution",
+    "MetadataResolutionOutcome",
+    "MetadataResolutionSnapshot",
+    "MetadataResolver",
+    "ResolvedPrinting",
+    "ScryfallFace",
     "SourceBoardObservation",
     "SourceFieldObservation",
     "SourceFieldState",
