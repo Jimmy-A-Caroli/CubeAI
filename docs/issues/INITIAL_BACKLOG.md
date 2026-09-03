@@ -324,7 +324,7 @@ seat-visible current-pack access.
 
 ### M1-012 — Define the bot port and Bot v0 rating policy
 
-- **Labels/state:** `component::lab`, `type::research`, `type::feature`, `priority::high`, `human::decision`, `BLOCKED`
+- **Labels/state:** `component::lab`, `type::research`, `type::feature`, `priority::high`, `human::decision`, `BLOCKED — rating artifact not approved`
 - **Dependencies:** M1-009.
 - **Goal/context:** Establish a transparent raw-ranking bot with licensed, versioned data and deterministic tie-breaking.
 - **Scope:** Strategy input/output port limited to visible state; rating dataset/source investigation; missing-rating fallback; strategy ID/version/configuration; score explanation and tie policy.
@@ -332,7 +332,8 @@ seat-visible current-pack access.
 - **Acceptance criteria:** Rating source and license are approved; no hidden information enters strategy input; all legal cards receive a deterministic comparable score; decision records rating and tie-break reason.
 - **Required tests:** Ordered ratings, equal scores, missing ratings, duplicate card names/printings, input visibility, stable version/config serialization.
 - **Expected artifacts/areas:** bot domain port, rating data policy/artifact, tests, research note.
-- **Research evidence:** [M1-012 Bot v0 rating-policy decision](../research/m1-012-bot-v0-rating-policy.md) is `REQUIRES HUMAN APPROVAL`; it does not approve a source, license, or implementation.
+- **Accepted policy:** `raw-ranking-v0` uses Oracle-ID lookup, `0.0` missing-rating fallback, ascending `DraftCardInstance.id` ties, and strategy/version provenance. CubeCobra/CubeCobraML data are prohibited until explicit reusable-data rights are confirmed; 17Lands is not a Bot v0 Vintage Cube substitute. The policy is accepted, but no concrete, rights-cleared rating artifact or acquisition process is approved.
+- **Research evidence:** [M1-012 Bot v0 rating-policy decision](../research/m1-012-bot-v0-rating-policy.md) records the accepted policy and its remaining rating-artifact blocker; it does not approve a source, license, or implementation.
 
 ### M1-013 — Execute deterministic bot turns
 
