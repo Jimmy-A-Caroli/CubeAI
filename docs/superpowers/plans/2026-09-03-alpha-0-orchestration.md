@@ -218,3 +218,16 @@ M1-010 deterministic allocation (READY)
     ↓
 M1-011 draft state (BLOCKED on M1-010)
 ```
+
+## Wave 6 — allocation integration
+
+- M1-010 implementation `df78485` was independently reviewed as
+  `REPAIR_REQUIRED`: a publicly constructible validation result could be
+  forged or stale, and its seed test did not prove source order before shuffle.
+  `c548c57` added canonical revalidation and focused regressions; a second
+  review required binding the result to the exact immutable snapshot.
+  `ec60c8f` records the CubeVersion content fingerprint in validation evidence,
+  rejects stale same-ID snapshots, and uses a reversed source-order golden
+  sequence. The final independent review approved it.
+- M1-010 is complete. M1-011 is now ready; M1-012 and all later work remain
+  outside this Alpha-closing run.

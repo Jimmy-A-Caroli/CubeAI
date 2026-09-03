@@ -287,7 +287,7 @@ Completion evidence: `ce23379`.
 
 ### M1-010 — Allocate deterministic packs
 
-- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::safe`, `READY`
+- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::safe`, `COMPLETE`
 - **Dependencies:** M1-008, M1-009.
 - **Goal/context:** Allocate a valid Cube version into packs reproducibly without duplicating membership instances.
 - **Scope:** Seeded sampling/shuffle policy, stable pre-randomization ordering, draft-card instance creation, configurable geometry, and explicit excess-card handling.
@@ -296,9 +296,14 @@ Completion evidence: `ce23379`.
 - **Required tests:** Golden seed, conservation/uniqueness invariant, duplicate memberships, exact/excess/insufficient sizes, invalid configuration.
 - **Expected artifacts/areas:** draft allocation domain service and tests.
 
+Completion evidence: reviewed commits `df78485`, `c548c57`, and `ec60c8f`;
+allocation consumes fingerprint-bound validation evidence, revalidates the
+immutable version, preserves source order before seeded shuffle, and conserves
+selected membership occurrences as unique draft-card instances.
+
 ### M1-011 — Implement draft state transitions and pack rotation
 
-- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::safe`, `BLOCKED`
+- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::safe`, `READY`
 - **Dependencies:** M1-010.
 - **Goal/context:** Advance simultaneous draft rounds correctly through alternating directions.
 - **Scope:** Start pack, legal pick command, one pick per active seat per round, pack transfer, left/right alternation by pack number, empty-pack handling, completion, pools and immutable pick events.
