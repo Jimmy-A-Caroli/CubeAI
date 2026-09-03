@@ -34,7 +34,8 @@ From the repository root, inventory all direct and transitive packages from the
 committed locks:
 
 ```powershell
-make dependency-inventory
+uv --directory backend tree --locked
+corepack npm --prefix frontend ls --package-lock-only --all
 ```
 
 The backend command is `uv tree --locked`; the frontend command is `npm ls
@@ -43,7 +44,8 @@ The backend command is `uv tree --locked`; the frontend command is `npm ls
 Then produce license review tables:
 
 ```powershell
-make license-report
+uv --directory backend run --locked python ../scripts/report_backend_licenses.py
+node scripts/report_frontend_licenses.mjs
 ```
 
 The backend reader uses the locked environment's installed distribution
@@ -53,14 +55,23 @@ outputs are tab-separated, sorted deterministically, and label every package
 `ALLOWED`, `ALLOWLISTED`, or `REVIEW_REQUIRED`. Reports are review artifacts;
 do not commit generated output unless a later issue explicitly requests it.
 
-`make dependency-license-test` runs the offline guardrails, including a
-controlled package with no license, and is the focused check for these readers.
+Run the offline reader guardrails, including a controlled package with no
+license, with:
+
+```powershell
+uv --directory backend run --locked pytest -q tests/test_dependency_license_reports.py
+node --test scripts/report_frontend_licenses.test.mjs
+```
+
+On hosts with Make available, `make dependency-inventory`, `make
+license-report`, and `make dependency-license-test` mirror these native
+commands; Make is optional.
 
 ## Failure and allowlist policy
 
 `config/dependency-license-policy.json` contains the exact SPDX expressions
 accepted for the current review. A missing, malformed, or unlisted expression
-is visible as `REVIEW_REQUIRED` and causes `make license-report` to fail.
+is visible as `REVIEW_REQUIRED` and causes the license-report commands to fail.
 Fixing it requires a human review; changing a package's displayed name or
 version does not silence the failure.
 

@@ -16,6 +16,50 @@ test("an unknown license requires review", () => {
   );
 });
 
+test("an exception is allowlisted through its expiry calendar date", () => {
+  assert.equal(
+    reviewStatus(
+      "frontend:fixture@1.0.0",
+      "Custom-License",
+      {
+        allowed_license_expressions: [],
+        allowlist: {
+          "frontend:fixture@1.0.0": {
+            license: "Custom-License",
+            reason: "Controlled test exception",
+            reviewed_by: "test",
+            expires_on: "2026-09-03",
+          },
+        },
+      },
+      new Date("2026-09-03T12:00:00"),
+    ),
+    "ALLOWLISTED",
+  );
+});
+
+test("an exception requires review after its expiry calendar date", () => {
+  assert.equal(
+    reviewStatus(
+      "frontend:fixture@1.0.0",
+      "Custom-License",
+      {
+        allowed_license_expressions: [],
+        allowlist: {
+          "frontend:fixture@1.0.0": {
+            license: "Custom-License",
+            reason: "Controlled test exception",
+            reviewed_by: "test",
+            expires_on: "2026-09-03",
+          },
+        },
+      },
+      new Date("2026-09-04T00:00:00"),
+    ),
+    "REVIEW_REQUIRED",
+  );
+});
+
 test("report surfaces a controlled unknown license", async () => {
   const directory = await mkdtemp(join(tmpdir(), "cubeai-license-report-"));
   const lockPath = join(directory, "package-lock.json");

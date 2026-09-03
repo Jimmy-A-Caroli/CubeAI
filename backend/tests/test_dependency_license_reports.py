@@ -32,6 +32,28 @@ def test_unknown_license_requires_review() -> None:
     )
 
 
+def test_metadata_lookup_requires_normalized_name_and_locked_version(
+    tmp_path: Path,
+) -> None:
+    module = load_report_module()
+    metadata_path = tmp_path / "metadata"
+    distribution_info = metadata_path / "Unlicensed-9.9.9.dist-info"
+    distribution_info.mkdir(parents=True)
+    (distribution_info / "METADATA").write_text(
+        "Metadata-Version: 2.1\n"
+        "Name: Unlicensed\n"
+        "Version: 9.9.9\n"
+        "License: MIT\n",
+        encoding="utf-8",
+    )
+
+    assert (
+        module.license_from_metadata("unlicensed", "1.0.0", [metadata_path])
+        == "UNKNOWN"
+    )
+    assert module.license_from_metadata("unlicensed", "9.9.9", [metadata_path]) == "MIT"
+
+
 def test_report_surfaces_a_controlled_unknown_license(tmp_path: Path) -> None:
     lock_path = tmp_path / "uv.lock"
     lock_path.write_text(

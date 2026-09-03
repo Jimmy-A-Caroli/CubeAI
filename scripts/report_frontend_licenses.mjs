@@ -9,6 +9,27 @@ function packageNameFromPath(packagePath) {
   return index === -1 ? packagePath : packagePath.slice(index + marker.length);
 }
 
+function isIsoCalendarDate(value) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    return false;
+  }
+  const [year, month, day] = value.split("-").map(Number);
+  const parsed = new Date(Date.UTC(year, month - 1, day));
+  return (
+    parsed.getUTCFullYear() === year &&
+    parsed.getUTCMonth() === month - 1 &&
+    parsed.getUTCDate() === day
+  );
+}
+
+function calendarDate(date) {
+  return [
+    date.getFullYear(),
+    String(date.getMonth() + 1).padStart(2, "0"),
+    String(date.getDate()).padStart(2, "0"),
+  ].join("-");
+}
+
 export function reviewStatus(
   packageKey,
   licenseExpression,
@@ -30,10 +51,12 @@ export function reviewStatus(
   ) {
     return "REVIEW_REQUIRED";
   }
-  const expiresOn = new Date(`${exception.expires_on}T00:00:00Z`);
-  return Number.isNaN(expiresOn.valueOf()) || expiresOn < today
-    ? "REVIEW_REQUIRED"
-    : "ALLOWLISTED";
+  if (!isIsoCalendarDate(exception.expires_on)) {
+    return "REVIEW_REQUIRED";
+  }
+  return exception.expires_on >= calendarDate(today)
+    ? "ALLOWLISTED"
+    : "REVIEW_REQUIRED";
 }
 
 export async function report(

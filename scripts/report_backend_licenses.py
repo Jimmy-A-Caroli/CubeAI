@@ -49,12 +49,19 @@ def registry_packages(lock_path: Path) -> list[tuple[str, str]]:
     return sorted(resolved, key=lambda package: (normalized_name(package[0]), package[1]))
 
 
-def license_from_metadata(name: str, paths: Iterable[Path] | None = None) -> str:
+def license_from_metadata(
+    name: str, version: str, paths: Iterable[Path] | None = None
+) -> str:
     discovery_arguments = {} if paths is None else {"path": list(paths)}
     for distribution in importlib.metadata.distributions(**discovery_arguments):
         metadata = distribution.metadata
         metadata_name = metadata.get("Name")
-        if isinstance(metadata_name, str) and normalized_name(metadata_name) == normalized_name(name):
+        metadata_version = metadata.get("Version")
+        if (
+            isinstance(metadata_name, str)
+            and normalized_name(metadata_name) == normalized_name(name)
+            and metadata_version == version
+        ):
             expression = metadata.get("License-Expression") or metadata.get("License")
             if isinstance(expression, str) and expression.strip():
                 return " ".join(expression.split())
@@ -89,7 +96,7 @@ def report(lock_path: Path, policy_path: Path, metadata_paths: Iterable[Path] | 
     allowed, allowlist = read_policy(policy_path)
     rows: list[tuple[str, str, str, str]] = []
     for name, version in registry_packages(lock_path):
-        license_expression = license_from_metadata(name, metadata_paths)
+        license_expression = license_from_metadata(name, version, metadata_paths)
         package_key = f"backend:{normalized_name(name)}@{version}"
         status = review_status(package_key, license_expression, allowed, allowlist)
         rows.append((name, version, license_expression, status))
