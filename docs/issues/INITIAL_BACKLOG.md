@@ -83,7 +83,7 @@ Completion evidence: reviewed implementation commit `f088c7fc74cd68051cb90154561
 
 ### M0-006 — Provide aggregate developer commands
 
-- **Labels/state:** `component::infra`, `type::feature`, `priority::high`, `agent::safe`, `BLOCKED`
+- **Labels/state:** `component::infra`, `type::feature`, `priority::high`, `agent::safe`, `COMPLETE`
 - **Dependencies:** M0-004, M0-005.
 - **Goal/context:** Give humans and agents stable commands instead of tool-specific guesswork.
 - **Scope:** Add cross-platform-enough entry points for setup, format, check, test, and development; join the backend health endpoint and frontend status view into the M0 connectivity slice; delegate to workspace tools without hiding errors.
@@ -92,9 +92,11 @@ Completion evidence: reviewed implementation commit `f088c7fc74cd68051cb90154561
 - **Required tests:** Clean setup followed by aggregate validation; inject one controlled failure to verify propagation.
 - **Expected artifacts/areas:** root task runner or scripts, README.
 
+Completion evidence: reviewed implementation commits `69ad9eb` and `88b26f2`; a locked clean setup, aggregate check, aggregate test, controlled child-failure regression, direct/proxied health smoke, and frontend status tests passed on the orchestration branch.
+
 ### M0-007 — Add continuous integration
 
-- **Labels/state:** `component::infra`, `type::feature`, `priority::high`, `agent::safe`, `BLOCKED`
+- **Labels/state:** `component::infra`, `type::feature`, `priority::high`, `agent::safe`, `READY`
 - **Dependencies:** M0-006.
 - **Goal/context:** Run the same repository validation on proposed changes.
 - **Scope:** Minimal GitHub Actions workflow with dependency caching, locked installs, aggregate checks, least necessary permissions, cancellation of superseded runs, and M0 connectivity-slice validation where practical in CI.
@@ -116,7 +118,7 @@ Completion evidence: reviewed implementation commit `f088c7fc74cd68051cb90154561
 
 ### M0-009 — Add dependency and license reporting
 
-- **Labels/state:** `component::infra`, `type::test`, `priority::medium`, `agent::safe`, `READY`
+- **Labels/state:** `component::infra`, `type::test`, `priority::medium`, `agent::safe`, `COMPLETE`
 - **Dependencies:** M0-002, M0-003.
 - **Goal/context:** Make dependency review repeatable before Forge or data packages introduce risk.
 - **Scope:** Document dependency approval criteria; add reproducible inventory/license commands for both workspaces; define failure/allowlist policy.
@@ -124,6 +126,8 @@ Completion evidence: reviewed implementation commit `f088c7fc74cd68051cb90154561
 - **Acceptance criteria:** Direct and transitive dependencies can be inventoried from locks; unknown/disallowed licenses are visible; reports do not need committing unless documented.
 - **Required tests:** Run inventory commands on clean locks and verify a controlled unknown license is surfaced.
 - **Expected artifacts/areas:** scripts/configuration, dependency policy documentation.
+
+Completion evidence: reviewed implementation commits `99325dff3ba1045635469100baaa7cf9621d2f5c` and `b2de88f`; locked backend report tests passed, the backend report surfaced eight packages requiring human license review, and the frontend report passed with all locked packages allowed.
 
 ### M0-010 — Add issue and proposal templates
 
@@ -138,7 +142,7 @@ Completion evidence: reviewed implementation commit `f088c7fc74cd68051cb90154561
 
 ### M0-011 — Add minimal local orchestration
 
-- **Labels/state:** `component::infra`, `type::feature`, `priority::medium`, `agent::safe`, `BLOCKED`
+- **Labels/state:** `component::infra`, `type::feature`, `priority::medium`, `agent::safe`, `READY`
 - **Dependencies:** M0-006.
 - **Goal/context:** Start the first meaningful backend/frontend development slice with a simple command.
 - **Scope:** Add local process orchestration and, if justified, a small Compose configuration; run the M0 connectivity slice locally with health/status behavior and clean shutdown; preserve native commands.
@@ -199,7 +203,7 @@ Completion evidence: `d9f2dd6`.
 
 ### M1-004 — Implement the CubeCobra read adapter
 
-- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::supervised`, `BLOCKED`
+- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::supervised`, `COMPLETE`
 - **Dependencies:** M1-003.
 - **Goal/context:** Import the approved CubeCobra contract through the provider-neutral port.
 - **Scope:** URL/identifier parsing, responsible HTTP behavior, supported response mapping, bounded timeout/retry, cache validators if supported, structured failures, contract fixtures.
@@ -208,9 +212,11 @@ Completion evidence: `d9f2dd6`.
 - **Required tests:** Offline contract tests for all fixtures, HTTP fake tests for timeout/rate/error behavior, one opt-in live smoke test excluded from default suite.
 - **Expected artifacts/areas:** external adapter, tests, CubeCobra research updates.
 
+Completion evidence: reviewed commits `c7950a1` and `b1be034`; offline contract/fake-HTTP coverage, opt-in live-smoke exclusion, and locked backend validation passed.
+
 ### M1-005 — Define the Scryfall metadata and cache policy
 
-- **Labels/state:** `component::lab`, `type::research`, `priority::high`, `human::decision`, `BLOCKED`
+- **Labels/state:** `component::lab`, `type::research`, `priority::high`, `human::decision`, `COMPLETE`
 - **Dependencies:** M0-009.
 - **Goal/context:** Use Scryfall responsibly and choose when live collection lookup versus bulk data is appropriate.
 - **Scope:** Official API/bulk guidance, identifiers, attribution, images, required headers, throttling, retries, cache refresh, offline behavior, custom cards, and data/license implications; recommend M1 strategy.
@@ -219,9 +225,11 @@ Completion evidence: `d9f2dd6`.
 - **Required tests:** Validate documented example requests and bulk metadata shape with a small sanitized sample.
 - **Expected artifacts/areas:** `docs/research/scryfall-metadata.md`, proposed ADR if warranted.
 
+Completion evidence: [Scryfall metadata/cache policy](../research/scryfall-metadata.md) was independently reviewed and explicitly adopted by human Alpha-0 authorization on 2026-09-03. The accepted M1 scope is exact printing-ID resolution with a durable local cache, network lookup only for required misses, explicit unavailable/custom/unresolved outcomes, no automatic fuzzy/name fallback, and no bulk-data-first architecture.
+
 ### M1-006 — Define metadata resolution and implement the Scryfall adapter
 
-- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::supervised`, `BLOCKED`
+- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::supervised`, `COMPLETE`
 - **Dependencies:** M1-002, M1-005.
 - **Goal/context:** Resolve import candidates without hiding ambiguity or coupling domain entities to Scryfall payloads.
 - **Scope:** Resolver port; batch identifiers; exact printing and Oracle resolution; cache implementation approved by policy; structured missing/ambiguous/custom outcomes.
@@ -230,9 +238,11 @@ Completion evidence: `d9f2dd6`.
 - **Required tests:** Fixture contract tests, cache hit/stale behavior, batch mapping, ambiguity/missing cases, rate-limit fake.
 - **Expected artifacts/areas:** metadata port/adapter/cache, tests, fixtures.
 
+Completion evidence: reviewed commits `452b078` and `65a8b1b`; exact-ID cache/resolver, synthetic contract fixture, 150 offline backend tests, and static validation passed.
+
 ### M1-007 — Assemble immutable Cube versions
 
-- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::safe`, `BLOCKED`
+- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::safe`, `READY`
 - **Dependencies:** M1-004, M1-006.
 - **Goal/context:** Combine source candidates and resolution results into a reviewable version without partial silent acceptance.
 - **Scope:** Import application service, version fingerprint/identity, resolved memberships, diagnostics summary, source snapshot link, explicit usability state.
@@ -538,4 +548,4 @@ M2 issues are intentionally moderate-detail and remain `BLOCKED` until M1-018 an
 
 ## Recommended first issue
 
-M0-001 through M0-005, M0-008, and M1-001 through M1-003 and M1-009 are complete. The next eligible work packages are **M0-006 — Provide aggregate developer commands**, **M0-009 — Add dependency and license reporting**, **M0-010 — Add issue and proposal templates**, and **M1-004 — Implement the CubeCobra read adapter**. M1-004 remains supervised and requires explicit authorization before implementation.
+M0-001 through M0-009, plus M1-001 through M1-003 and M1-009, are complete. The next eligible agent-safe work packages are **M0-007 — Add continuous integration**, **M0-010 — Add issue and proposal templates**, and **M0-011 — Add minimal local orchestration**. M0-007 requires a successful remote run before acceptance and therefore cannot complete without permission to push a branch. **M1-005 — Define the Scryfall metadata and cache policy** has a reviewed proposal, but its adoption remains a human decision. M1-004 remains blocked pending explicitly authorized supervised repair.

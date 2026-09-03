@@ -42,10 +42,10 @@ The M1 draft UI is a functional, clean, intentionally simple visual foundation t
 | M1-001 | Research and freeze the supported CubeCobra import contract | M0-008 | COMPLETE |
 | M1-002 | Model card identity, printing, Cube, version, and membership | M0-002 | COMPLETE |
 | M1-003 | Define import candidates, diagnostics, and adapter port | M1-001, M1-002 | COMPLETE |
-| M1-004 | Implement the CubeCobra read adapter against fixtures | M1-003 | READY |
-| M1-005 | Research and define Scryfall metadata/cache policy | M0-009 | BLOCKED |
-| M1-006 | Define metadata resolver port and Scryfall adapter | M1-002, M1-005 | BLOCKED |
-| M1-007 | Assemble immutable Cube versions with diagnostics | M1-004, M1-006 | BLOCKED |
+| M1-004 | Implement the CubeCobra read adapter against fixtures | M1-003 | COMPLETE |
+| M1-005 | Research and define Scryfall metadata/cache policy | M0-009 | COMPLETE |
+| M1-006 | Define metadata resolver port and Scryfall adapter | M1-002, M1-005 | COMPLETE |
+| M1-007 | Assemble immutable Cube versions with diagnostics | M1-004, M1-006 | READY |
 | M1-008 | Validate Cube contents and draft capacity | M1-007 | BLOCKED |
 | M1-009 | Define draft configuration, instances, seats, packs, and picks | M1-002 | COMPLETE |
 | M1-010 | Allocate deterministic packs | M1-008, M1-009 | BLOCKED |

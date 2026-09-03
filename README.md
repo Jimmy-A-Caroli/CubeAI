@@ -8,23 +8,27 @@ The project is focused on the Cube loop: import a Cube, validate it, draft it, u
 
 CubeAI is in its repository-foundation phase, with the first CubeLab domain
 foundation now underway. The completed work packages are M0-001 through
-M0-005, M0-008, M1-001 through M1-003, and M1-009. They establish locked Python and
+M0-009, M1-001 through M1-003, and M1-009. They establish locked Python and
 React/TypeScript workspaces, synthetic-fixture policy, frontend quality checks,
 the supported CubeCobra import contract, and immutable Cube/card identity and
-membership domain types.
+membership domain types. It also includes a minimal local connectivity slice:
+the backend serves `GET /health` and CubeUI displays its resulting connection
+status.
 
 The `backend/` workspace provides framework-independent types for source
 references, import candidates, card and printing identities, Cube memberships,
 immutable Cube versions, and draft configuration/identity vocabulary. The `frontend/` workspace provides the React/TypeScript foundation
 and independent formatting, lint, typecheck, unit-test, and production-build
-commands. No API endpoint, CubeCobra read adapter, metadata resolver, draft
-engine, bot, persistence layer, or user-facing product workflow has been
-implemented. The root aggregate command and integrated health slice remain later
-M0 work.
+commands. The M0 health endpoint is a connectivity proof only; it is not a
+product API or an import, metadata, drafting, persistence, or gameplay
+workflow.
 
-The currently eligible work packages are M0-006, M0-009, M0-010, and M1-004.
-See the [initial backlog](docs/issues/INITIAL_BACKLOG.md) for their
-dependencies and the canonical task state.
+The Scryfall metadata policy is accepted for M1: exact printing-ID resolution,
+a durable local cache, network calls only for required misses, and explicit
+unavailable/custom/unresolved outcomes—without fuzzy fallback or bulk-data
+infrastructure. M1-004's supervised CubeCobra repair and M1-006's supervised
+resolver implementation are now ready on the Alpha path. See the [initial
+backlog](docs/issues/INITIAL_BACKLOG.md) for dependencies and canonical state.
 
 ## Intended capabilities
 
@@ -62,7 +66,42 @@ hosted-service concerns remain future work or require further validation.
 
 ## Available local validation
 
-Run these commands from the repository root:
+Run these commands from the repository root. The root runner uses only the
+accepted `uv` backend environment and `corepack`/npm frontend tools, executes
+child commands directly, and returns a failing child command's nonzero status.
+
+```powershell
+uv --directory backend run --locked python ../scripts/cubeai.py setup
+uv --directory backend run --locked python ../scripts/cubeai.py format
+uv --directory backend run --locked python ../scripts/cubeai.py check
+uv --directory backend run --locked python ../scripts/cubeai.py test
+```
+
+`setup` installs the two locked workspaces. `format` intentionally rewrites
+only backend and frontend source files using their existing formatters; `check`
+is read-only and runs formatting verification, linting, type checks, and the
+backend architecture boundary check. `test` runs both workspace test suites.
+Focused workspace commands remain available in [backend/README.md](backend/README.md)
+and [frontend/README.md](frontend/README.md).
+
+To run the M0 connectivity slice, after `setup` run:
+
+```powershell
+uv --directory backend run --locked python ../scripts/cubeai.py dev
+```
+
+The runner starts the backend health server at
+`http://127.0.0.1:8000/health` and Vite on its reported local URL (normally
+`http://127.0.0.1:5173/`). Vite proxies `/health` to the local backend; open
+the Vite URL to see `Backend connected`. Use `Ctrl+C` to stop the two local
+processes. This command is intentionally minimal and does not add Docker,
+deployment configuration, or durable local-service management.
+
+The existing Make targets are optional shortcuts on hosts where Make is
+available; the Python root-runner commands above are the supported
+cross-platform-enough entry points.
+
+For individual workspace validation, run:
 
 ```powershell
 uv --directory backend sync --locked --all-groups
@@ -77,16 +116,37 @@ corepack npm --prefix frontend test
 corepack npm --prefix frontend run build
 ```
 
-There is intentionally no root aggregate command yet; M0-006 is the next
-work package for joining the independently validated workspaces.
+
+## Dependency and license review
+
+Before adding or upgrading a package, follow the reviewed
+[dependency and license policy](docs/DEPENDENCY-LICENSE-POLICY.md). The
+policy documents the required approval evidence, lockfile-based inventories,
+license reports, failure behavior, and narrow temporary exceptions.
+
+```powershell
+uv --directory backend tree --locked
+corepack npm --prefix frontend ls --package-lock-only --all
+
+uv --directory backend run --locked python ../scripts/report_backend_licenses.py
+node scripts/report_frontend_licenses.mjs
+
+uv --directory backend run --locked pytest -q tests/test_dependency_license_reports.py
+node --test scripts/report_frontend_licenses.test.mjs
+```
+
+On hosts with Make available, `make dependency-inventory`, `make
+license-report`, and `make dependency-license-test` provide optional shortcuts
+for the same commands.
 
 ## Contributing
 
-Contribution processes are not open yet. Use the workspace-local commands in
+Contribution processes are not open yet. Use the root commands above for
+aggregate validation or the workspace-local commands in
 [backend/README.md](backend/README.md) and [frontend/README.md](frontend/README.md)
-for the available checks; root aggregate validation arrives in M0-006. Proposed
-changes should begin as a focused issue or architectural proposal. Agentic
-contributors must follow [AGENTS.md](AGENTS.md).
+while developing a focused change. Proposed changes should begin as a focused
+issue or architectural proposal. Agentic contributors must follow
+[AGENTS.md](AGENTS.md).
 
 ## License
 

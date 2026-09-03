@@ -1,8 +1,11 @@
 # CubeUI
 
-CubeUI is CubeAI's single web-first frontend codebase. The current status is
-static: API fetching, routing, authentication, offline/PWA/sync, global state,
-and a design system are deliberately deferred.
+CubeUI is CubeAI's single web-first frontend codebase. Its M0 status component
+requests the local `/health` endpoint and displays `Backend connected` only
+after the expected response. Vite proxies that path to the local health server
+when started through the repository root `dev` command. Routing,
+authentication, offline/PWA/sync, global state, and a design system remain
+deferred.
 
 ## Requirements
 
@@ -26,6 +29,10 @@ corepack npm --prefix frontend run build
 
 `ci` uses the committed `package-lock.json` to reproduce the dependency tree.
 The development server prints its local URL when it starts.
+
+When running the frontend directly, also start the backend health server in a
+second terminal (`uv --directory backend run --locked python -m cubeai.api`).
+The root `dev` command starts both processes for the M0 connectivity proof.
 
 ## Quality checks
 

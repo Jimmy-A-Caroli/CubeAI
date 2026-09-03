@@ -7,9 +7,23 @@ from cubeai.lab.application.imports import (
     DiagnosticSeverity,
     ImportCandidate,
     ImportDiagnostic,
+    ImportOutcome,
     ImportResult,
+    SourceBoardObservation,
+    SourceFieldObservation,
+    SourceFieldState,
     SourceRequest,
     SourceSnapshotReference,
+)
+from cubeai.lab.application.metadata import (
+    MetadataDiagnostic,
+    MetadataDiagnosticCode,
+    MetadataResolution,
+    MetadataResolutionOutcome,
+    MetadataResolutionSnapshot,
+    MetadataResolver,
+    ResolvedPrinting,
+    ScryfallFace,
 )
 
 __all__ = (
@@ -19,7 +33,19 @@ __all__ = (
     "DiagnosticSeverity",
     "ImportCandidate",
     "ImportDiagnostic",
+    "ImportOutcome",
     "ImportResult",
+    "MetadataDiagnostic",
+    "MetadataDiagnosticCode",
+    "MetadataResolution",
+    "MetadataResolutionOutcome",
+    "MetadataResolutionSnapshot",
+    "MetadataResolver",
+    "ResolvedPrinting",
+    "ScryfallFace",
+    "SourceBoardObservation",
+    "SourceFieldObservation",
+    "SourceFieldState",
     "SourceRequest",
     "SourceSnapshotReference",
 )

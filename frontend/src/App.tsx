@@ -2,7 +2,7 @@ import './App.css';
 import { useEffect, useState } from 'react';
 
 export default function App() {
-  const [connected, setConnected] = useState(true);
+  const [connected, setConnected] = useState(false);
   useEffect(() => {
     if (typeof fetch !== 'function') return;
     void fetch('/health')

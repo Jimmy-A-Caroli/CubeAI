@@ -1,0 +1,30 @@
+{
+  "fixture_type": "cubeai-synthetic",
+  "schema_version": 1,
+  "purpose": "offline validation of documented Scryfall metadata request and bulk-list shapes",
+  "provenance": {
+    "source": "CubeAI-authored synthetic research test data",
+    "license": "MIT"
+  },
+  "collection_request": {
+    "identifiers": [
+      {"id": "11111111-1111-4111-8111-111111111111"},
+      {"id": "22222222-2222-4222-8222-222222222222"}
+    ]
+  },
+  "bulk_list": {
+    "object": "list",
+    "has_more": false,
+    "data": [
+      {
+        "object": "bulk_data",
+        "id": "33333333-3333-4333-8333-333333333333",
+        "type": "default_cards",
+        "updated_at": "2026-09-03T00:00:00Z",
+        "compressed_size": 1,
+        "uri": "https://metadata.example.invalid/bulk-data/default_cards",
+        "jsonl_download_uri": "https://metadata.example.invalid/bulk/default_cards.jsonl.gz"
+      }
+    ]
+  }
+}
