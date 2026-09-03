@@ -40,10 +40,7 @@ def test_metadata_lookup_requires_normalized_name_and_locked_version(
     distribution_info = metadata_path / "Unlicensed-9.9.9.dist-info"
     distribution_info.mkdir(parents=True)
     (distribution_info / "METADATA").write_text(
-        "Metadata-Version: 2.1\n"
-        "Name: Unlicensed\n"
-        "Version: 9.9.9\n"
-        "License: MIT\n",
+        "Metadata-Version: 2.1\nName: Unlicensed\nVersion: 9.9.9\nLicense: MIT\n",
         encoding="utf-8",
     )
 

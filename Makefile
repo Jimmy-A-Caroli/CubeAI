@@ -1,6 +1,7 @@
 setup:
-	uv --directory backend sync --locked --all-groups
-	corepack npm --prefix frontend ci
+	uv --directory backend run --locked python ../scripts/cubeai.py setup
+format:
+	uv --directory backend run --locked python ../scripts/cubeai.py format
 dependency-inventory:
 	uv --directory backend tree --locked
 	corepack npm --prefix frontend ls --package-lock-only --all
@@ -11,15 +12,8 @@ dependency-license-test:
 	uv --directory backend run --locked pytest -q tests/test_dependency_license_reports.py
 	node --test scripts/report_frontend_licenses.test.mjs
 check:
-	uv --directory backend run ruff format --check .
-	uv --directory backend run ruff check .
-	uv --directory backend run mypy --strict src
-	uv --directory backend run lint-imports
-	corepack npm --prefix frontend run format:check
-	corepack npm --prefix frontend run lint
-	corepack npm --prefix frontend run typecheck
+	uv --directory backend run --locked python ../scripts/cubeai.py check
 test:
-	uv --directory backend run pytest -q tests
-	corepack npm --prefix frontend test
+	uv --directory backend run --locked python ../scripts/cubeai.py test
 dev:
-	uv --directory backend run python -m cubeai.api
+	uv --directory backend run --locked python ../scripts/cubeai.py dev
