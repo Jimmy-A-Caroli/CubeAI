@@ -332,6 +332,7 @@ seat-visible current-pack access.
 - **Acceptance criteria:** Rating source and license are approved; no hidden information enters strategy input; all legal cards receive a deterministic comparable score; decision records rating and tie-break reason.
 - **Required tests:** Ordered ratings, equal scores, missing ratings, duplicate card names/printings, input visibility, stable version/config serialization.
 - **Expected artifacts/areas:** bot domain port, rating data policy/artifact, tests, research note.
+- **Research evidence:** [M1-012 Bot v0 rating-policy decision](../research/m1-012-bot-v0-rating-policy.md) is `REQUIRES HUMAN APPROVAL`; it does not approve a source, license, or implementation.
 
 ### M1-013 — Execute deterministic bot turns
 
