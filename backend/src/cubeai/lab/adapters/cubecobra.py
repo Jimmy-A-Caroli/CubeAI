@@ -392,14 +392,13 @@ class CubeCobraSource(CubeSource):
             diagnostics.extend(
                 ImportDiagnostic(
                     DiagnosticCode.UNSUPPORTED_NON_MAINBOARD,
-                    DiagnosticSeverity.ERROR,
+                    DiagnosticSeverity.WARNING,
                     f"non-mainboard array is nonempty: {board.name} ({board.count})",
                     snapshot,
                 )
                 for board in nonempty_boards
             )
-            outcome = ImportOutcome.UNSUPPORTED
-        elif optional_absent:
+        if optional_absent:
             outcome = ImportOutcome.SUPPORTED_WITH_OPTIONAL_DATA_ABSENT
         else:
             outcome = ImportOutcome.SUPPORTED
