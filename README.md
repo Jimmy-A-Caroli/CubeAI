@@ -23,12 +23,12 @@ commands. The M0 health endpoint is a connectivity proof only; it is not a
 product API or an import, metadata, drafting, persistence, or gameplay
 workflow.
 
-The currently eligible agent-safe work packages are M0-007, M0-010, and
-M0-011. M0-007 requires a successful remote run, so it cannot complete while
-this branch remains unpushed. M1-005 has a reviewed policy proposal, but its
-adoption is a human decision. M1-004 remains blocked pending a
-human-authorized supervised repair. See the [initial backlog](docs/issues/INITIAL_BACKLOG.md)
-for dependencies and canonical task state.
+The Scryfall metadata policy is accepted for M1: exact printing-ID resolution,
+a durable local cache, network calls only for required misses, and explicit
+unavailable/custom/unresolved outcomes—without fuzzy fallback or bulk-data
+infrastructure. M1-004's supervised CubeCobra repair and M1-006's supervised
+resolver implementation are now ready on the Alpha path. See the [initial
+backlog](docs/issues/INITIAL_BACKLOG.md) for dependencies and canonical state.
 
 ## Intended capabilities
 

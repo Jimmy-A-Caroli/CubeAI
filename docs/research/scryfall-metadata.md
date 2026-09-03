@@ -1,10 +1,12 @@
-# M1-005 Scryfall metadata and cache policy proposal
+# M1-005 Scryfall metadata and cache policy
 
-**Status:** decision-ready research only. This document does **not** adopt a
-provider, cache, attribution, image, storage, or metadata-resolution policy.
-M1-005 remains `human::decision`; M1-006 remains blocked. No Scryfall client,
-adapter, cache, bulk download, or production fixture is introduced by this
-report.
+**Status:** Accepted for M1 implementation by explicit human Alpha-0
+authorization on 2026-09-03. M1-005 is complete and M1-006 is unblocked. The
+accepted scope is exact Scryfall printing-ID resolution with a durable local
+cache, network lookup only when a cache result is required, and explicit
+unavailable/custom/unresolved outcomes. Automatic fuzzy/name fallback and
+bulk-data-first architecture are prohibited. This document still introduces no
+client, adapter, cache implementation, bulk download, or production fixture.
 
 **Accessed:** 2026-09-03. The detailed evidence and calculations remain in
 [Scryfall resolution reconnaissance](scryfall-resolution-reconnaissance.md).
@@ -54,25 +56,25 @@ data is committed here.
 | Images and attribution | Image URIs can be on a parent card or its faces. The use rules prohibit misleading presentation and require users to be able to identify artist/source for imagery. | M1 should retain source/image provenance but not mirror an image corpus. A UI decision must cover face images, artist/source presentation, and a source link. |
 | Custom cards | The documented lookup API resolves records already in Scryfall; it does not define creation/upload of arbitrary custom cards. | Preserve custom/unavailable input as an explicit unresolved/custom result. Never manufacture an Oracle or Scryfall printing ID, or silently accept a same-name match. |
 
-## Alternatives for human decision
+## Alternatives considered before acceptance
 
 | Alternative | Benefits | Costs and risks | M1 suitability |
 | --- | --- | --- | --- |
 | Live collection requests only | Smallest implementation; exact Scryfall IDs can be resolved in batches; no local database/archive lifecycle. | No offline resolution; repeated imports repeat provider work; rate scheduling and multi-batch availability remain. | Viable only for a deliberately online local MVP with clear failure behavior. |
 | Full bulk-data resolver | Local and offline-capable printing lookup after ingest; avoids repeated live lookups at scale. | A manifest, large download, gzip streaming, indexing, atomic refresh, disk budget, language contract, and data-use review are all required. | Too much scope for the smallest M1 path unless offline-first operation is a product requirement. |
-| Hybrid exact-ID live resolver with durable local cache | Makes only cache misses live, supports offline reuse of previously resolved cards, preserves exact-printing references, and avoids mandatory archive ingest. | Still needs cache storage, freshness rules, provider pacing, snapshot provenance, and an explicit stale/offline rule. | **Recommended for human approval** as the smallest responsible M1 option. Bulk can remain a later implementation behind the same resolver boundary. |
+| Hybrid exact-ID live resolver with durable local cache | Makes only cache misses live, supports offline reuse of previously resolved cards, preserves exact-printing references, and avoids mandatory archive ingest. | Still needs cache storage, freshness rules, provider pacing, snapshot provenance, and an explicit stale/offline rule. | **Accepted** as the smallest responsible M1 option. Bulk remains a later implementation behind the same resolver boundary. |
 
-## Proposed policy — pending human approval
+## Accepted M1 policy
 
-The following is an exact implementation proposal, not current repository
-behavior or an accepted architecture decision.
+The following is the accepted implementation direction. It is not current
+repository behavior until M1-006 implements it.
 
 1. **Resolution input and precedence.** Accept an exact Scryfall Card UUID as
    the only automatic M1 printing-resolution key. A CubeCobra-provided exact
    ID may be validated against set/collector/language/Oracle hints, but a
    disagreement yields a diagnostic rather than replacement. Do not choose a
    printing from `oracle_id`, name, fuzzy name, or set/collector fallback
-   automatically. Those possible fallbacks need separate human approval.
+   automatically. Those possible fallbacks are outside the accepted M1 scope.
 2. **Live client behavior.** Use HTTPS and one shared adapter-level scheduler.
    Send `User-Agent: CubeAI/<version> (<maintainer contact or repository URL>)`,
    `Accept: application/json;q=0.9,*/*;q=0.8`, and
@@ -140,29 +142,10 @@ mixed `not_found`, set/collector conflicts, language policy, multi-face cards,
 images, custom records, cache freshness, `400`, `404`, `429`, `5xx`, and
 network failures.
 
-## Required human decisions
+## Deferred product and legal questions
 
-Approval must select all of the following before M1-005 can be complete and
-before M1-006 is unblocked:
-
-1. Choose live-only, bulk, or the proposed hybrid strategy, including whether
-   offline use is required for the M1 demo.
-2. Approve or revise the exact-ID-only baseline and decide whether any
-   set/collector, language, Oracle, or name fallback may ever be automatic.
-3. Approve cache storage location, minimum freshness/revalidation behavior,
-   the proposed timeout/retry/cooldown values, and the stale-record display
-   rule.
-4. Decide the admission rule for `not_found`, ambiguous, stale, unavailable,
-   and custom memberships: reject the whole CubeVersion, permit an explicit
-   unresolved version, or require user remediation.
-5. Select accepted language/printing coverage and the threshold that would
-   justify Default Cards or All Cards bulk data.
-6. Approve image presentation, attribution/source-link behavior, and a legal/
-   product assessment of Scryfall data and image-use terms. This report makes
-   no license compatibility conclusion.
-7. Approve the retained cache fields and provenance/snapshot record so that
-   privacy, disk, and immutability expectations are clear before persistence
-   code exists.
-
-Until those decisions are recorded in a human-approved policy or ADR, the
-repository must keep M1-005 `READY`/`human::decision` and M1-006 `BLOCKED`.
+The acceptance above is sufficient for M1-006. It does not decide future
+image presentation, attribution UX, legal compatibility conclusions, expanded
+language coverage, automatic set/collector or Oracle/name fallback, or a
+threshold for bulk-data adoption. Those are explicitly deferred and must not
+block or broaden the exact-ID M1 resolver.

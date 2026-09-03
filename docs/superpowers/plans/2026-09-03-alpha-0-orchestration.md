@@ -143,3 +143,18 @@ pending explicit supervised-repair authorization.
   M1-004 supervised repair/acceptance
   M1-004 + M1-006 -> M1-007 -> M1-008 -> M1-010 -> M1-011
   ```
+
+## Wave 3 authorization and sequencing ruling
+
+- On 2026-09-03, human Alpha-0 authorization adopted M1-005's exact
+  printing-ID, durable-local-cache policy; it forbids automatic fuzzy/name
+  fallback and bulk-data-first architecture. M1-005 is now complete, and
+  M1-006 is canonically ready.
+- The same authorization permits a bounded supervised M1-004 repair and
+  acceptance pass against ADR-0004 and the frozen contract. M1-004 is now
+  canonically ready.
+- M1-004 and M1-006 are both on the critical path but are not dispatched in
+  parallel: they share the provider-neutral import model. M1-004 must first
+  repair its loss of printing/Oracle/provenance evidence and its diagnostics;
+  M1-006 then consumes that stabilized contract. This is an execution-order
+  ruling, not a new dependency.

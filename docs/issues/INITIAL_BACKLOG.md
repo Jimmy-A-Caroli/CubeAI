@@ -203,7 +203,7 @@ Completion evidence: `d9f2dd6`.
 
 ### M1-004 — Implement the CubeCobra read adapter
 
-- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::supervised`, `BLOCKED`
+- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::supervised`, `READY`
 - **Dependencies:** M1-003.
 - **Goal/context:** Import the approved CubeCobra contract through the provider-neutral port.
 - **Scope:** URL/identifier parsing, responsible HTTP behavior, supported response mapping, bounded timeout/retry, cache validators if supported, structured failures, contract fixtures.
@@ -214,7 +214,7 @@ Completion evidence: `d9f2dd6`.
 
 ### M1-005 — Define the Scryfall metadata and cache policy
 
-- **Labels/state:** `component::lab`, `type::research`, `priority::high`, `human::decision`, `READY`
+- **Labels/state:** `component::lab`, `type::research`, `priority::high`, `human::decision`, `COMPLETE`
 - **Dependencies:** M0-009.
 - **Goal/context:** Use Scryfall responsibly and choose when live collection lookup versus bulk data is appropriate.
 - **Scope:** Official API/bulk guidance, identifiers, attribution, images, required headers, throttling, retries, cache refresh, offline behavior, custom cards, and data/license implications; recommend M1 strategy.
@@ -223,11 +223,11 @@ Completion evidence: `d9f2dd6`.
 - **Required tests:** Validate documented example requests and bulk metadata shape with a small sanitized sample.
 - **Expected artifacts/areas:** `docs/research/scryfall-metadata.md`, proposed ADR if warranted.
 
-Research evidence: [Scryfall metadata/cache decision proposal](../research/scryfall-metadata.md) was independently reviewed. It is not adopted; M1-005 remains `READY` and `human::decision` until a human accepts or revises the proposal.
+Completion evidence: [Scryfall metadata/cache policy](../research/scryfall-metadata.md) was independently reviewed and explicitly adopted by human Alpha-0 authorization on 2026-09-03. The accepted M1 scope is exact printing-ID resolution with a durable local cache, network lookup only for required misses, explicit unavailable/custom/unresolved outcomes, no automatic fuzzy/name fallback, and no bulk-data-first architecture.
 
 ### M1-006 — Define metadata resolution and implement the Scryfall adapter
 
-- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::supervised`, `BLOCKED`
+- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::supervised`, `READY`
 - **Dependencies:** M1-002, M1-005.
 - **Goal/context:** Resolve import candidates without hiding ambiguity or coupling domain entities to Scryfall payloads.
 - **Scope:** Resolver port; batch identifiers; exact printing and Oracle resolution; cache implementation approved by policy; structured missing/ambiguous/custom outcomes.
