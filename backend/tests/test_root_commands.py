@@ -29,3 +29,15 @@ def test_aggregate_runner_stops_and_returns_a_controlled_child_failure() -> None
 
     assert exit_code == 23
     assert calls == [("first-child",), ("failing-child",)]
+
+
+def test_backend_format_and_check_commands_keep_the_lockfile_guard() -> None:
+    commands = ROOT_COMMANDS.COMMANDS["format"] + ROOT_COMMANDS.COMMANDS["check"]
+    backend_commands = [
+        command
+        for command in commands
+        if command[:4] == ("uv", "--directory", "backend", "run")
+    ]
+
+    assert backend_commands
+    assert all(command[4] == "--locked" for command in backend_commands)
