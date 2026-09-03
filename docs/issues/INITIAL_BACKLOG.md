@@ -338,7 +338,7 @@ seat-visible current-pack access.
 
 ### M1-013 — Execute deterministic bot turns
 
-- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::safe`, `READY`
+- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `COMPLETE`
 - **Dependencies:** M1-011, M1-012.
 - **Goal/context:** Advance seven bot seats around each human decision while retaining strategy provenance.
 - **Scope:** Bot-turn application service, per-seat strategy configuration, deterministic RNG derivation, legal-choice validation, failure behavior, bot pick events.
@@ -346,10 +346,11 @@ seat-visible current-pack access.
 - **Acceptance criteria:** Same draft/strategy/seed yields identical bot choices; every bot event names strategy/version; illegal strategy output aborts without corrupting state; human view stops at the next human decision.
 - **Required tests:** One-human/seven-bot golden draft segment, mixed strategy fake, illegal output rollback, deterministic RNG isolation, complete bot-only round.
 - **Expected artifacts/areas:** application service and tests.
+- **Completion evidence:** `543e8a6` (independent review approved; deterministic bot sequencing, seven-bot handoff, visibility, malformed strategy rejection, rollback, and full backend suite passed). Unlocks M1-014.
 
 ### M1-014 — Persist Cube versions and drafts in SQLite
 
-- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::supervised`, `BLOCKED`
+- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::supervised`, `READY`
 - **Dependencies:** M1-007, M1-013.
 - **Goal/context:** Support local restart and future schema evolution without leaking SQL models into the domain.
 - **Scope:** Repository ports, approved schema/migration tool, SQLite adapters, transaction boundary for pick plus bot turns, version/event persistence and rehydration.
