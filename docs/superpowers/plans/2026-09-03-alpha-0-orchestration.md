@@ -231,3 +231,31 @@ M1-011 draft state (BLOCKED on M1-010)
   sequence. The final independent review approved it.
 - M1-010 is complete. M1-011 is now ready; M1-012 and all later work remain
   outside this Alpha-closing run.
+
+## Wave 7 — Alpha-0 closing evidence
+
+- M1-004 correction `653e3ce` changes a populated CubeCobra supplementary
+  board from a blocking unsupported outcome to an explicit non-blocking
+  `unsupported_non_mainboard` warning. Only `mainboard` memberships are
+  imported; independent review approved the correction.
+- M1-011 implementation `9a44257` was independently reviewed as
+  `REPAIR_REQUIRED` twice: first for public construction of forged completed
+  histories, then for forged in-progress pack placement. `765d937` replays and
+  validates legal event histories; `4e09587` also binds current seat-to-pack
+  placement to that replay. Final re-review approved the transition state
+  machine. M1-011 is complete; M1-012 remains human-owned and blocked.
+- Checkpoint E ran against the public `modovintage` identifier without storing
+  or printing its payload. The supported import had 540 memberships and one
+  supplementary-board warning; first resolution was 540 `resolved`, offline
+  cache replay was 540 `cached_fresh`. It produced a draftable immutable
+  version with fingerprint
+  `17a9b63fd0a596760fa1205b24b93216e89e899811f7e4c105ea4e3ca3acac70`,
+  24 packs / 360 card instances, and a completed 360-event eight-seat draft
+  with 45 cards per pool. The deterministic event fingerprint was
+  `f2388fff7d57e6a31305acb10f17bcfb2ccddda157fef581ec90a859d4d6ba86` for
+  both resolution passes.
+- The Checkpoint E developer harness is `scripts/alpha_checkpoint_e.py`. Its
+  narrow cache-lifetime correction `5f107c9` closes SQLite connections after
+  each cache operation so temporary Windows caches are removable; focused
+  adapter and state tests passed. No bot policy/execution, persistence, API,
+  UI, gameplay, or later feature work was added.

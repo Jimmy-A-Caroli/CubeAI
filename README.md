@@ -6,29 +6,28 @@ The project is focused on the Cube loop: import a Cube, validate it, draft it, u
 
 ## Status
 
-CubeAI is in its repository-foundation phase, with the first CubeLab domain
-foundation now underway. The completed work packages are M0-001 through
-M0-009, M1-001 through M1-003, and M1-009. They establish locked Python and
-React/TypeScript workspaces, synthetic-fixture policy, frontend quality checks,
-the supported CubeCobra import contract, and immutable Cube/card identity and
-membership domain types. It also includes a minimal local connectivity slice:
-the backend serves `GET /health` and CubeUI displays its resulting connection
-status.
+CubeAI has completed the Alpha-0 CubeLab draft-core boundary. In addition to
+the repository foundations, M1-001 through M1-011 now provide a supported
+CubeCobra read adapter, exact printing-ID Scryfall resolution with a local
+cache, immutable Cube versions, capacity validation, deterministic allocation,
+and a deterministic local draft state machine. The product remains pre-API and
+pre-UI for importing and drafting; the existing `GET /health`/CubeUI status is
+only a minimal local connectivity proof.
 
-The `backend/` workspace provides framework-independent types for source
-references, import candidates, card and printing identities, Cube memberships,
-immutable Cube versions, and draft configuration/identity vocabulary. The `frontend/` workspace provides the React/TypeScript foundation
-and independent formatting, lint, typecheck, unit-test, and production-build
-commands. The M0 health endpoint is a connectivity proof only; it is not a
-product API or an import, metadata, drafting, persistence, or gameplay
-workflow.
+The `backend/` workspace keeps source candidates, card/printing identities,
+Cube memberships, immutable versions, validation, allocation, and transitions
+framework-independent. The `frontend/` workspace supplies the React/TypeScript
+foundation and independent formatting, lint, typecheck, unit-test, and
+production-build commands. No HTTP draft API, persistence, bot strategy, or
+import/draft UI has been implemented.
 
-The Scryfall metadata policy is accepted for M1: exact printing-ID resolution,
-a durable local cache, network calls only for required misses, and explicit
+The accepted Scryfall policy is exact printing-ID resolution, a durable local
+cache, network calls only for required misses, and explicit
 unavailable/custom/unresolved outcomes—without fuzzy fallback or bulk-data
-infrastructure. M1-004's supervised CubeCobra repair and M1-006's supervised
-resolver implementation are now ready on the Alpha path. See the [initial
-backlog](docs/issues/INITIAL_BACKLOG.md) for dependencies and canonical state.
+infrastructure. The M1-004 adapter records populated supplementary CubeCobra
+boards as non-blocking diagnostics while importing mainboard memberships only.
+See the [initial backlog](docs/issues/INITIAL_BACKLOG.md) for canonical state
+and dependencies.
 
 ## Intended capabilities
 
@@ -59,10 +58,11 @@ Development will be issue-driven. M0 and M1 are decomposed in the [initial backl
 
 ## Current limitations
 
-CubeCobra's supported import contract is documented, but its read adapter is
-not implemented. Scryfall metadata/cache policy, persistence, deterministic
-drafting, bots, analytics, simulation, gameplay, Forge feasibility, and all
-hosted-service concerns remain future work or require further validation.
+CubeCobra import and exact-ID metadata resolution are implemented as bounded
+adapters, and deterministic local draft allocation/transitions are available as
+domain code. Persistence, HTTP draft commands/views, import/draft UI, bot
+policy and execution, analytics, simulation, gameplay, Forge feasibility, and
+all hosted-service concerns remain future work or require further validation.
 
 ## Available local validation
 
@@ -83,6 +83,16 @@ is read-only and runs formatting verification, linting, type checks, and the
 backend architecture boundary check. `test` runs both workspace test suites.
 Focused workspace commands remain available in [backend/README.md](backend/README.md)
 and [frontend/README.md](frontend/README.md).
+
+An opt-in public-source Checkpoint E smoke exercises one supported CubeCobra
+snapshot through resolution, validation, allocation, and a completed
+deterministic draft. It creates a temporary Scryfall cache by default and
+prints aggregate evidence only; it is intentionally outside the default
+offline test suite.
+
+```powershell
+uv --directory backend run --locked python ../scripts/alpha_checkpoint_e.py
+```
 
 To run the M0 connectivity slice, after `setup` run:
 

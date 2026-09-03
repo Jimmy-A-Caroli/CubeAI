@@ -212,7 +212,10 @@ Completion evidence: `d9f2dd6`.
 - **Required tests:** Offline contract tests for all fixtures, HTTP fake tests for timeout/rate/error behavior, one opt-in live smoke test excluded from default suite.
 - **Expected artifacts/areas:** external adapter, tests, CubeCobra research updates.
 
-Completion evidence: reviewed commits `c7950a1` and `b1be034`; offline contract/fake-HTTP coverage, opt-in live-smoke exclusion, and locked backend validation passed.
+Completion evidence: reviewed commits `c7950a1` and `b1be034`; correction
+`653e3ce` records populated supplementary boards as non-blocking warnings
+while preserving mainboard-only membership import. Offline contract/fake-HTTP
+coverage, opt-in live-smoke exclusion, and locked backend validation passed.
 
 ### M1-005 — Define the Scryfall metadata and cache policy
 
@@ -303,7 +306,7 @@ selected membership occurrences as unique draft-card instances.
 
 ### M1-011 — Implement draft state transitions and pack rotation
 
-- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::safe`, `READY`
+- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::safe`, `COMPLETE`
 - **Dependencies:** M1-010.
 - **Goal/context:** Advance simultaneous draft rounds correctly through alternating directions.
 - **Scope:** Start pack, legal pick command, one pick per active seat per round, pack transfer, left/right alternation by pack number, empty-pack handling, completion, pools and immutable pick events.
@@ -311,6 +314,13 @@ selected membership occurrences as unique draft-card instances.
 - **Acceptance criteria:** Stale/illegal picks do not mutate state; no instance is picked twice or lost; direction alternates; draft completes only after every allocated card is picked; seat-visible view exposes appropriate current pack and public progress.
 - **Required tests:** Two- and eight-seat golden scenarios, direction changes, stale/wrong-seat/card errors, conservation invariant, completion and pool derivation.
 - **Expected artifacts/areas:** draft state machine, commands/views, tests.
+
+Completion evidence: reviewed commits `9a44257`, `765d937`, and `4e09587`;
+immutable state transitions replay and validate event histories, preserve the
+legally rotated current-pack position, reject stale/forged commands without
+mutation, and derive pools from ordered events. Two-, three-, and eight-seat
+goldens cover alternating directions, conservation, completion, and
+seat-visible current-pack access.
 
 ### M1-012 — Define the bot port and Bot v0 rating policy
 
