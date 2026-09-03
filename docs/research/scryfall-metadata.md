@@ -5,8 +5,13 @@ authorization on 2026-09-03. M1-005 is complete and M1-006 is unblocked. The
 accepted scope is exact Scryfall printing-ID resolution with a durable local
 cache, network lookup only when a cache result is required, and explicit
 unavailable/custom/unresolved outcomes. Automatic fuzzy/name fallback and
-bulk-data-first architecture are prohibited. This document still introduces no
-client, adapter, cache implementation, bulk download, or production fixture.
+bulk-data-first architecture are prohibited.
+
+M1-006 now implements this narrow policy through a provider-neutral resolver
+port, an exact-ID Scryfall collection adapter, and a caller-configured local
+SQLite cache. The implementation remains intentionally separate from
+CubeVersion assembly, validation, API/UI work, image download, and bulk-data
+ingest. Its cache and failure contract is documented in the backend README.
 
 **Accessed:** 2026-09-03. The detailed evidence and calculations remain in
 [Scryfall resolution reconnaissance](scryfall-resolution-reconnaissance.md).
@@ -119,6 +124,40 @@ repository behavior until M1-006 implements it.
    offering/language scope, stream JSONL gzip, record manifest ID/type/
    `updated_at`, and atomically replace a local derived index. The proposed M1
    baseline does not download a bulk archive.
+
+## M1-006 implementation record
+
+The implementation accepts only a UUID in an import candidate's
+`printing_hint`; that value is normalized and is the sole automatic provider
+lookup key. It does not use a candidate name, `oracle_id`, set, collector
+number, language, or Cube membership key to select a printing. A candidate
+with no exact ID or marked custom becomes `custom_or_unresolved`; malformed
+IDs become `invalid_reference` without network activity.
+
+`ScryfallMetadataResolver` first looks up the exact ID in a
+`SQLiteScryfallCache` supplied by the caller. The cache is a single SQLite
+`STRICT` table, keyed by Scryfall printing UUID, and stores only the approved
+printing/Oracle/face/display/image-URI subset plus `fetched_at` and a response
+schema version. There is deliberately no implicit global cache location: a
+local application composition root must choose a user-data path. A record is
+fresh for 24 hours. Offline mode returns either `cached_fresh` or
+`cached_stale` without network traffic; an offline miss returns explicit
+`provider_unavailable`. An online stale record is refreshed only by a valid
+exact-ID response.
+
+Live misses are deduplicated only for the provider request, chunked at 75,
+and then mapped back to every original membership occurrence in input order.
+The adapter sends the accepted headers, begins collection requests at least
+500 ms apart, makes no automatic retry on `429`, waits before later work after
+a `429`, and makes at most one delayed retry for a network failure or `5xx`.
+It maps malformed, `400`, and `404` collection responses to
+`provider_contract_failure`; collection `not_found` entries remain the only
+automatic `not_found` card result. Provider exceptions never leave the port.
+
+Each call returns an immutable resolution snapshot with cache-record
+references, provider printing/Oracle identities, outcome taxonomy, and
+Oracle-mismatch diagnostics. A later CubeVersion service—not this adapter—will
+own whether any unresolved outcome prevents version creation.
 
 ## Offline validation prepared by this research
 

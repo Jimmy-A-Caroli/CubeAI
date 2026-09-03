@@ -66,3 +66,34 @@ appropriate:
 $env:CUBEAI_LIVE_SMOKE = "1"
 uv --directory backend run pytest -q -o addopts='' -m live_smoke tests/test_cubecobra_live_smoke.py
 ```
+
+## Scryfall metadata resolver checks
+
+The M1 resolver is a provider-neutral application port with a Scryfall adapter
+that accepts only an exact Scryfall printing UUID from `ImportCandidate`.
+Callers compose it with an explicit local SQLite cache path; it has no implicit
+global database location:
+
+```python
+from pathlib import Path
+
+from cubeai.lab.adapters.scryfall import SQLiteScryfallCache, ScryfallMetadataResolver
+
+resolver = ScryfallMetadataResolver(
+    SQLiteScryfallCache(Path("local/scryfall-cache.sqlite3"))
+)
+```
+
+The cache is keyed by the provider printing UUID and stores only the approved
+metadata subset, cache timestamp, and response schema version. It is fresh for
+24 hours. Offline mode never sends requests: it returns fresh or stale cached
+records when present and a structured unavailable result for a miss. Online
+resolution uses only cache misses/stale refreshes, deduplicates provider
+requests without merging Cube memberships, and returns one result per original
+membership occurrence.
+
+The default test suite is fully offline and covers cache semantics, exact
+printing/Oracle mismatch diagnostics, duplicate memberships, collection
+`not_found`, malformed and unavailable provider responses, and pacing/retry
+limits. It uses only the CubeAI-authored synthetic collection fixture; it does
+not download Scryfall bulk data or images.
