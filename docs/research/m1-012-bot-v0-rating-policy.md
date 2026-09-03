@@ -1,6 +1,6 @@
 # M1-012 Bot v0 rating-policy decision
 
-**Status:** `POLICY ACCEPTED; IMPLEMENTATION READY FOR REVIEW`
+**Status:** `COMPLETE`
 
 **Issue:** M1-012 — Define the bot port and Bot v0 rating policy
 
@@ -109,8 +109,11 @@ M1-013/M1-014; and the import/draft UI issues depend on M1-015. There is no
 agent-safe Alpha-1 implementation to start without prematurely adopting a
 rating artifact or bot implementation, or violating those dependencies.
 
-**Checkpoint:** E — policy accepted; rating artifact and pure Bot v0 strategy
-port are ready for review.
+**Completion evidence:** `70d621f` — independently reviewed; focused Bot v0,
+draft-vocabulary, and draft-state tests passed.
 
-**Next action:** Complete independent review, then use the approved visible
-state port to implement M1-013 deterministic bot turns.
+**Checkpoint:** E — policy accepted; rating artifact and pure Bot v0 strategy
+port complete.
+
+**Next action:** Implement M1-013 deterministic bot turns through the approved
+visible-state port.

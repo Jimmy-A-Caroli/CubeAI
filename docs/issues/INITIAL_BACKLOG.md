@@ -324,7 +324,7 @@ seat-visible current-pack access.
 
 ### M1-012 — Define the bot port and Bot v0 rating policy
 
-- **Labels/state:** `component::lab`, `type::research`, `type::feature`, `priority::high`, `agent::supervised`, `READY FOR REVIEW`
+- **Labels/state:** `component::lab`, `type::research`, `type::feature`, `priority::high`, `COMPLETE`
 - **Dependencies:** M1-009.
 - **Goal/context:** Establish a transparent raw-ranking bot with licensed, versioned data and deterministic tie-breaking.
 - **Scope:** Strategy input/output port limited to visible state; rating dataset/source investigation; missing-rating fallback; strategy ID/version/configuration; score explanation and tie policy.
@@ -334,10 +334,11 @@ seat-visible current-pack access.
 - **Expected artifacts/areas:** bot domain port, rating data policy/artifact, tests, research note.
 - **Accepted policy:** `raw-ranking-v0` uses Oracle-ID lookup, `0.0` missing-rating fallback, ascending `DraftCardInstance.id` ties, and strategy/version provenance. The approved `cubeai-raw-ranking-v0@2026.09.03.1` artifact is a small CubeAI-owned, versioned JSON baseline with deliberately sparse synthetic coverage. CubeCobra/CubeCobraML data are prohibited until explicit reusable-data rights are confirmed; 17Lands is not a Bot v0 Vintage Cube substitute.
 - **Research evidence:** [M1-012 Bot v0 rating-policy decision](../research/m1-012-bot-v0-rating-policy.md) records the accepted policy, artifact provenance, and deferred external sources.
+- **Completion evidence:** `70d621f` (independent review approved; focused Bot v0, draft-vocabulary, and draft-state tests passed). Unlocks M1-013.
 
 ### M1-013 — Execute deterministic bot turns
 
-- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::safe`, `BLOCKED`
+- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::safe`, `READY`
 - **Dependencies:** M1-011, M1-012.
 - **Goal/context:** Advance seven bot seats around each human decision while retaining strategy provenance.
 - **Scope:** Bot-turn application service, per-seat strategy configuration, deterministic RNG derivation, legal-choice validation, failure behavior, bot pick events.
