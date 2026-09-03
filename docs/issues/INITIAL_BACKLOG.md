@@ -83,7 +83,7 @@ Completion evidence: reviewed implementation commit `f088c7fc74cd68051cb90154561
 
 ### M0-006 — Provide aggregate developer commands
 
-- **Labels/state:** `component::infra`, `type::feature`, `priority::high`, `agent::safe`, `BLOCKED`
+- **Labels/state:** `component::infra`, `type::feature`, `priority::high`, `agent::safe`, `READY`
 - **Dependencies:** M0-004, M0-005.
 - **Goal/context:** Give humans and agents stable commands instead of tool-specific guesswork.
 - **Scope:** Add cross-platform-enough entry points for setup, format, check, test, and development; join the backend health endpoint and frontend status view into the M0 connectivity slice; delegate to workspace tools without hiding errors.
@@ -116,7 +116,7 @@ Completion evidence: reviewed implementation commit `f088c7fc74cd68051cb90154561
 
 ### M0-009 — Add dependency and license reporting
 
-- **Labels/state:** `component::infra`, `type::test`, `priority::medium`, `agent::safe`, `READY`
+- **Labels/state:** `component::infra`, `type::test`, `priority::medium`, `agent::safe`, `COMPLETE`
 - **Dependencies:** M0-002, M0-003.
 - **Goal/context:** Make dependency review repeatable before Forge or data packages introduce risk.
 - **Scope:** Document dependency approval criteria; add reproducible inventory/license commands for both workspaces; define failure/allowlist policy.
@@ -124,6 +124,8 @@ Completion evidence: reviewed implementation commit `f088c7fc74cd68051cb90154561
 - **Acceptance criteria:** Direct and transitive dependencies can be inventoried from locks; unknown/disallowed licenses are visible; reports do not need committing unless documented.
 - **Required tests:** Run inventory commands on clean locks and verify a controlled unknown license is surfaced.
 - **Expected artifacts/areas:** scripts/configuration, dependency policy documentation.
+
+Completion evidence: reviewed implementation commits `99325dff3ba1045635469100baaa7cf9621d2f5c` and `b2de88f`; locked backend report tests passed, the backend report surfaced eight packages requiring human license review, and the frontend report passed with all locked packages allowed.
 
 ### M0-010 — Add issue and proposal templates
 
@@ -210,7 +212,7 @@ Completion evidence: `d9f2dd6`.
 
 ### M1-005 — Define the Scryfall metadata and cache policy
 
-- **Labels/state:** `component::lab`, `type::research`, `priority::high`, `human::decision`, `BLOCKED`
+- **Labels/state:** `component::lab`, `type::research`, `priority::high`, `human::decision`, `READY`
 - **Dependencies:** M0-009.
 - **Goal/context:** Use Scryfall responsibly and choose when live collection lookup versus bulk data is appropriate.
 - **Scope:** Official API/bulk guidance, identifiers, attribution, images, required headers, throttling, retries, cache refresh, offline behavior, custom cards, and data/license implications; recommend M1 strategy.
@@ -538,4 +540,4 @@ M2 issues are intentionally moderate-detail and remain `BLOCKED` until M1-018 an
 
 ## Recommended first issue
 
-M0-001 through M0-005, M0-008, and M1-001 through M1-003 and M1-009 are complete. The next eligible work packages are **M0-006 — Provide aggregate developer commands**, **M0-009 — Add dependency and license reporting**, **M0-010 — Add issue and proposal templates**, and **M1-004 — Implement the CubeCobra read adapter**. M1-004 remains supervised and requires explicit authorization before implementation.
+M0-001 through M0-005 and M0-008 through M0-009, plus M1-001 through M1-003 and M1-009, are complete. The next eligible agent-safe work packages are **M0-006 — Provide aggregate developer commands** and **M0-010 — Add issue and proposal templates**. **M1-005 — Define the Scryfall metadata and cache policy** is ready for bounded research, but its policy adoption remains a human decision. M1-004 remains blocked pending explicitly authorized supervised repair.

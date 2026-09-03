@@ -8,7 +8,7 @@ The project is focused on the Cube loop: import a Cube, validate it, draft it, u
 
 CubeAI is in its repository-foundation phase, with the first CubeLab domain
 foundation now underway. The completed work packages are M0-001 through
-M0-005, M0-008, M1-001 through M1-003, and M1-009. They establish locked Python and
+M0-005, M0-008 through M0-009, M1-001 through M1-003, and M1-009. They establish locked Python and
 React/TypeScript workspaces, synthetic-fixture policy, frontend quality checks,
 the supported CubeCobra import contract, and immutable Cube/card identity and
 membership domain types.
@@ -22,9 +22,11 @@ engine, bot, persistence layer, or user-facing product workflow has been
 implemented. The root aggregate command and integrated health slice remain later
 M0 work.
 
-The currently eligible work packages are M0-006, M0-009, M0-010, and M1-004.
-See the [initial backlog](docs/issues/INITIAL_BACKLOG.md) for their
-dependencies and the canonical task state.
+The currently eligible agent-safe work packages are M0-006 and M0-010.
+M1-005 is ready for research only; policy adoption is a human decision.
+M1-004 remains blocked pending a human-authorized supervised repair. See the
+[initial backlog](docs/issues/INITIAL_BACKLOG.md) for dependencies and the
+canonical task state.
 
 ## Intended capabilities
 

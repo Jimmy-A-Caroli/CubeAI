@@ -73,3 +73,43 @@ The three streams do not share files or interfaces. The audits do not alter
 source or canonical state; their findings determine whether a later tracking
 task is justified. Every implementation and any corrective change receives an
 independent review before integration.
+
+## Wave 1 evidence
+
+- Baseline at `7dc1964`: locked backend sync plus pytest, Ruff format/check,
+  mypy, and Import Linter passed (`84 passed`); clean frontend install plus
+  format, lint, typecheck, Vitest (`2 passed`), and production build passed.
+- M0-006 audit verdict: `REPAIR_REQUIRED`. The health handler is valid, but the
+  Makefile-only root runner is unavailable on the declared Windows path, lacks
+  `format`, does not start/proxy the frontend, omits required aggregate checks
+  and controlled-failure tests, and is contradicted by root/workspace docs.
+  M0-006 has complete listed dependencies and is an `agent::safe` targeted
+  repair candidate; it is not `COMPLETE`.
+- M1-004 audit verdict: `REPAIR_REQUIRED`. The current adapter maps narrow
+  happy paths but collapses failure codes, retries 404, loses Oracle/provenance
+  evidence, accepts unknown source shapes, exposes raw provider exceptions,
+  uses a non-injectable clock, and lacks adapter-contract tests. M1-004 stays
+  canonically blocked and requires a human-authorized supervised repair before
+  it can unlock M1-007.
+- M0-009 was independently reviewed, repaired in `b2de88f`, rereviewed, and
+  integrated into this orchestration branch in `2a11129`. It adds no dependency
+  or lockfile change. In the locked Python 3.14 toolchain, its three backend
+  report tests passed; the report intentionally exited 1 after surfacing eight
+  packages for human license review. The frontend report tests passed (four
+  tests), with all locked frontend packages allowed. This is visible review
+  evidence rather than automatic legal approval of the eight backend packages.
+
+## Wave 2
+
+1. M0-006 targeted `agent::safe` repair: replace the Windows-incompatible and
+   incomplete aggregate-command surface with documented, cross-platform-enough
+   workspace entry points; complete the health-view connectivity proof and its
+   focused tests without changing product architecture.
+2. M1-005 bounded research: record authoritative Scryfall API/bulk-data facts
+   and a decision-ready cache/metadata policy proposal. It may not adopt the
+   policy, implement an adapter, or mark the issue complete; human approval is
+   the hard stop before M1-006.
+
+The streams have separate source areas and may proceed in parallel. Wave 2
+cannot unlock M1-006 without a human decision, and M1-004 remains blocked
+pending explicit supervised-repair authorization.
