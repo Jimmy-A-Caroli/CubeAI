@@ -34,6 +34,8 @@ from cubeai.lab.application.metadata import (
 )
 from cubeai.lab.application.ratings import load_raw_ranking_v0_artifact
 from cubeai.lab.application.bot_turns import BotTurnError, advance_bot_turns
+from cubeai.lab.application.repositories import DraftRepository
+from cubeai.lab.application.draft_commands import submit_human_pick_and_advance_bots
 
 __all__ = (
     "CandidateResolution",
@@ -65,4 +67,6 @@ __all__ = (
     "load_raw_ranking_v0_artifact",
     "BotTurnError",
     "advance_bot_turns",
+    "DraftRepository",
+    "submit_human_pick_and_advance_bots",
 )
