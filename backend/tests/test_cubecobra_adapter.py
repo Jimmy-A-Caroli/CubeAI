@@ -13,6 +13,7 @@ import pytest
 from cubeai.lab.adapters.cubecobra import CubeCobraSource
 from cubeai.lab.application import (
     DiagnosticCode,
+    DiagnosticSeverity,
     ImportOutcome,
     SourceFieldState,
     SourceRequest,
@@ -265,19 +266,33 @@ def test_malformed_json_and_malformed_required_response_are_invalid_source() -> 
     assert _codes(malformed_response) == {DiagnosticCode.INVALID_SOURCE_RECORD}
 
 
-def test_supplementary_board_is_diagnosed_without_merging_it() -> None:
+@pytest.mark.parametrize("board", ["basics", "maybeboard"])
+def test_populated_supplementary_board_is_nonblocking_and_not_imported(
+    board: str,
+) -> None:
     payload = _response_fixture("normal-public-mainboard.json")
-    payload["cards"]["maybeboard"] = [payload["cards"]["mainboard"][0]]
+    payload["cards"][board] = [payload["cards"]["mainboard"][0]]
     source, _ = _source([FakeResponse(200, _body(payload))])
 
     result = source.import_cube(SourceRequest("cubecobra", "modovintage"))
 
-    assert result.outcome is ImportOutcome.UNSUPPORTED
+    assert result.outcome is ImportOutcome.SUPPORTED_WITH_OPTIONAL_DATA_ABSENT
     assert len(result.candidates) == 1
+    assert result.candidates[0].position == 0
     assert result.snapshot is not None
-    assert result.snapshot.supplementary_boards[0].name == "maybeboard"
+    assert result.snapshot.supplementary_boards[0].name == board
     assert result.snapshot.supplementary_boards[0].count == 1
-    assert DiagnosticCode.UNSUPPORTED_NON_MAINBOARD in _codes(result)
+    diagnostics = [
+        diagnostic
+        for diagnostic in result.diagnostics
+        if diagnostic.code is DiagnosticCode.UNSUPPORTED_NON_MAINBOARD
+    ]
+    assert [(diagnostic.severity, diagnostic.message) for diagnostic in diagnostics] == [
+        (
+            DiagnosticSeverity.WARNING,
+            f"non-mainboard array is nonempty: {board} (1)",
+        )
+    ]
 
 
 @pytest.mark.parametrize(

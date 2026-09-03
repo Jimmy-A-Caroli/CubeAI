@@ -1,5 +1,12 @@
 """CubeLab application boundary."""
 
+from cubeai.lab.application.cube_versions import (
+    CubeVersionAssemblyDiagnostic,
+    CubeVersionAssemblyDiagnosticCode,
+    CubeVersionAssemblyOutcome,
+    CubeVersionAssemblyResult,
+    assemble_cube_version,
+)
 from cubeai.lab.application.imports import (
     CandidateResolution,
     CubeSource,
@@ -43,6 +50,11 @@ __all__ = (
     "MetadataResolver",
     "ResolvedPrinting",
     "ScryfallFace",
+    "CubeVersionAssemblyDiagnostic",
+    "CubeVersionAssemblyDiagnosticCode",
+    "CubeVersionAssemblyOutcome",
+    "CubeVersionAssemblyResult",
+    "assemble_cube_version",
     "SourceBoardObservation",
     "SourceFieldObservation",
     "SourceFieldState",

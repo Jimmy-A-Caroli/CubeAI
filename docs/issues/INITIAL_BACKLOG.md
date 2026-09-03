@@ -212,7 +212,10 @@ Completion evidence: `d9f2dd6`.
 - **Required tests:** Offline contract tests for all fixtures, HTTP fake tests for timeout/rate/error behavior, one opt-in live smoke test excluded from default suite.
 - **Expected artifacts/areas:** external adapter, tests, CubeCobra research updates.
 
-Completion evidence: reviewed commits `c7950a1` and `b1be034`; offline contract/fake-HTTP coverage, opt-in live-smoke exclusion, and locked backend validation passed.
+Completion evidence: reviewed commits `c7950a1` and `b1be034`; correction
+`653e3ce` records populated supplementary boards as non-blocking warnings
+while preserving mainboard-only membership import. Offline contract/fake-HTTP
+coverage, opt-in live-smoke exclusion, and locked backend validation passed.
 
 ### M1-005 — Define the Scryfall metadata and cache policy
 
@@ -242,7 +245,7 @@ Completion evidence: reviewed commits `452b078` and `65a8b1b`; exact-ID cache/re
 
 ### M1-007 — Assemble immutable Cube versions
 
-- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::safe`, `READY`
+- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::safe`, `COMPLETE`
 - **Dependencies:** M1-004, M1-006.
 - **Goal/context:** Combine source candidates and resolution results into a reviewable version without partial silent acceptance.
 - **Scope:** Import application service, version fingerprint/identity, resolved memberships, diagnostics summary, source snapshot link, explicit usability state.
@@ -251,9 +254,14 @@ Completion evidence: reviewed commits `452b078` and `65a8b1b`; exact-ID cache/re
 - **Required tests:** Normal, duplicate, unresolved/custom, changed-version, and deterministic fingerprint scenarios.
 - **Expected artifacts/areas:** application service/domain tests.
 
+Completion evidence: reviewed commits `786df60` and `1964005`; immutable
+provider-neutral assembly preserves membership occurrences/source order and
+identity scopes, emits deterministic SHA-256 content fingerprints, and makes
+unusable or mismatched source/resolution evidence explicit.
+
 ### M1-008 — Validate Cube contents and draft capacity
 
-- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::safe`, `BLOCKED`
+- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::safe`, `COMPLETE`
 - **Dependencies:** M1-007.
 - **Goal/context:** Explain whether a Cube version supports a requested draft before allocation.
 - **Scope:** Severity-coded validation for usable memberships, unresolved cards, duplicate semantics, configured seats/packs/pack size, excess cards, and unsupported custom behavior.
@@ -261,6 +269,11 @@ Completion evidence: reviewed commits `452b078` and `65a8b1b`; exact-ID cache/re
 - **Acceptance criteria:** Required size is computed safely; too-small Cube is an error; excess is permitted by explicit allocation policy; duplicate names are not inherently errors; messages identify affected membership/configuration.
 - **Required tests:** Exact size, too small, excess, zero/invalid configuration, duplicates, unresolved/custom policy cases.
 - **Expected artifacts/areas:** domain validation and application tests.
+
+Completion evidence: reviewed commits `355ddac` and `ca773e0`; deterministic
+domain validation produces membership- and draft-geometry-aware diagnostics,
+rejects unresolved/custom memberships and insufficient usable capacity, and
+explicitly permits excess memberships pending M1-010 selection policy.
 
 ### M1-009 — Define draft entities and configuration
 
@@ -277,7 +290,7 @@ Completion evidence: `ce23379`.
 
 ### M1-010 — Allocate deterministic packs
 
-- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::safe`, `BLOCKED`
+- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::safe`, `COMPLETE`
 - **Dependencies:** M1-008, M1-009.
 - **Goal/context:** Allocate a valid Cube version into packs reproducibly without duplicating membership instances.
 - **Scope:** Seeded sampling/shuffle policy, stable pre-randomization ordering, draft-card instance creation, configurable geometry, and explicit excess-card handling.
@@ -286,9 +299,14 @@ Completion evidence: `ce23379`.
 - **Required tests:** Golden seed, conservation/uniqueness invariant, duplicate memberships, exact/excess/insufficient sizes, invalid configuration.
 - **Expected artifacts/areas:** draft allocation domain service and tests.
 
+Completion evidence: reviewed commits `df78485`, `c548c57`, and `ec60c8f`;
+allocation consumes fingerprint-bound validation evidence, revalidates the
+immutable version, preserves source order before seeded shuffle, and conserves
+selected membership occurrences as unique draft-card instances.
+
 ### M1-011 — Implement draft state transitions and pack rotation
 
-- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::safe`, `BLOCKED`
+- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::safe`, `COMPLETE`
 - **Dependencies:** M1-010.
 - **Goal/context:** Advance simultaneous draft rounds correctly through alternating directions.
 - **Scope:** Start pack, legal pick command, one pick per active seat per round, pack transfer, left/right alternation by pack number, empty-pack handling, completion, pools and immutable pick events.
@@ -296,6 +314,13 @@ Completion evidence: `ce23379`.
 - **Acceptance criteria:** Stale/illegal picks do not mutate state; no instance is picked twice or lost; direction alternates; draft completes only after every allocated card is picked; seat-visible view exposes appropriate current pack and public progress.
 - **Required tests:** Two- and eight-seat golden scenarios, direction changes, stale/wrong-seat/card errors, conservation invariant, completion and pool derivation.
 - **Expected artifacts/areas:** draft state machine, commands/views, tests.
+
+Completion evidence: reviewed commits `9a44257`, `765d937`, and `4e09587`;
+immutable state transitions replay and validate event histories, preserve the
+legally rotated current-pack position, reject stale/forged commands without
+mutation, and derive pools from ordered events. Two-, three-, and eight-seat
+goldens cover alternating directions, conservation, completion, and
+seat-visible current-pack access.
 
 ### M1-012 — Define the bot port and Bot v0 rating policy
 

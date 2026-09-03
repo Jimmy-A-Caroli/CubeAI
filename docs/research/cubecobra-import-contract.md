@@ -101,10 +101,11 @@ claimed.
 
 **FROZEN:** import `mainboard` only.
 For every other nonempty array-valued board, retain its name and count in
-source provenance and return `UNSUPPORTED_NON_MAINBOARD`; do not merge,
-discard silently, or assign draft/sideboard semantics. Empty known boards are
-recorded without a diagnostic. A non-array `cards` property is ignored as a
-non-board (an `id` property was observed in prior reconnaissance).
+source provenance and return a non-blocking `UNSUPPORTED_NON_MAINBOARD`
+warning; do not merge, discard silently, or assign draft/sideboard semantics.
+The valid mainboard import continues. Empty known boards are recorded without a
+diagnostic. A non-array `cards` property is ignored as a non-board (an `id`
+property was observed in prior reconnaissance).
 
 The corpus established `maybeboard` and `basics`, not their CubeAI semantics,
 and did not establish other board names. Therefore a nonempty unknown named
@@ -179,7 +180,8 @@ not an adapter or a promise that the excerpts are complete payloads.
 - **Identifier-only:** accept a full ID or nonempty `shortId`; page URL parsing
   is outside this provider/application contract.
 - **Mainboard-only:** import `mainboard`; diagnose every nonempty
-  supplementary board without merging or assigning domain semantics.
+  supplementary board without merging or assigning domain semantics. The
+  diagnostic is non-blocking for an otherwise supported mainboard import.
 - **Membership occurrence:** one mainboard array element is one membership;
   equal provider, printing, or Oracle identifiers never collapse occurrences.
 - **Identity scopes:** retain printing and Oracle evidence separately.

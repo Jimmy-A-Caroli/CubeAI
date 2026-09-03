@@ -15,7 +15,7 @@ class ResolutionStatus(StrEnum):
     CUSTOM = "custom"
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, slots=True)
 class SourceReference:
     source: str
     external_id: str
@@ -25,7 +25,7 @@ class SourceReference:
         _require_nonblank_string(self.external_id, "external_id")
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, slots=True)
 class CardIdentity:
     id: str
     name: str
@@ -43,7 +43,7 @@ class CardIdentity:
             raise ValueError("oracle_id must be absent for a nonresolved identity")
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, slots=True)
 class CardPrinting:
     id: str
     card_identity: CardIdentity
@@ -53,7 +53,7 @@ class CardPrinting:
         _require_nonblank_string(self.id, "id")
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, slots=True)
 class Cube:
     id: str
     name: str
@@ -63,7 +63,7 @@ class Cube:
         _require_nonblank_string(self.id, "id")
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, slots=True)
 class CubeCard:
     id: str
     resolution_status: ResolutionStatus
@@ -88,17 +88,34 @@ class CubeCard:
             raise ValueError("printing must be absent for a nonresolved CubeCard")
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, slots=True)
 class CubeVersion:
     id: str
     cube: Cube
     cards: tuple[CubeCard, ...]
     source_reference: SourceReference | None = None
+    resolution_snapshot_id: str | None = None
+    content_fingerprint: str | None = None
 
     def __post_init__(self) -> None:
         _require_nonblank_string(self.id, "id")
+        if not isinstance(self.cube, Cube):
+            raise ValueError("cube must be a Cube")
         cards = tuple(self.cards)
+        if any(not isinstance(card, CubeCard) for card in cards):
+            raise ValueError("cards must contain CubeCard values")
         object.__setattr__(self, "cards", cards)
         card_ids = [card.id for card in cards]
         if len(card_ids) != len(set(card_ids)):
             raise ValueError("duplicate CubeCard.id values are not allowed")
+        if self.source_reference is not None and not isinstance(
+            self.source_reference, SourceReference
+        ):
+            raise ValueError("source_reference must be a SourceReference or None")
+        if self.resolution_snapshot_id is not None:
+            _require_nonblank_string(
+                self.resolution_snapshot_id, "resolution_snapshot_id"
+            )
+        fingerprint = self.content_fingerprint or self.id
+        _require_nonblank_string(fingerprint, "content_fingerprint")
+        object.__setattr__(self, "content_fingerprint", fingerprint)

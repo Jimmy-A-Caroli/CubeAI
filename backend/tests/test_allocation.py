@@ -1,33 +1,217 @@
+"""Focused tests for deterministic allocation from validated CubeVersions."""
+
+from dataclasses import FrozenInstanceError
+
 import pytest
+
 from cubeai.lab.domain import (
+    CardIdentity,
+    CardPrinting,
     Cube,
     CubeCard,
+    CubeValidationResult,
     CubeVersion,
-    ResolutionStatus,
     DraftConfiguration,
-    allocate_packs,
     InsufficientCubeCapacity,
+    ResolutionStatus,
+    allocate_packs,
+    validate_cube_version,
 )
 
 
-def version(size: int) -> CubeVersion:
-    return CubeVersion(
-        "v",
-        Cube("c", "Cube"),
-        tuple(CubeCard(f"m{i}", ResolutionStatus.UNRESOLVED) for i in range(size)),
+def _membership(membership_id: str, *, printing_id: str) -> CubeCard:
+    identity = CardIdentity(
+        id=f"oracle:{printing_id}",
+        name=f"Synthetic {printing_id}",
+        resolution_status=ResolutionStatus.RESOLVED,
+        oracle_id=f"oracle:{printing_id}",
+    )
+    return CubeCard(
+        membership_id,
+        ResolutionStatus.RESOLVED,
+        CardPrinting(printing_id, identity),
     )
 
 
-def test_allocation_is_deterministic_and_configurable() -> None:
-    config = DraftConfiguration(2, 2, 3, 42)
-    first = allocate_packs("d", version(12), config)
-    second = allocate_packs("d", version(12), config)
-    assert first == second and len(first) == 4 and all(len(p.cards) == 3 for p in first)
-    assert allocate_packs("d", version(12), DraftConfiguration(2, 2, 3, 43)) != first
+def _version(size: int) -> CubeVersion:
+    return CubeVersion(
+        "version-1",
+        Cube("cube-1", "Synthetic Cube"),
+        tuple(
+            _membership(f"membership-{index}", printing_id=f"printing-{index}")
+            for index in range(size)
+        ),
+    )
 
 
-def test_duplicate_memberships_are_distinct_and_capacity_is_checked() -> None:
-    allocated = allocate_packs("d", version(6), DraftConfiguration(1, 1, 6, 1))
-    assert len({card.cube_card_id for card in allocated[0].cards}) == 6
+def _validation(version: CubeVersion, configuration: DraftConfiguration):
+    return validate_cube_version(version, configuration)
+
+
+def _membership_ids(allocation: object) -> tuple[str, ...]:
+    assert isinstance(allocation, tuple)
+    return tuple(
+        instance.cube_card_id
+        for allocated_pack in allocation
+        for instance in allocated_pack.cards
+    )
+
+
+def test_allocation_is_deterministic_and_uses_validation_geometry() -> None:
+    version = _version(12)
+    configuration = DraftConfiguration(2, 2, 3, 42)
+    validation = _validation(version, configuration)
+
+    first = allocate_packs("draft-1", version, validation)
+    second = allocate_packs("draft-1", version, validation)
+
+    assert first == second
+    assert len(first) == 4
+    assert all(len(pack.cards) == 3 for pack in first)
+    assert [pack.pack.owner_seat for pack in first] == [0, 1, 0, 1]
+
+
+def test_golden_seed_preserves_source_order_before_deterministic_shuffle() -> None:
+    version = CubeVersion(
+        "version-source-order",
+        Cube("cube-1", "Synthetic Cube"),
+        tuple(
+            _membership(f"membership-{index}", printing_id=f"printing-{index}")
+            for index in (5, 4, 3, 2, 1, 0)
+        ),
+    )
+    configuration = DraftConfiguration(2, 1, 3, 17)
+
+    allocation = allocate_packs("draft-1", version, _validation(version, configuration))
+
+    assert _membership_ids(allocation) == (
+        "membership-5",
+        "membership-0",
+        "membership-4",
+        "membership-3",
+        "membership-2",
+        "membership-1",
+    )
+    assert set(_membership_ids(allocation)) == {card.id for card in version.cards}
+
+
+def test_different_seed_changes_a_nontrivial_allocation() -> None:
+    version = _version(12)
+    first = allocate_packs(
+        "draft-1", version, _validation(version, DraftConfiguration(2, 2, 3, 42))
+    )
+    second = allocate_packs(
+        "draft-1", version, _validation(version, DraftConfiguration(2, 2, 3, 43))
+    )
+
+    assert _membership_ids(first) != _membership_ids(second)
+
+
+def test_membership_accounting_preserves_duplicates_and_excess_policy() -> None:
+    version = CubeVersion(
+        "version-duplicates",
+        Cube("cube-1", "Synthetic Cube"),
+        (
+            _membership("membership-1", printing_id="printing-1"),
+            _membership("membership-2", printing_id="printing-1"),
+            _membership("membership-3", printing_id="printing-2"),
+            _membership("membership-4", printing_id="printing-3"),
+        ),
+    )
+    configuration = DraftConfiguration(1, 1, 3, 1)
+    allocation = allocate_packs("draft-1", version, _validation(version, configuration))
+
+    membership_ids = _membership_ids(allocation)
+    assert len(membership_ids) == 3
+    assert len(set(membership_ids)) == 3
+    assert set(membership_ids).issubset({card.id for card in version.cards})
+    assert len({instance.id for pack in allocation for instance in pack.cards}) == 3
+
+
+def test_insufficient_or_blocking_validation_cannot_allocate() -> None:
+    small = _version(2)
+    configuration = DraftConfiguration(1, 1, 3, 1)
     with pytest.raises(InsufficientCubeCapacity):
-        allocate_packs("d", version(5), DraftConfiguration(1, 1, 6, 1))
+        allocate_packs("draft-1", small, _validation(small, configuration))
+
+    unresolved = CubeVersion(
+        "version-unresolved",
+        Cube("cube-1", "Synthetic Cube"),
+        (
+            _membership("membership-1", printing_id="printing-1"),
+            _membership("membership-2", printing_id="printing-2"),
+            _membership("membership-3", printing_id="printing-3"),
+            CubeCard("membership-4", ResolutionStatus.UNRESOLVED),
+        ),
+    )
+    with pytest.raises(ValueError, match="blocking"):
+        allocate_packs("draft-1", unresolved, _validation(unresolved, configuration))
+
+
+def test_allocation_rejects_other_version_validation_and_cannot_mutate_inputs() -> None:
+    version = _version(3)
+    other_version = CubeVersion(
+        "version-2", Cube("cube-2", "Other Cube"), version.cards
+    )
+    validation = _validation(version, DraftConfiguration(1, 1, 3, 1))
+
+    with pytest.raises(ValueError, match="belong"):
+        allocate_packs("draft-1", other_version, validation)
+    allocation = allocate_packs("draft-1", version, validation)
+    with pytest.raises(FrozenInstanceError):
+        allocation[0].cards = ()  # type: ignore[misc]
+    assert [card.id for card in version.cards] == [
+        "membership-0",
+        "membership-1",
+        "membership-2",
+    ]
+
+
+def test_forged_validation_cannot_allocate_unresolved_memberships() -> None:
+    configuration = DraftConfiguration(1, 1, 3, 1)
+    version = CubeVersion(
+        "version-unresolved",
+        Cube("cube-1", "Synthetic Cube"),
+        (
+            _membership("membership-1", printing_id="printing-1"),
+            _membership("membership-2", printing_id="printing-2"),
+            _membership("membership-3", printing_id="printing-3"),
+            CubeCard("membership-4", ResolutionStatus.UNRESOLVED),
+        ),
+    )
+    forged = CubeValidationResult(
+        version.id, version.content_fingerprint, configuration, 3
+    )
+
+    with pytest.raises(ValueError, match="blocking"):
+        allocate_packs("draft-1", version, forged)
+
+
+def test_stale_draftable_validation_cannot_cross_cubeversion_snapshots() -> None:
+    configuration = DraftConfiguration(1, 1, 3, 1)
+    first = CubeVersion(
+        "shared-id",
+        Cube("cube-1", "Synthetic Cube"),
+        tuple(
+            _membership(f"first-{index}", printing_id=f"printing-{index}")
+            for index in range(3)
+        ),
+        content_fingerprint="first-snapshot",
+    )
+    changed = CubeVersion(
+        "shared-id",
+        Cube("cube-1", "Synthetic Cube"),
+        tuple(
+            _membership(f"changed-{index}", printing_id=f"printing-{index}")
+            for index in range(3)
+        ),
+        content_fingerprint="changed-snapshot",
+    )
+
+    with pytest.raises(ValueError, match="snapshot"):
+        allocate_packs("draft-1", changed, _validation(first, configuration))
+
+
+def test_invalid_geometry_cannot_reach_allocation() -> None:
+    with pytest.raises(ValueError, match="pack_size"):
+        DraftConfiguration(1, 1, 0, 1)
