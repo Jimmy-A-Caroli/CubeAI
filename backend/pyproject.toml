@@ -37,6 +37,12 @@ strict = true
 mypy_path = "src"
 exclude = "(^|/)(\\.venv|build|dist)(/|$)"
 
+[tool.pytest.ini_options]
+addopts = "-m 'not live_smoke'"
+markers = [
+    "live_smoke: explicit network smoke check; excluded from the default suite",
+]
+
 [tool.importlinter]
 root_package = "cubeai"
 include_external_packages = true

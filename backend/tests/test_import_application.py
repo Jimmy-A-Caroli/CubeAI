@@ -66,9 +66,18 @@ def test_candidate_preserves_duplicate_memberships_and_source_evidence() -> None
 def test_diagnostic_codes_are_stable_enums(code: DiagnosticCode) -> None:
     diagnostic = ImportDiagnostic(code, DiagnosticSeverity.ERROR, "diagnostic")
     assert diagnostic.code.value in {
-        "transport_failure",
+        "source_request_invalid",
+        "source_inaccessible",
+        "source_rate_limited",
+        "source_unavailable",
         "unsupported_source_contract",
+        "unsupported_visibility",
+        "unsupported_non_mainboard",
+        "empty_mainboard",
+        "card_count_mismatch",
         "invalid_source_record",
+        "unknown_source_shape",
+        "optional_source_data_malformed",
     }
 
 

@@ -7,7 +7,11 @@ from cubeai.lab.application.imports import (
     DiagnosticSeverity,
     ImportCandidate,
     ImportDiagnostic,
+    ImportOutcome,
     ImportResult,
+    SourceBoardObservation,
+    SourceFieldObservation,
+    SourceFieldState,
     SourceRequest,
     SourceSnapshotReference,
 )
@@ -19,7 +23,11 @@ __all__ = (
     "DiagnosticSeverity",
     "ImportCandidate",
     "ImportDiagnostic",
+    "ImportOutcome",
     "ImportResult",
+    "SourceBoardObservation",
+    "SourceFieldObservation",
+    "SourceFieldState",
     "SourceRequest",
     "SourceSnapshotReference",
 )

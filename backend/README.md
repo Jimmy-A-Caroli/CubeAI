@@ -48,3 +48,21 @@ recommended way to verify the full M0 status view.
 External adapters, persistence, and product workflow automation remain outside
 this health proof. The architecture check keeps `cubeai.lab.domain` independent
 from API, adapter, persistence, and framework modules.
+
+## CubeCobra adapter checks
+
+The default suite uses only the reviewed, sanitized CubeCobra contract excerpts
+and never performs external requests. It covers identifier-only input, public
+mainboard mapping, separate provider/printing/Oracle evidence, duplicate
+occurrences, provenance, supplementary-board diagnostics, and bounded failure
+outcomes.
+
+One low-frequency live smoke check is deliberately excluded from normal test
+runs. It sends no response body to fixtures or logs. Run it only when an
+intentional network check against the reference-corpus CORE identifier is
+appropriate:
+
+```powershell
+$env:CUBEAI_LIVE_SMOKE = "1"
+uv --directory backend run pytest -q -o addopts='' -m live_smoke tests/test_cubecobra_live_smoke.py
+```
