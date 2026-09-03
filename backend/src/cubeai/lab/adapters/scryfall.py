@@ -450,6 +450,8 @@ class ScryfallMetadataResolver:
                 return MetadataResolutionOutcome.NETWORK_FAILURE
             except Exception:
                 return MetadataResolutionOutcome.PROVIDER_CONTRACT_FAILURE
+            if type(status) is not int or not isinstance(body, bytes):
+                return MetadataResolutionOutcome.PROVIDER_CONTRACT_FAILURE
             if status == 429:
                 self._cooldown_until = self._now() + timedelta(
                     seconds=RATE_LIMIT_COOLDOWN_SECONDS

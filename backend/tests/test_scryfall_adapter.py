@@ -38,11 +38,11 @@ ORACLE_ID = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
 
 
 class FakeResponse:
-    def __init__(self, status: int, body: bytes) -> None:
+    def __init__(self, status: object, body: object) -> None:
         self.status = status
         self._body = body
 
-    def read(self) -> bytes:
+    def read(self) -> object:
         return self._body
 
 
@@ -134,6 +134,14 @@ def test_exact_collection_contract_maps_printing_and_preserves_identity_layers(
     assert result.printing.printing_id == PRINTING_ID
     assert result.printing.oracle_id == ORACLE_ID
     assert result.printing.provider == "scryfall"
+    assert result.printing.name == "Synthetic Ember"
+    assert result.printing.set_code == "syn"
+    assert result.printing.collector_number == "1"
+    assert result.printing.language == "en"
+    assert result.printing.layout == "normal"
+    assert result.printing.image_uris == (
+        ("normal", "https://images.example.invalid/synthetic-ember.jpg"),
+    )
     assert (
         result.cache_reference == f"scryfall:{PRINTING_ID}:2026-09-03T12:00:00+00:00:v1"
     )
@@ -273,6 +281,23 @@ def test_collection_not_found_remains_explicit_and_does_not_fallback(
 
     assert result.outcome is MetadataResolutionOutcome.NOT_FOUND
     assert result.printing is None
+
+
+@pytest.mark.parametrize(
+    "response",
+    [
+        FakeResponse("200", _body(_fixture_document())),
+        FakeResponse(200, "not bytes"),
+    ],
+)
+def test_malformed_response_status_or_body_is_a_structured_contract_failure(
+    tmp_path: Path, response: FakeResponse
+) -> None:
+    resolver, _, _ = _resolver(tmp_path, [response])
+
+    result = resolver.resolve((_candidate(),)).resolutions[0]
+
+    assert result.outcome is MetadataResolutionOutcome.PROVIDER_CONTRACT_FAILURE
 
 
 @pytest.mark.parametrize(

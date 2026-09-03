@@ -1,5 +1,12 @@
 {
-  "provenance": "CubeAI-authored synthetic Scryfall collection contract fixture; no provider response data.",
+  "fixture_type": "cubeai-synthetic-contract",
+  "schema_version": 1,
+  "purpose": "exact Scryfall collection response parsing",
+  "provenance": {
+    "source": "CubeAI-authored synthetic test data",
+    "license": "MIT",
+    "provider_data": "none"
+  },
   "response": {
     "data": [
       {

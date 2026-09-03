@@ -13,6 +13,9 @@ FIXTURES_ROOT = REPOSITORY_ROOT / "fixtures"
 SYNTHETIC_FIXTURE = (
     FIXTURES_ROOT / "synthetic" / "duplicate-membership-unresolved-custom.json"
 )
+SCRYFALL_CONTRACT_FIXTURE = (
+    FIXTURES_ROOT / "contracts" / "scryfall" / "exact-collection.json"
+)
 SECRET_PATTERN = re.compile(
     r'(?i)"?(?:api[_-]?key|authorization|bearer|password|secret|token)"?\s*[:=]'
 )
@@ -53,6 +56,31 @@ def test_synthetic_fixture_preserves_duplicate_and_unresolved_custom_cases() -> 
     assert unresolved_custom["resolution_status"] == "unresolved_custom"
     assert unresolved_custom["printing_id"] is None
     assert unresolved_custom["oracle_id"] is None
+
+
+def test_scryfall_contract_fixture_is_synthetic_licensed_and_parser_shaped() -> None:
+    fixture = json.loads(SCRYFALL_CONTRACT_FIXTURE.read_text(encoding="utf-8"))
+
+    assert fixture["fixture_type"] == "cubeai-synthetic-contract"
+    assert fixture["schema_version"] == 1
+    assert fixture["purpose"] == "exact Scryfall collection response parsing"
+    assert fixture["provenance"] == {
+        "source": "CubeAI-authored synthetic test data",
+        "license": "MIT",
+        "provider_data": "none",
+    }
+    assert set(fixture["response"]) == {"data", "not_found"}
+    assert fixture["response"]["not_found"] == []
+    assert set(fixture["response"]["data"][0]) == {
+        "id",
+        "oracle_id",
+        "name",
+        "set",
+        "collector_number",
+        "lang",
+        "layout",
+        "image_uris",
+    }
 
 
 def test_committed_json_fixtures_contain_no_secret_markers() -> None:
