@@ -178,6 +178,14 @@ def test_cache_is_durable_fresh_and_stale_offline_without_network(
     assert offline_opener.calls == []
 
 
+def test_cache_connections_close_after_each_operation(tmp_path: Path) -> None:
+    cache = SQLiteScryfallCache(tmp_path / "scryfall-cache.sqlite3")
+    cache.get(PRINTING_ID)
+
+    cache.path.unlink()
+    assert not cache.path.exists()
+
+
 def test_stale_online_record_refreshes_and_offline_miss_is_explicit(
     tmp_path: Path,
 ) -> None:

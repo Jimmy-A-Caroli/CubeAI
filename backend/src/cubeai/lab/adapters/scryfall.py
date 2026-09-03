@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from collections.abc import Callable, Mapping
+from collections.abc import Callable, Iterator, Mapping
+from contextlib import contextmanager
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 import hashlib
@@ -189,7 +190,7 @@ class SQLiteScryfallCache:
     def __init__(self, path: Path) -> None:
         self._path = path
         self._path.parent.mkdir(parents=True, exist_ok=True)
-        with self._connect() as connection:
+        with self._connection() as connection:
             connection.execute(
                 """
                 CREATE TABLE IF NOT EXISTS scryfall_cache_records (
@@ -206,7 +207,7 @@ class SQLiteScryfallCache:
         return self._path
 
     def get(self, printing_id: str) -> ResolvedPrinting | None:
-        with self._connect() as connection:
+        with self._connection() as connection:
             row = connection.execute(
                 "SELECT payload FROM scryfall_cache_records WHERE printing_id = ?",
                 (printing_id,),
@@ -218,7 +219,7 @@ class SQLiteScryfallCache:
     def put(self, printing: ResolvedPrinting) -> None:
         if printing.provider != "scryfall":
             raise ValueError("the Scryfall cache only accepts Scryfall printings")
-        with self._connect() as connection:
+        with self._connection() as connection:
             connection.execute(
                 """
                 INSERT INTO scryfall_cache_records (
@@ -237,8 +238,14 @@ class SQLiteScryfallCache:
                 ),
             )
 
-    def _connect(self) -> sqlite3.Connection:
-        return sqlite3.connect(self._path)
+    @contextmanager
+    def _connection(self) -> Iterator[sqlite3.Connection]:
+        connection = sqlite3.connect(self._path)
+        try:
+            yield connection
+            connection.commit()
+        finally:
+            connection.close()
 
 
 @dataclass(frozen=True, slots=True)
