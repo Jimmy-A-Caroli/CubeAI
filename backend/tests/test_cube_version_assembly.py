@@ -202,6 +202,38 @@ def test_invalid_import_or_mismatched_resolution_cannot_create_a_partial_version
     )
 
 
+def test_resolution_cannot_substitute_different_source_evidence_for_same_key() -> None:
+    imported_custom = _candidate(
+        "membership-1", 0, resolution=CandidateResolution.CUSTOM
+    )
+    substituted_resolved = _candidate("membership-1", 0)
+
+    result = assemble_cube_version(
+        ImportResult(_source_snapshot(), (imported_custom,)),
+        MetadataResolutionSnapshot(
+            "resolution-snapshot-1",
+            "2026-09-03T12:00:00+00:00",
+            (
+                MetadataResolution(
+                    substituted_resolved,
+                    MetadataResolutionOutcome.RESOLVED,
+                    _printing(),
+                    "scryfall:printing-1:record",
+                ),
+            ),
+        ),
+        cube_id="cube-1",
+        cube_name="Synthetic Cube",
+    )
+
+    assert result.outcome is CubeVersionAssemblyOutcome.NOT_ASSEMBLED
+    assert result.cube_version is None
+    assert result.diagnostics[0].code is (
+        CubeVersionAssemblyDiagnosticCode.RESOLUTION_SNAPSHOT_MISMATCH
+    )
+    assert result.diagnostics[0].membership_key == "membership-1"
+
+
 def test_resolved_printing_without_card_level_oracle_identity_is_not_usable() -> None:
     candidate = _candidate("membership-1", 0)
     missing_oracle = ResolvedPrinting(

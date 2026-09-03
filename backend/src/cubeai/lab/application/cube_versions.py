@@ -43,7 +43,6 @@ class CubeVersionAssemblyDiagnosticCode(StrEnum):
 
     IMPORT_NOT_SUPPORTED = "import_not_supported"
     RESOLUTION_SNAPSHOT_MISMATCH = "resolution_snapshot_mismatch"
-    MISSING_RESOLUTION = "missing_resolution"
     UNRESOLVED_MEMBERSHIP = "unresolved_membership"
     CUSTOM_MEMBERSHIP = "custom_membership"
     INVALID_RESOLUTION = "invalid_resolution"
@@ -157,21 +156,29 @@ def assemble_cube_version(
     source_keys = tuple(
         candidate.membership_key for candidate in import_result.candidates
     )
-    if set(resolutions) != set(source_keys) or any(
-        resolutions[key].candidate.source_snapshot != import_result.snapshot
-        for key in source_keys
-    ):
+    mismatched_candidate = next(
+        (
+            candidate
+            for candidate in import_result.candidates
+            if candidate.membership_key not in resolutions
+            or resolutions[candidate.membership_key].candidate != candidate
+        ),
+        None,
+    )
+    if set(resolutions) != set(source_keys) or mismatched_candidate is not None:
         return CubeVersionAssemblyResult(
             CubeVersionAssemblyOutcome.NOT_ASSEMBLED,
             None,
             (
                 CubeVersionAssemblyDiagnostic(
                     CubeVersionAssemblyDiagnosticCode.RESOLUTION_SNAPSHOT_MISMATCH,
-                    (
-                        "Resolution results must match every membership from the imported "
-                        "source snapshot."
-                    ),
+                    "Resolution results must exactly match imported memberships.",
                     import_result.snapshot,
+                    (
+                        mismatched_candidate.membership_key
+                        if mismatched_candidate is not None
+                        else None
+                    ),
                 ),
             ),
         )
