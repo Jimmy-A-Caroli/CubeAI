@@ -4,6 +4,8 @@ import pytest
 
 from cubeai.lab.domain import (
     ActorOrigin,
+    BotDecisionProvenance,
+    BotTieBreakReason,
     Draft,
     DraftCardInstance,
     DraftConfiguration,
@@ -12,7 +14,20 @@ from cubeai.lab.domain import (
     DraftSeat,
     DraftStatus,
     PickEvent,
+    RatingLookupOutcome,
 )
+
+
+def _bot_provenance() -> BotDecisionProvenance:
+    return BotDecisionProvenance(
+        "raw-ranking-v0",
+        "1",
+        "artifact-1",
+        "1",
+        1.0,
+        RatingLookupOutcome.RATED,
+        BotTieBreakReason.HIGHEST_RATING,
+    )
 
 
 def test_configuration_is_generic_and_computes_required_cards() -> None:
@@ -50,10 +65,20 @@ def test_identity_scopes_and_duplicate_memberships_remain_distinct() -> None:
 
 def test_pick_event_carries_actor_provenance_without_transition_logic() -> None:
     event = PickEvent(
-        "draft-1", 0, 1, 0, 0, "instance-1", ActorOrigin.BOT, "seat-1", "bot-v0"
+        "draft-1",
+        0,
+        1,
+        0,
+        0,
+        "instance-1",
+        ActorOrigin.BOT,
+        "seat-1",
+        "raw-ranking-v0@1",
+        _bot_provenance(),
     )
     assert event.actor_origin is ActorOrigin.BOT
-    assert event.strategy_ref == "bot-v0"
+    assert event.strategy_ref == "raw-ranking-v0@1"
+    assert event.bot_provenance == _bot_provenance()
     assert (
         Draft("draft-1", "cube-version-1", DraftConfiguration(2, 1, 3, 1)).status
         is DraftStatus.CREATED
@@ -74,3 +99,17 @@ def test_invalid_identity_fields_are_rejected() -> None:
         DraftCardInstance("instance-1", "draft-1", "")
     with pytest.raises(ValueError, match="actor_origin"):
         PickEvent("draft-1", 0, 0, 0, 0, "instance-1", "bot", "actor")  # type: ignore[arg-type]
+    with pytest.raises(ValueError, match="require bot_provenance"):
+        PickEvent("draft-1", 0, 0, 0, 0, "instance-1", ActorOrigin.BOT, "bot")
+    with pytest.raises(ValueError, match="requires actor_origin BOT"):
+        PickEvent(
+            "draft-1",
+            0,
+            0,
+            0,
+            0,
+            "instance-1",
+            ActorOrigin.HUMAN,
+            "seat-0",
+            bot_provenance=_bot_provenance(),
+        )

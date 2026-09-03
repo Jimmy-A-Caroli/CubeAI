@@ -2,6 +2,7 @@
 
 from dataclasses import dataclass
 from enum import StrEnum
+from math import isfinite
 
 
 def _require_text(value: object, field: str) -> str:
@@ -20,6 +21,16 @@ class ActorOrigin(StrEnum):
     HUMAN = "human"
     BOT = "bot"
     SIMULATION = "simulation"
+
+
+class RatingLookupOutcome(StrEnum):
+    RATED = "rated"
+    MISSING = "missing"
+
+
+class BotTieBreakReason(StrEnum):
+    HIGHEST_RATING = "highest_rating"
+    INSTANCE_ID = "instance_id"
 
 
 @dataclass(frozen=True, slots=True)
@@ -100,6 +111,38 @@ class DraftCardInstance:
 
 
 @dataclass(frozen=True, slots=True)
+class BotDecisionProvenance:
+    """The durable, decision-local explanation for one Bot v0 pick."""
+
+    strategy_id: str
+    strategy_version: str
+    rating_artifact_id: str
+    rating_artifact_version: str
+    selected_rating: float
+    rating_lookup_outcome: RatingLookupOutcome
+    tie_break_reason: BotTieBreakReason
+
+    def __post_init__(self) -> None:
+        for field in (
+            "strategy_id",
+            "strategy_version",
+            "rating_artifact_id",
+            "rating_artifact_version",
+        ):
+            _require_text(getattr(self, field), field)
+        if (
+            not isinstance(self.selected_rating, (int, float))
+            or isinstance(self.selected_rating, bool)
+            or not isfinite(self.selected_rating)
+        ):
+            raise ValueError("selected_rating must be finite numeric")
+        if not isinstance(self.rating_lookup_outcome, RatingLookupOutcome):
+            raise ValueError("rating_lookup_outcome must be a RatingLookupOutcome")
+        if not isinstance(self.tie_break_reason, BotTieBreakReason):
+            raise ValueError("tie_break_reason must be a BotTieBreakReason")
+
+
+@dataclass(frozen=True, slots=True)
 class PickEvent:
     draft_id: str
     sequence: int
@@ -110,6 +153,7 @@ class PickEvent:
     actor_origin: ActorOrigin
     actor_id: str
     strategy_ref: str | None = None
+    bot_provenance: BotDecisionProvenance | None = None
 
     def __post_init__(self) -> None:
         _require_text(self.draft_id, "draft_id")
@@ -123,6 +167,13 @@ class PickEvent:
             raise ValueError("actor_origin must be an ActorOrigin")
         if self.strategy_ref is not None:
             _require_text(self.strategy_ref, "strategy_ref")
+        if self.actor_origin is ActorOrigin.BOT and self.bot_provenance is None:
+            raise ValueError("BOT pick events require bot_provenance")
+        if self.bot_provenance is not None:
+            if self.actor_origin is not ActorOrigin.BOT:
+                raise ValueError("bot_provenance requires actor_origin BOT")
+            if not isinstance(self.bot_provenance, BotDecisionProvenance):
+                raise ValueError("bot_provenance must be a BotDecisionProvenance")
 
 
 @dataclass(frozen=True, slots=True)

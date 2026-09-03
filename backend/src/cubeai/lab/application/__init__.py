@@ -32,6 +32,7 @@ from cubeai.lab.application.metadata import (
     ResolvedPrinting,
     ScryfallFace,
 )
+from cubeai.lab.application.ratings import load_raw_ranking_v0_artifact
 
 __all__ = (
     "CandidateResolution",
@@ -60,4 +61,5 @@ __all__ = (
     "SourceFieldState",
     "SourceRequest",
     "SourceSnapshotReference",
+    "load_raw_ranking_v0_artifact",
 )

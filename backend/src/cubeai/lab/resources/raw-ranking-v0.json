@@ -1,0 +1,13 @@
+{
+  "artifact_id": "cubeai-raw-ranking-v0",
+  "artifact_version": "2026.09.03.1",
+  "created_date": "2026-09-03",
+  "ownership": "CubeAI-owned baseline artifact.",
+  "basis": "A deliberately small repository-authored static prior for the synthetic acceptance path; it is not a third-party ranking dataset, observed human behavior, or contextual drafting model.",
+  "rights": "CubeAI-owned artifact. It does not reproduce or redistribute CubeCobra, CubeCobraML, 17Lands, or another third-party rating dataset.",
+  "coverage": "Two Oracle IDs used by the synthetic acceptance path. All unlisted Oracle IDs intentionally use the Bot v0 0.0 fallback.",
+  "ratings": [
+    {"oracle_id": "oracle-1", "rating": 3.0},
+    {"oracle_id": "oracle-2", "rating": 1.0}
+  ]
+}

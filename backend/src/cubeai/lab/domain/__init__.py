@@ -11,6 +11,8 @@ from cubeai.lab.domain.cube import (
 )
 from cubeai.lab.domain.draft import (
     ActorOrigin,
+    BotDecisionProvenance,
+    BotTieBreakReason,
     Draft,
     DraftCardInstance,
     DraftConfiguration,
@@ -19,6 +21,15 @@ from cubeai.lab.domain.draft import (
     DraftSeat,
     DraftStatus,
     PickEvent,
+    RatingLookupOutcome,
+)
+from cubeai.lab.domain.bot import (
+    BotPickDecision,
+    BotVisibleCandidate,
+    BotVisibleState,
+    RatingArtifact,
+    RatingEntry,
+    RawRankingStrategyV0,
 )
 from cubeai.lab.domain.allocation import (
     AllocatedPack,
@@ -51,6 +62,8 @@ __all__ = (
     "ResolutionStatus",
     "SourceReference",
     "ActorOrigin",
+    "BotDecisionProvenance",
+    "BotTieBreakReason",
     "Draft",
     "DraftCardInstance",
     "DraftConfiguration",
@@ -59,6 +72,13 @@ __all__ = (
     "DraftSeat",
     "DraftStatus",
     "PickEvent",
+    "RatingLookupOutcome",
+    "BotPickDecision",
+    "BotVisibleCandidate",
+    "BotVisibleState",
+    "RatingArtifact",
+    "RatingEntry",
+    "RawRankingStrategyV0",
     "AllocatedPack",
     "InsufficientCubeCapacity",
     "allocate_packs",

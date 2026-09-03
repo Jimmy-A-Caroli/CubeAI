@@ -1,6 +1,6 @@
 # M1-012 Bot v0 rating-policy decision
 
-**Status:** `POLICY ACCEPTED; IMPLEMENTATION BLOCKED ON RATING ARTIFACT`
+**Status:** `POLICY ACCEPTED; IMPLEMENTATION READY FOR REVIEW`
 
 **Issue:** M1-012 — Define the bot port and Bot v0 rating policy
 
@@ -29,17 +29,17 @@ policy on 2026-09-03:
   remains a methodological/future-environment candidate, not a Vintage Cube
   ranking substitute or Bot v0 dependency.
 
-The human did not approve a concrete rating artifact, source version, or
-acquisition process. Consequently, M1-012 cannot yet create a non-zero static
-external card-strength prior without inventing a source, and it remains blocked
-on that artifact decision. The accepted policy itself must not be represented
-as approval to use CubeCobra, CubeCobraML, 17Lands, Scryfall, EDHREC, or a
-newly invented source.
+The human approved the first artifact class: a small, CubeAI-owned, versioned
+curated artifact. The committed `cubeai-raw-ranking-v0@2026.09.03.1` JSON
+artifact is intentionally limited to two synthetic acceptance-path Oracle IDs.
+It is repository-authored, not a copy of a third-party dataset; all other
+Oracle IDs receive the accepted `0.0` fallback. The accepted policy must not
+be represented as approval to use CubeCobra, CubeCobraML, 17Lands, Scryfall,
+EDHREC, or a newly invented third-party source.
 
-## Accepted Bot v0 contract after artifact approval
+## Accepted Bot v0 contract
 
-Once a concrete, rights-cleared rating artifact is approved, Bot v0 will apply
-one pinned snapshot as follows:
+Bot v0 applies the committed, pinned artifact snapshot as follows:
 
 | Concern | Accepted policy | Rationale |
 |---|---|---|
@@ -51,20 +51,20 @@ one pinned snapshot as follows:
 | Decision meaning | A score represents only the declared static card-strength prior, not universal card power, human draft quality, human-likeness, or expected game performance. | Prevents an unsupported quality claim. |
 | Overrides | Defer Cube-specific overrides. | Overrides need a separate authored-data, versioning, and provenance policy. |
 
-The existing draft core already offers a narrow legal-card projection and
-validates a chosen instance through its immutable pick transition. It must not
-hand its complete runner state to a strategy. The current `PickEvent` has only
-an opaque `strategy_ref`, so it cannot yet satisfy Bot v0's explanation
-requirement. After rating-artifact approval, M1-012 must decide and test a typed decision
-record (on the event or a linked immutable record) containing at least strategy
-ID/version, source snapshot and derivation revision, checksum, rating lookup
-outcome, numeric score or fallback, and tie-break reason. This document does
-not preselect that data shape.
+The existing draft core offers a narrow legal-card projection and validates a
+chosen instance through its immutable pick transition. It must not hand its
+complete runner state to a strategy. M1-012 adds the typed
+`BotDecisionProvenance` record to every Bot-origin `PickEvent`, retaining
+strategy ID/version, artifact ID/version, finite selected rating, lookup
+outcome, and tie-break reason. External-source snapshots, derivation revisions,
+and checksums remain deferred until a rights-cleared external artifact is
+separately approved; the CubeAI-owned package-local artifact needs none.
 
 ## Source candidates and evidence
 
 | Candidate | License / rights evidence | Coverage and semantics | Versioning / cadence | Fit and disposition |
 |---|---|---|---|---|
+| CubeAI-owned `cubeai-raw-ranking-v0` artifact | Repository-authored and CubeAI-owned; it contains no third-party rating dataset. | Two synthetic acceptance-path Oracle IDs; all other cards are intentionally unrated and receive `0.0`. It is a product baseline, not a representative Vintage Cube ranking. | Versioned JSON packaged with CubeLab. Changes require review and a new artifact version. | **Approved for Bot v0.** Small by design and replaceable without changing strategy logic. |
 | CubeCobra public export with a derived `elos.json`-style ranking | CubeCobra's repository describes an ISC source-code license, but that does not expressly license hosted/exported data. CubeCobraML documents a public export, including Oracle mappings, cubes, picks, decks, and derived ELO output. | Cube-draft observations with Oracle-level mappings are a high-priority future research candidate. This remains pick-preference evidence, not card-power truth. | CubeCobraML documents quarterly export updates. A later rights-cleared proposal would pin export object/version, retrieval date, checksum, derivation code revision/configuration, and output checksum; never refresh during a draft. | **Not approved for use.** Do not use, copy, commit, scrape, redistribute, or make it a Bot v0 dependency until explicit reusable-data rights are confirmed. |
 | 17Lands public datasets | Its public-data page says datasets are normally CC BY 4.0, subject to stated exceptions. Its usage guidance prefers public datasets over scraping and warns that API stability is not guaranteed. | Arena Limited, expansion/event-specific observations. It lacks a justified cross-format normalization and will not cover many powered, older, or paper-only Cube cards. | Public datasets expose a last-updated value; a future use would pin URL, update value, retrieval date, and content checksum. | **Not approved for Bot v0.** It remains a methodological and future-environment candidate, but is not a defensible direct Vintage Cube ranking. |
 | Scryfall / EDHREC-derived popularity | No new source was investigated or approved for rating reuse. Existing CubeAI policy limits Scryfall to exact printing metadata. | Metadata and Commander popularity are not Cube-draft raw rankings. | Not applicable. | **Reject.** Using either would expand policy and conflate unrelated signals. |
@@ -75,15 +75,18 @@ Primary evidence: [CubeCobraML export documentation](https://github.com/dekkergl
 [17Lands usage guidance](https://www.17lands.com/usage_guidelines), and
 [17Lands terms](https://www.17lands.com/terms_of_service).
 
-## Required provenance and operational limits after artifact approval
+## Artifact provenance and operational limits
 
-An approved implementation must keep the rating artifact outside the repository
-unless its license explicitly permits inclusion. Each accepted snapshot must
-record source location/identifier, source terms or permission reference,
-retrieval timestamp, source and derived-artifact checksums, derivation revision
-and configuration, and the Bot v0 strategy version. Updating ratings is a
-separate deliberate snapshot operation, never a live provider call or implicit
-mid-draft refresh.
+The first artifact is package-local at
+`backend/src/cubeai/lab/resources/raw-ranking-v0.json`. It names its ID,
+version, creation date, CubeAI ownership, basis, rights statement, coverage,
+and Oracle-ID ratings. Future non-CubeAI artifacts must remain outside the
+repository unless their rights explicitly permit inclusion. Every future
+accepted snapshot must record source location/identifier, source terms or
+permission reference, retrieval timestamp, source and derived-artifact
+checksums, derivation revision and configuration, and the Bot v0 strategy
+version. Updating ratings is a deliberate reviewed snapshot operation, never a
+live provider call or implicit mid-draft refresh.
 
 The bot explanation for every decision must identify the same snapshot and
 strategy version, the selected instance, Oracle-ID lookup result, score or
@@ -106,12 +109,8 @@ M1-013/M1-014; and the import/draft UI issues depend on M1-015. There is no
 agent-safe Alpha-1 implementation to start without prematurely adopting a
 rating artifact or bot implementation, or violating those dependencies.
 
-**Checkpoint:** E — policy accepted; no rating artifact or bot interface
-implemented.
+**Checkpoint:** E — policy accepted; rating artifact and pure Bot v0 strategy
+port are ready for review.
 
-**Next action:** A human approves one concrete, rights-cleared static rating
-artifact (or explicitly revises the requirement to allow a non-external neutral
-baseline). The approval must identify source/author, license or permission,
-version/snapshot, permitted use, and the minimal committed/acquisition form.
-Only then can M1-012 be made ready and its minimal bot-port/provenance
-implementation planned.
+**Next action:** Complete independent review, then use the approved visible
+state port to implement M1-013 deterministic bot turns.
