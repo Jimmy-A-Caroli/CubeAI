@@ -170,3 +170,21 @@ pending explicit supervised-repair authorization.
   bulk behavior. Its 150-test default backend suite remains offline.
 - M1-007 is now the next Alpha-path task; it must assemble the reviewed import
   and resolution snapshots into immutable, diagnosable CubeVersions.
+
+## Wave 4 — immutable version integration
+
+- M1-007 implementation `786df60` was independently reviewed as
+  `REPAIR_REQUIRED`: matching a membership key and source snapshot did not
+  establish that the resolved record belonged to the exact imported candidate.
+  The repair `1964005` makes that equality a construction precondition and
+  adds a custom-versus-resolved substitution regression. Independent re-review
+  approved the repair.
+- The integrated default-offline backend suite passed with `157 passed` after
+  the repair. M1-007 is complete, so M1-008 is now the only ready Alpha-path
+  work package. M1-010 and M1-011 remain blocked.
+
+Updated Alpha path:
+
+```text
+M1-008 validation → M1-010 deterministic allocation → M1-011 draft state
+```
