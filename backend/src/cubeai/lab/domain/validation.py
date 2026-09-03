@@ -42,6 +42,7 @@ class CubeValidationDiagnostic:
 @dataclass(frozen=True, slots=True)
 class CubeValidationResult:
     cube_version_id: str
+    cube_version_fingerprint: str
     configuration: DraftConfiguration
     usable_membership_count: int
     diagnostics: tuple[CubeValidationDiagnostic, ...] = ()
@@ -52,6 +53,11 @@ class CubeValidationResult:
             or not self.cube_version_id.strip()
         ):
             raise ValueError("cube_version_id must be a nonblank string")
+        if (
+            not isinstance(self.cube_version_fingerprint, str)
+            or not self.cube_version_fingerprint.strip()
+        ):
+            raise ValueError("cube_version_fingerprint must be a nonblank string")
         if not isinstance(self.configuration, DraftConfiguration):
             raise ValueError("configuration must be a DraftConfiguration")
         if (
@@ -139,7 +145,11 @@ def validate_cube_version(
         )
 
     return CubeValidationResult(
-        version.id, configuration, usable_memberships, tuple(diagnostics)
+        version.id,
+        version.content_fingerprint,
+        configuration,
+        usable_memberships,
+        tuple(diagnostics),
     )
 
 

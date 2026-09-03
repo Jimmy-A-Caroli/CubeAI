@@ -46,6 +46,8 @@ def allocate_packs(
         raise ValueError("validation must be a CubeValidationResult")
     if validation.cube_version_id != version.id:
         raise ValueError("validation must belong to the supplied CubeVersion")
+    if validation.cube_version_fingerprint != version.content_fingerprint:
+        raise ValueError("validation must match the supplied CubeVersion snapshot")
     configuration = validation.configuration
     verified_validation = validate_cube_version(version, configuration)
     if verified_validation.usable_membership_count < configuration.card_count:

@@ -72,18 +72,25 @@ def test_allocation_is_deterministic_and_uses_validation_geometry() -> None:
 
 
 def test_golden_seed_preserves_source_order_before_deterministic_shuffle() -> None:
-    version = _version(6)
+    version = CubeVersion(
+        "version-source-order",
+        Cube("cube-1", "Synthetic Cube"),
+        tuple(
+            _membership(f"membership-{index}", printing_id=f"printing-{index}")
+            for index in (5, 4, 3, 2, 1, 0)
+        ),
+    )
     configuration = DraftConfiguration(2, 1, 3, 17)
 
     allocation = allocate_packs("draft-1", version, _validation(version, configuration))
 
     assert _membership_ids(allocation) == (
-        "membership-0",
         "membership-5",
-        "membership-1",
-        "membership-2",
-        "membership-3",
+        "membership-0",
         "membership-4",
+        "membership-3",
+        "membership-2",
+        "membership-1",
     )
     assert set(_membership_ids(allocation)) == {card.id for card in version.cards}
 
@@ -172,10 +179,37 @@ def test_forged_validation_cannot_allocate_unresolved_memberships() -> None:
             CubeCard("membership-4", ResolutionStatus.UNRESOLVED),
         ),
     )
-    forged = CubeValidationResult(version.id, configuration, 3)
+    forged = CubeValidationResult(
+        version.id, version.content_fingerprint, configuration, 3
+    )
 
     with pytest.raises(ValueError, match="blocking"):
         allocate_packs("draft-1", version, forged)
+
+
+def test_stale_draftable_validation_cannot_cross_cubeversion_snapshots() -> None:
+    configuration = DraftConfiguration(1, 1, 3, 1)
+    first = CubeVersion(
+        "shared-id",
+        Cube("cube-1", "Synthetic Cube"),
+        tuple(
+            _membership(f"first-{index}", printing_id=f"printing-{index}")
+            for index in range(3)
+        ),
+        content_fingerprint="first-snapshot",
+    )
+    changed = CubeVersion(
+        "shared-id",
+        Cube("cube-1", "Synthetic Cube"),
+        tuple(
+            _membership(f"changed-{index}", printing_id=f"printing-{index}")
+            for index in range(3)
+        ),
+        content_fingerprint="changed-snapshot",
+    )
+
+    with pytest.raises(ValueError, match="snapshot"):
+        allocate_packs("draft-1", changed, _validation(first, configuration))
 
 
 def test_invalid_geometry_cannot_reach_allocation() -> None:
