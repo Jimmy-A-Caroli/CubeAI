@@ -203,7 +203,7 @@ Completion evidence: `d9f2dd6`.
 
 ### M1-004 — Implement the CubeCobra read adapter
 
-- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::supervised`, `READY`
+- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::supervised`, `COMPLETE`
 - **Dependencies:** M1-003.
 - **Goal/context:** Import the approved CubeCobra contract through the provider-neutral port.
 - **Scope:** URL/identifier parsing, responsible HTTP behavior, supported response mapping, bounded timeout/retry, cache validators if supported, structured failures, contract fixtures.
@@ -211,6 +211,8 @@ Completion evidence: `d9f2dd6`.
 - **Acceptance criteria:** Fixture cases map deterministically; invalid IDs and unsupported payload versions are distinct; configured user agent and timeouts exist; raw provider exceptions do not escape the adapter.
 - **Required tests:** Offline contract tests for all fixtures, HTTP fake tests for timeout/rate/error behavior, one opt-in live smoke test excluded from default suite.
 - **Expected artifacts/areas:** external adapter, tests, CubeCobra research updates.
+
+Completion evidence: reviewed commits `c7950a1` and `b1be034`; offline contract/fake-HTTP coverage, opt-in live-smoke exclusion, and locked backend validation passed.
 
 ### M1-005 — Define the Scryfall metadata and cache policy
 
@@ -227,7 +229,7 @@ Completion evidence: [Scryfall metadata/cache policy](../research/scryfall-metad
 
 ### M1-006 — Define metadata resolution and implement the Scryfall adapter
 
-- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::supervised`, `READY`
+- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::supervised`, `COMPLETE`
 - **Dependencies:** M1-002, M1-005.
 - **Goal/context:** Resolve import candidates without hiding ambiguity or coupling domain entities to Scryfall payloads.
 - **Scope:** Resolver port; batch identifiers; exact printing and Oracle resolution; cache implementation approved by policy; structured missing/ambiguous/custom outcomes.
@@ -236,9 +238,11 @@ Completion evidence: [Scryfall metadata/cache policy](../research/scryfall-metad
 - **Required tests:** Fixture contract tests, cache hit/stale behavior, batch mapping, ambiguity/missing cases, rate-limit fake.
 - **Expected artifacts/areas:** metadata port/adapter/cache, tests, fixtures.
 
+Completion evidence: reviewed commits `452b078` and `65a8b1b`; exact-ID cache/resolver, synthetic contract fixture, 150 offline backend tests, and static validation passed.
+
 ### M1-007 — Assemble immutable Cube versions
 
-- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::safe`, `BLOCKED`
+- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::safe`, `READY`
 - **Dependencies:** M1-004, M1-006.
 - **Goal/context:** Combine source candidates and resolution results into a reviewable version without partial silent acceptance.
 - **Scope:** Import application service, version fingerprint/identity, resolved memberships, diagnostics summary, source snapshot link, explicit usability state.

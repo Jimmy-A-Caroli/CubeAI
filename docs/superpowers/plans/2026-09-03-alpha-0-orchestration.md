@@ -158,3 +158,15 @@ pending explicit supervised-repair authorization.
   repair its loss of printing/Oracle/provenance evidence and its diagnostics;
   M1-006 then consumes that stabilized contract. This is an execution-order
   ruling, not a new dependency.
+
+## Wave 3 evidence
+
+- M1-004 was repaired in `c7950a1` and `b1be034`, then independently approved;
+  `966cd39` integrated it. It now maps the frozen public CubeCobra contract
+  through structured provider-neutral outcomes without leaking provider errors.
+- M1-006 was implemented in `452b078`, repaired in `65a8b1b`, and independently
+  approved; `7c4cc21` integrated it. It supplies exact printing-ID resolution,
+  a caller-selected durable SQLite cache, explicit outcomes, and no fallback or
+  bulk behavior. Its 150-test default backend suite remains offline.
+- M1-007 is now the next Alpha-path task; it must assemble the reviewed import
+  and resolution snapshots into immutable, diagnosable CubeVersions.
