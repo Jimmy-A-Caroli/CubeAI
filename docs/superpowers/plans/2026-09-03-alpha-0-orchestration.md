@@ -188,3 +188,33 @@ Updated Alpha path:
 ```text
 M1-008 validation → M1-010 deterministic allocation → M1-011 draft state
 ```
+
+## Wave 5 — validation integration and stop
+
+- M1-008 implementation `355ddac` was independently reviewed as
+  `REPAIR_REQUIRED` because capacity diagnostics did not identify the affected
+  draft geometry. The focused repair `ca773e0` adds stable seats,
+  packs-per-seat, and cards-per-pack context for both insufficient and excess
+  diagnostics; independent re-review approved it.
+- The integrated default-offline backend suite passed with `165 passed` after
+  the repair. M1-008 is complete; M1-010 is now ready because M1-009 was
+  already complete. M1-011 remains blocked on M1-010. No M1-010 or M1-011
+  implementation occurred in this wave.
+- The requested opt-in live CORE smoke attempted CubeCobra identifier
+  `modovintage` without retaining its payload. With external network access,
+  the source adapter returned `UNSUPPORTED` because the current public source
+  has a nonempty `basics` board. Under the frozen M1-004 contract, that
+  condition blocks source-to-resolution assembly rather than yielding a
+  mainboard-only import with a visible diagnostic. The live chain therefore
+  did not reach CubeVersion validation; changing that accepted source behavior
+  is outside M1-007/M1-008 and requires human direction.
+
+Updated Alpha path:
+
+```text
+validated CubeVersion boundary
+    ↓
+M1-010 deterministic allocation (READY)
+    ↓
+M1-011 draft state (BLOCKED on M1-010)
+```

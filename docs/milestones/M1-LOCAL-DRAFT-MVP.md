@@ -46,9 +46,9 @@ The M1 draft UI is a functional, clean, intentionally simple visual foundation t
 | M1-005 | Research and define Scryfall metadata/cache policy | M0-009 | COMPLETE |
 | M1-006 | Define metadata resolver port and Scryfall adapter | M1-002, M1-005 | COMPLETE |
 | M1-007 | Assemble immutable Cube versions with diagnostics | M1-004, M1-006 | COMPLETE |
-| M1-008 | Validate Cube contents and draft capacity | M1-007 | READY |
+| M1-008 | Validate Cube contents and draft capacity | M1-007 | COMPLETE |
 | M1-009 | Define draft configuration, instances, seats, packs, and picks | M1-002 | COMPLETE |
-| M1-010 | Allocate deterministic packs | M1-008, M1-009 | BLOCKED |
+| M1-010 | Allocate deterministic packs | M1-008, M1-009 | READY |
 | M1-011 | Implement draft state transitions and pack rotation | M1-010 | BLOCKED |
 | M1-012 | Define bot strategy port and Bot v0 rating policy | M1-009 | BLOCKED |
 | M1-013 | Execute deterministic bot turns | M1-011, M1-012 | BLOCKED |
