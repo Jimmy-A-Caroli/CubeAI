@@ -3,6 +3,7 @@ from dataclasses import FrozenInstanceError
 import pytest
 
 from cubeai.lab.domain import (
+    ActorOrigin,
     AllocatedPack,
     Draft,
     DraftCardInstance,
@@ -11,6 +12,7 @@ from cubeai.lab.domain import (
     DraftState,
     DraftStatus,
     DraftTransitionError,
+    PickEvent,
     available_cards,
     pick_card,
     pool_for_seat,
@@ -190,3 +192,36 @@ def test_replay_with_the_same_legal_choices_is_identical() -> None:
     second = _complete_with_first_legal_card(_draft_state(packs_per_seat=2))
 
     assert first == second
+
+
+def test_constructor_rejects_a_forged_completed_history() -> None:
+    configuration = DraftConfiguration(2, 1, 2, seed=17)
+    draft = Draft("draft-1", "cube-version-1", configuration)
+    allocation = _allocation(draft.id, configuration)
+    forged_events = tuple(
+        PickEvent(
+            draft.id,
+            sequence,
+            0,
+            0,
+            0,
+            card.id,
+            actor_origin=ActorOrigin.HUMAN,
+            actor_id="seat:0",
+        )
+        for sequence, card in enumerate(
+            card for pack in allocation for card in pack.cards
+        )
+    )
+
+    with pytest.raises(ValueError, match="legal turn"):
+        DraftState(
+            draft,
+            allocation,
+            pack_round=1,
+            pick_number=2,
+            active_seat=None,
+            active_packs=(),
+            pick_events=forged_events,
+            status=DraftStatus.COMPLETED,
+        )

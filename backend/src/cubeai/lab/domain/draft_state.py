@@ -312,6 +312,50 @@ def _validate_pick_events(
         raise ValueError("a draft-card instance cannot be picked twice")
     if any(not 0 <= event.seat_number < draft.configuration.seats for event in events):
         raise ValueError("pick event seats must match the draft geometry")
+    _validate_legal_event_sequence(draft, allocation, events)
+
+
+def _validate_legal_event_sequence(
+    draft: Draft, allocation: tuple[AllocatedPack, ...], events: tuple[PickEvent, ...]
+) -> None:
+    """Replay the command schedule so direct construction cannot forge history."""
+
+    pack_round = 0
+    pick_number = 0
+    active_seat = 0
+    active_packs = _active_packs_for_round(draft, allocation, pack_round)
+    for event in events:
+        active_pack = active_packs[active_seat]
+        if event.seat_number != active_seat:
+            raise ValueError("pick event seat does not match the legal turn")
+        if event.pick_number != pick_number:
+            raise ValueError("pick event number does not match the legal turn")
+        if event.pack_number != active_pack.pack.pack_number:
+            raise ValueError("pick event pack does not match the current active pack")
+        if not any(card.id == event.card_instance_id for card in active_pack.cards):
+            raise ValueError("pick event card is not available in the current active pack")
+        updated_packs = list(active_packs)
+        updated_packs[active_seat] = ActiveDraftPack(
+            active_pack.pack,
+            tuple(card for card in active_pack.cards if card.id != event.card_instance_id),
+        )
+        active_packs = tuple(updated_packs)
+        if active_seat + 1 < draft.configuration.seats:
+            active_seat += 1
+            continue
+        if not all(not pack.cards for pack in active_packs):
+            active_packs = _rotate_packs(active_packs, pack_round)
+            pick_number += 1
+            active_seat = 0
+            continue
+        pack_round += 1
+        if pack_round == draft.configuration.packs_per_seat:
+            if event is not events[-1]:
+                raise ValueError("pick events continue after the draft is complete")
+            continue
+        pick_number = 0
+        active_seat = 0
+        active_packs = _active_packs_for_round(draft, allocation, pack_round)
 
 
 def _validate_active_packs(
