@@ -362,7 +362,7 @@ seat-visible current-pack access.
 
 ### M1-015 — Expose the local draft API
 
-- **Labels/state:** `component::lab`, `component::ui`, `type::feature`, `priority::high`, `agent::supervised`, `READY`
+- **Labels/state:** `component::lab`, `component::ui`, `type::feature`, `priority::high`, `agent::supervised`, `COMPLETE`
 - **Dependencies:** M1-008, M1-013, M1-014.
 - **Goal/context:** Provide the smallest versioned HTTP contract needed for import, validation, draft commands, and seat-safe views.
 - **Scope:** Proposed FastAPI app; DTO mapping; endpoints to import/inspect Cube version, start/resume draft, submit a pick, and read current/complete human-seat view; stable error envelope and local configuration.
@@ -370,10 +370,11 @@ seat-visible current-pack access.
 - **Acceptance criteria:** OpenAPI describes versioned DTOs; illegal/stale commands use stable codes and do not mutate state; views omit other seats' current packs/pools; provider errors map safely; health endpoint reflects local readiness.
 - **Required tests:** API integration tests for happy path, validation errors, stale/illegal picks, provider failure, restart/resume, and hidden-information assertions; schema snapshot/compatibility check.
 - **Expected artifacts/areas:** API package, DTOs/mappers, tests, API documentation.
+- **Completion evidence:** `ae64900` (independent review approved; FastAPI/Pydantic DTO boundary, local SQLite launcher, import/validation/start/resume/pick routes, stable error envelope, and one-human-seat hidden-information contract passed). Unlocks M1-016 and M1-017.
 
 ### M1-016 — Build Cube import and validation UI
 
-- **Labels/state:** `component::ui`, `type::feature`, `priority::high`, `agent::safe`, `BLOCKED`
+- **Labels/state:** `component::ui`, `type::feature`, `priority::high`, `agent::safe`, `READY`
 - **Dependencies:** M1-015, M0-005.
 - **Goal/context:** Let a local user enter a CubeCobra URL/ID and understand whether the Cube is draftable.
 - **Scope:** Source form, loading/error states, Cube/version summary, grouped diagnostics with affected entries, retry, and start-draft configuration/defaults.
@@ -384,7 +385,7 @@ seat-visible current-pack access.
 
 ### M1-017 — Build pack, pick, and drafted-pool UI
 
-- **Labels/state:** `component::ui`, `type::feature`, `priority::high`, `agent::safe`, `BLOCKED`
+- **Labels/state:** `component::ui`, `type::feature`, `priority::high`, `agent::safe`, `READY`
 - **Dependencies:** M1-015, M0-005.
 - **Goal/context:** Complete a draft quickly with a clear current pack, selected card, progress, and pool.
 - **Scope:** Current pack grid/list, card detail on demand, pick confirmation/command state, pack/seat progress, drafted pool grouped by a simple deterministic view, completion state, resume/error recovery.

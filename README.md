@@ -11,17 +11,16 @@ three Alpha-1 work packages. In addition to the repository foundations,
 M1-001 through M1-014 now provide a supported
 CubeCobra read adapter, exact printing-ID Scryfall resolution with a local
 cache, immutable Cube versions, capacity validation, deterministic allocation,
-deterministic local draft state machine, raw-ranking Bot v0, and caller-selected
-SQLite restart persistence. The product remains pre-API and pre-UI for
-importing and drafting; the existing `GET /health`/CubeUI status is only a
-minimal local connectivity proof.
+deterministic local draft state machine, raw-ranking Bot v0, caller-selected
+SQLite restart persistence, and a versioned local FastAPI contract. The product
+remains pre-UI for importing and drafting.
 
 The `backend/` workspace keeps source candidates, card/printing identities,
 Cube memberships, immutable versions, validation, allocation, and transitions
 framework-independent. The `frontend/` workspace supplies the React/TypeScript
 foundation and independent formatting, lint, typecheck, unit-test, and
-production-build commands. No HTTP draft API or import/draft UI has been
-implemented.
+production-build commands. The HTTP API exposes only a local, one-human-seat
+draft view; import/draft UI has not yet been implemented.
 
 The accepted Scryfall policy is exact printing-ID resolution, a durable local
 cache, network calls only for required misses, and explicit
@@ -63,10 +62,10 @@ Development will be issue-driven. M0 and M1 are decomposed in the [initial backl
 
 CubeCobra import and exact-ID metadata resolution are implemented as bounded
 adapters. Deterministic local allocation/transitions, raw-ranking Bot v0, and
-local SQLite save/resume are available through framework-independent CubeLab
-boundaries. HTTP draft commands/views, import/draft UI, analytics, simulation,
-gameplay, Forge feasibility, and all hosted-service concerns remain future work
-or require further validation.
+local SQLite save/resume and versioned HTTP draft commands/views are available
+through framework-independent CubeLab boundaries. Import/draft UI, analytics,
+simulation, gameplay, Forge feasibility, and all hosted-service concerns remain
+future work or require further validation.
 
 ## Available local validation
 
