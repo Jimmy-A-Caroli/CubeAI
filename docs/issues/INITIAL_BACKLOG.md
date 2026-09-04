@@ -398,7 +398,7 @@ seat-visible current-pack access.
 
 ### M1-018 — Verify the deterministic local draft MVP
 
-- **Labels/state:** `component::lab`, `component::ui`, `component::infra`, `type::test`, `priority::high`, `agent::supervised`, `READY`
+- **Labels/state:** `component::lab`, `component::ui`, `component::infra`, `type::test`, `priority::high`, `agent::supervised`, `COMPLETE`
 - **Dependencies:** M1-016, M1-017.
 - **Goal/context:** Prove the milestone from clean setup through completed draft and restart behavior.
 - **Scope:** Fixed synthetic/contract fixture acceptance scenario; same-seed replay comparison; supported public Cube opt-in smoke; documentation and measured usability/performance notes; M1 exit review.
@@ -406,6 +406,9 @@ seat-visible current-pack access.
 - **Acceptance criteria:** Clean local workflow imports, validates, drafts, persists/resumes, and completes; golden replay matches pack/pick/pool event data; human/bot provenance is queryable; M1 non-goals remain absent; known limitations are documented.
 - **Required tests:** Full local/browser acceptance, deterministic replay diff, restart/resume, aggregate CI suite, opt-in live-source smoke.
 - **Expected artifacts/areas:** acceptance tests, README quick start, M1 acceptance report.
+- **Completion evidence:** `docs/M1-018-ACCEPTANCE-EVIDENCE.md` records the
+  controlled restart/replay acceptance, the opt-in `modovintage` public smoke,
+  supervised browser acceptance, and the final root/workspace validation.
 
 ## M2 — Draft Intelligence and Analytics
 
