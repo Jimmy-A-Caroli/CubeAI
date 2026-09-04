@@ -42,6 +42,10 @@ from cubeai.lab.application.draft_observations import (
     DraftObservationError,
     derive_draft_observations,
 )
+from cubeai.lab.application.wheel_observations import (
+    WheelObservation,
+    derive_wheel_observations,
+)
 from cubeai.lab.application.draft_sessions import (
     DraftSeatView,
     DraftSessionError,
@@ -88,6 +92,8 @@ __all__ = (
     "DraftDecisionObservation",
     "DraftObservationError",
     "derive_draft_observations",
+    "WheelObservation",
+    "derive_wheel_observations",
     "DraftSeatView",
     "DraftSessionError",
     "human_seat_view",

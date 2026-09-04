@@ -412,9 +412,9 @@ seat-visible current-pack access.
 
 ## M2 — Draft Intelligence and Analytics
 
-M2 issues are intentionally moderate-detail. M2-001 was refined after M1-018
-and is complete; all remaining M2 issues remain `BLOCKED` pending their stated
-dependencies and further refinement.
+M2 issues are intentionally moderate-detail. M2-001 and M2-002 were refined
+after M1-018 and are complete; all remaining M2 issues remain `BLOCKED` pending
+their stated dependencies and further refinement.
 
 ### M2-001 — Derive cards-seen and pick-history projections
 
@@ -431,13 +431,16 @@ dependencies and further refinement.
 
 ### M2-002 — Define and implement wheel detection
 
-- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::supervised`, `BLOCKED`
+- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::supervised`, `COMPLETE`
 - **Dependencies:** M2-001.
 - **Goal/context:** Identify returning card instances for configurable seats and packs.
 - **Scope/out of scope:** Formal wheel definition and event-derived result; no strategic judgment.
 - **Acceptance criteria:** Results use instance IDs and handle small seat counts, exhausted packs, and duplicate names.
 - **Required tests:** Direction/seat-count golden scenarios and duplicates.
 - **Expected artifacts/areas:** analysis model/tests/docs.
+- **Completion evidence:** `docs/M2-002-WHEEL-EVIDENCE.md`; pure M2-001
+  observation consumption records the first return of a passed draft-card
+  instance to its original seat, with no identity collapse or interpretation.
 
 ### M2-003 — Add tracked-card behavior
 

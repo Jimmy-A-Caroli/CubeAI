@@ -20,8 +20,10 @@ deterministic local end-to-end workflow and closes M1.
 
 M2-001 adds a completed-draft observation foundation: deterministic,
 event-derived cards-seen, pool-before-pick, and pick-history contexts with
-actor and recorded Bot provenance. It is exposed through a completion-only API
-view; the Draft Inspector and all advice, metrics, and analytics interfaces
+actor and recorded Bot provenance. M2-002 derives first-return wheel facts for
+specific draft instances from those observations, without strategic
+interpretation. The observation context is exposed through a completion-only
+API view; the Draft Inspector and all advice, metrics, and analytics interfaces
 remain future work.
 
 The `backend/` workspace keeps source candidates, card/printing identities,
