@@ -51,7 +51,7 @@ const review: DraftReview = {
   human_picks: [
     {
       seat_number: 0,
-      pack_number: 1,
+      round_number: 1,
       pick_number: 1,
       card: { name: 'Lightning Bolt', ...noDetails },
       bot_provenance: null,
@@ -60,7 +60,7 @@ const review: DraftReview = {
   bot_picks: [
     {
       seat_number: 1,
-      pack_number: 1,
+      round_number: 1,
       pick_number: 1,
       card: { name: 'Counterspell', ...noDetails },
       bot_provenance: {
@@ -303,6 +303,38 @@ describe('DraftWorkspace', () => {
     expect(
       screen.getByText(/Bot v0 decision · Strategy: raw-ranking-v0@1/),
     ).toBeTruthy();
+  });
+
+  it('labels review picks with their draft round rather than a physical pack ID', async () => {
+    const loadReview = vi.fn().mockResolvedValue({
+      ...review,
+      human_picks: [
+        {
+          ...review.human_picks[0],
+          round_number: 2,
+          pick_number: 1,
+        },
+      ],
+      bot_picks: [
+        {
+          ...review.bot_picks[0],
+          round_number: 2,
+          pick_number: 1,
+        },
+      ],
+    });
+    render(
+      <DraftWorkspace
+        draftId="draft-7"
+        initialView={{ ...firstView, status: 'completed', current_pack: [] }}
+        api={apiWith({ loadReview })}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Review draft' }));
+
+    expect(await screen.findAllByText('Pack 2 · Pick 1')).toHaveLength(2);
+    expect(screen.queryByText('Pack 3 · Pick 1')).toBeNull();
   });
 
   it('has no basic accessibility violations in the selectable pack state', async () => {

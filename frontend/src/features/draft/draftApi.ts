@@ -34,7 +34,7 @@ export type DraftView = {
 
 export type DraftReviewPick = {
   seat_number: number;
-  pack_number: number;
+  round_number: number;
   pick_number: number;
   card: Omit<DraftCard, 'instance_id' | 'cube_card_id'>;
   bot_provenance: {

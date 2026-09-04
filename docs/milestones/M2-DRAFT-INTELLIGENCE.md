@@ -1,12 +1,16 @@
 # M2 — Draft Intelligence and Analytics
 
-**Current checkpoint: observation and local tracking foundation.** M2-001,
-M2-002, and M2-003 are complete; their event-derived decision-observation,
-wheel, and local tracking contracts are recorded in
+**Current checkpoint: observation, local tracking, and frozen metrics
+contract foundation.** M2-001, M2-002, and M2-003 are complete; their
+event-derived decision-observation, wheel, and local tracking contracts are recorded in
 [`docs/M2-001-OBSERVATION-EVIDENCE.md`](../M2-001-OBSERVATION-EVIDENCE.md)
 and [`docs/M2-002-WHEEL-EVIDENCE.md`](../M2-002-WHEEL-EVIDENCE.md), and
-[`docs/M2-003-TRACKING-CONTRACT.md`](../M2-003-TRACKING-CONTRACT.md).
-Later M2 candidate issues remain blocked until their declared dependencies and
+[`docs/M2-003-TRACKING-CONTRACT.md`](../M2-003-TRACKING-CONTRACT.md). The
+approved factual metrics contract is recorded in
+[`docs/M2-DRAFT-POSITION-METRICS-CONTRACT.md`](../M2-DRAFT-POSITION-METRICS-CONTRACT.md);
+its calculations remain future work.
+M2-009 is ready for a separately authorized metric implementation. Other later
+M2 candidate issues remain blocked until their declared dependencies and
 refinement are complete.
 
 ## Goal
@@ -56,7 +60,7 @@ Make a draft understandable during and after play while preserving the distincti
 | M2-006 | Define versioned archetype/tag vocabulary | M1-007 | BLOCKED |
 | M2-007 | Add explainable draft-fit feature scores | M2-004, M2-006 | BLOCKED |
 | M2-008 | Build post-draft Draft Inspector and timeline review | M2-001, M2-007 | BLOCKED |
-| M2-009 | Define provenance-aware pick metric schemas | M2-001 | BLOCKED |
+| M2-009 | Define provenance-aware pick metric schemas | M2-001 | READY |
 | M2-010 | Build initial analytics views and filters | M2-009 | BLOCKED |
 | M2-011 | Add lightweight human pick-review annotations | M2-008 | BLOCKED |
 

@@ -32,7 +32,7 @@ function readableError(error: unknown): string {
 }
 
 function pickLabel(pick: DraftReviewPick): string {
-  return `Pack ${pick.pack_number} · Pick ${pick.pick_number}`;
+  return `Pack ${pick.round_number} · Pick ${pick.pick_number}`;
 }
 
 export default function DraftWorkspace({
@@ -531,7 +531,9 @@ function ReviewPickList({
   return (
     <ol className="draft-workspace__review-list">
       {picks.map((pick) => (
-        <li key={`${pick.seat_number}-${pick.pack_number}-${pick.pick_number}`}>
+        <li
+          key={`${pick.seat_number}-${pick.round_number}-${pick.pick_number}`}
+        >
           <button onClick={() => onInspect(reviewCard(pick))} type="button">
             <CardArt card={reviewCard(pick)} compact />
             <span>

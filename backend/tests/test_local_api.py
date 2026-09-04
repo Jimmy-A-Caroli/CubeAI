@@ -484,6 +484,34 @@ def test_review_is_gated_until_completion_then_exposes_human_and_bot_history(
         assert forbidden not in rendered
 
 
+def test_review_reports_draft_round_not_physical_pack_identity(tmp_path) -> None:
+    app = _application(tmp_path)
+    request = _draft_request()
+    request["configuration"] = {
+        "seats": 2,
+        "packs_per_seat": 2,
+        "pack_size": 1,
+        "seed": 13,
+    }
+    _, view = _request(app, "POST", "/v1/drafts", request)
+
+    while view["status"] != "completed":
+        _, view = _request(
+            app,
+            "POST",
+            "/v1/drafts/draft-1/picks",
+            {"card_instance_id": view["current_pack"][0]["instance_id"]},
+        )
+    status, review = _request(app, "GET", "/v1/drafts/draft-1/review")
+
+    assert status == 200
+    assert [pick["round_number"] for pick in review["human_picks"]] == [1, 2]
+    assert [pick["pick_number"] for pick in review["human_picks"]] == [1, 1]
+    assert all("pack_number" not in pick for pick in review["human_picks"])
+    assert [pick["round_number"] for pick in review["bot_picks"]] == [1, 2]
+    assert all("pack_number" not in pick for pick in review["bot_picks"])
+
+
 def test_observations_are_completion_gated_and_replay_decision_context(
     tmp_path,
 ) -> None:

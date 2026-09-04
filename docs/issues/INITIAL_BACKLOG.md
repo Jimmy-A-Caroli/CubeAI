@@ -413,8 +413,9 @@ seat-visible current-pack access.
 ## M2 — Draft Intelligence and Analytics
 
 M2 issues are intentionally moderate-detail. M2-001 and M2-002 were refined
-after M1-018 and are complete; all remaining M2 issues remain `BLOCKED` pending
-their stated dependencies and further refinement.
+after M1-018 and are complete; M2-009 now has a frozen approved contract and
+is `READY`. The other remaining M2 issues remain `BLOCKED` pending their
+stated dependencies and further refinement.
 
 ### M2-001 — Derive cards-seen and pick-history projections
 
@@ -507,13 +508,14 @@ their stated dependencies and further refinement.
 
 ### M2-009 — Define provenance-aware pick metrics
 
-- **Labels/state:** `component::lab`, `type::proposal`, `priority::high`, `human::decision`, `BLOCKED`
+- **Labels/state:** `component::lab`, `type::proposal`, `priority::high`, `READY`
 - **Dependencies:** M2-001.
 - **Goal/context:** Specify denominators and dimensions for average/median pick, last pick, seen-to-pick, and wheel rates.
 - **Scope/out of scope:** Metric contracts and reference calculations; no performance or gameplay metrics.
 - **Acceptance criteria:** Every metric defines population, denominator, duplicates, incomplete drafts, Cube version, and origin filters.
 - **Required tests:** Hand-calculated miniature event datasets.
 - **Expected artifacts/areas:** metric specification/ADR and reference tests.
+- **Contract:** [`M2 Draft Position & Metrics Contract`](../M2-DRAFT-POSITION-METRICS-CONTRACT.md) is frozen with approved Cube-membership aggregation, seen-before-pick, completed-pass-opportunity wheel, actor, and completed-draft population decisions. Metric calculation remains unimplemented.
 
 ### M2-010 — Build initial analytics views
 

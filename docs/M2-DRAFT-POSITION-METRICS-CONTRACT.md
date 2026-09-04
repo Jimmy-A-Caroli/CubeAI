@@ -2,11 +2,11 @@
 
 ## Status and problem statement
 
-**Status: READY FOR HUMAN DECISION.** This is a bounded contract-discovery
-artifact for M2-009, which remains `BLOCKED` pending the metric decisions
-listed below. It defines factual draft-position vocabulary; it does not add
-analytics, a metric store, a dashboard, strategy interpretation, or Bot
-behavior.
+**Status: FROZEN — READY FOR A FUTURE METRIC IMPLEMENTATION.** The human
+approved the five M2 draft-metrics decisions on 2026-09-04. This is the
+binding contract for that future work. It defines factual draft-position
+vocabulary; it does not add analytics, a metric store, a dashboard, strategy
+interpretation, or Bot behavior.
 
 The completed-draft review currently can show a label such as `Pack 24 · Pick
 1` to a drafter in an eight-seat, three-round draft. That is misleading. A
@@ -192,14 +192,14 @@ remain distinct.
 
 | Metric | Numerator / value | Denominator or sample | Identity scope | Recommendation / decision |
 |---|---|---|---|---|
-| Mean / median pick | One-based `pick_number` of each selected instance | Selected-event sample count; report `n` | Cube membership initially | Approve as a descriptive position distribution, not card quality. |
-| Pick rate | Selections of instances from membership M | Legal M2-001 candidate appearances of instances from M | Cube membership initially | Approve this opportunity-based definition; an Oracle roll-up remains separate. |
-| First-pick rate | Selections from M where `pick_number == 0` | First-pick candidate appearances of M | Cube membership initially | Approve this definition, distinct from “share of M's picks that were first picks.” |
+| Mean / median pick | One-based `pick_number` of each selected instance | Selected-event sample count; report `n` | Cube membership | Approved descriptive position distribution, not card quality. |
+| Pick rate | Selections of instances from membership M | Legal M2-001 candidate appearances of instances from M | Cube membership | Approved opportunity-based definition; an Oracle roll-up remains separate. |
+| First-pick rate | Selections from M where `pick_number == 0` | First-pick candidate appearances of M | Cube membership | Approved definition, distinct from “share of M's picks that were first picks.” |
 | First-pick share (different metric) | Selections from M at first pick | All selections from M | Cube membership initially | Do not call this first-pick rate if both are shown. |
-| Seen-before-pick count | For a selected `(seat, instance)`, number of prior legal M2-001 appearances of that exact instance to that seat | Selected `(seat, instance)` sample; report distribution and `n` | Draft instance | Needs approval that this is the intended M2-009 “seen-to-pick” metric. It is 0 when selected at first sight. |
-| Last-pick rate | Selections from M where cards available is 1 | Candidate appearances of M where cards available is 1 | Cube membership initially | Exact structural category. |
-| Second-to-last rate | Selections from M where cards available is 2 | Candidate appearances of M where cards available is 2 | Cube membership initially | Exact structural category. |
-| Wheel return rate | M2-002 first-return facts | Defined wheel opportunities; see below | Draft instance, aggregated only after mapping to membership | Requires explicit denominator approval. |
+| Seen-before-pick count | For a selected `(seat, instance)`, number of prior legal M2-001 appearances of that exact instance to that seat | Selected `(seat, instance)` sample; report distribution and `n` | Draft instance | Approved M2-009 definition. It is 0 when selected at first sight. |
+| Last-pick rate | Selections from M where cards available is 1 | Candidate appearances of M where cards available is 1 | Cube membership | Exact structural category. |
+| Second-to-last rate | Selections from M where cards available is 2 | Candidate appearances of M where cards available is 2 | Cube membership | Exact structural category. |
+| Wheel return rate | M2-002 first-return facts | Completed pass opportunities; see below | Draft instance, aggregated only after mapping to membership | Approved denominator. |
 
 The recommended pick-rate denominator counts every legal opportunity, not
 merely every drafted copy. Thus two duplicate Cube memberships can each
@@ -207,13 +207,13 @@ contribute independently. This answers “when this Cube slot was available to
 this actor, how often was it chosen?” It does not claim intrinsic power or
 compare different Cube environments.
 
-For an initial wheel-rate denominator, recommend a **completed pass
+The approved wheel-rate denominator is a **completed pass
 opportunity**: a `(draft_id, seat, DraftCardInstance)` first observed by that
 seat and not selected, with a later same-seat observation in the same pack
 round where the instance is absent. Its numerator is the M2-002 first return
 for that same tuple. This excludes a last opportunity with no later seat turn
 and preserves M2-002's required evidence that the card left the seat. The
-strong alternative is all unchosen first-seen instances; it is simpler but
+rejected alternative is all unchosen first-seen instances; it is simpler but
 answers a weaker question because many cases had no structural opportunity to
 return. Do not use all times seen: it confounds repeated observations with
 opportunity.
@@ -225,19 +225,19 @@ metric value, never `0%` or a fabricated zero. This keeps “zero selections
 from legal opportunities” distinct from “no legal opportunities,” and applies
 equally to mean and median position when `sample_n == 0`.
 
-## Human decisions still required
+## Approved human decisions
 
 | Decision | Recommendation | Strongest alternative | Consequence of choosing incorrectly |
 |---|---|---|---|
 | Initial aggregate card identity | Cube membership within an exact CubeVersion. | Oracle-ID roll-up. | Collapsing duplicates can hide different slots, printings, or unresolved identity. |
-| “Seen-to-pick” meaning | Approve the exact-instance prior-appearances count above. | Omit it until a user-facing question is specified. | A vague label could be mistaken for pick rate or strategic delay. |
+| “Seen-to-pick” meaning | Exact-instance prior-appearances count above. | Omit it until a user-facing question is specified. | A vague label could be mistaken for pick rate or strategic delay. |
 | Wheel-rate denominator | Completed pass opportunities. | All unchosen first-seen instances. | The reported percentage describes different populations and cannot be compared honestly if unnamed. |
 | Default actor population | Separate human and each Bot strategy/version. | Explicitly labelled combined population. | Mixing Bot v0 and human history makes the result falsely look like human evidence. |
 | Initial inclusion of incomplete drafts | Completed drafts only. | A separately labelled partial-history population. | Mixing abandoned histories changes opportunity and position denominators. |
 
-These are metric-product choices, not open questions about the existing draft
-mechanics. They keep M2-009 human-gated. The semantic facts in the vocabulary
-table do not require a decision.
+These binding choices complete the M2 metrics contract. They do not authorize
+metric calculation, storage, analytics views, or an Oracle-level roll-up. The
+semantic facts in the vocabulary table require no further decision.
 
 ## UI correction required
 
@@ -258,8 +258,8 @@ surfaces:
 The M2-001 observations endpoint currently also presents event physical-pack
 identity under `pack_number`. Any later consumer must receive either a clearly
 named `physical_pack_number` or a separately derived `round_number`; it must
-not infer one from the other. No UI or API patch is made by this discovery
-contract.
+not infer one from the other. This closeout intentionally corrects only the
+completed-review DTO/UI surface identified in the problem statement.
 
 ## Deterministic validation probes
 
@@ -285,8 +285,8 @@ This contract does not infer that a card is weak, unwanted, open, synergistic,
 or a good/bad Bot pick. It does not define archetypes, colors, mana, ratings,
 signals, gameplay performance, or training data.
 
-The next approved implementation issue should add a small pure draft-position
-projection from replayed observations, then correct the review DTO/UI and add
-synthetic standard/nonstandard regression tests. It must preserve physical
-pack identity separately, use the exact scopes above, and wait for the listed
-metric decisions before calculating or storing rates.
+The Pack/Pick review correction is implemented with this closeout: review DTOs
+expose `round_number`, and normal review UI labels it as `Pack`. Physical-pack
+identity remains intact in domain events and allocations. A future, separately
+authorized M2-009 implementation may add pure metric calculations and their
+synthetic hand-calculated reference tests using the frozen scopes above.

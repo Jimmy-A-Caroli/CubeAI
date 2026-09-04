@@ -158,7 +158,7 @@ class BotProvenanceDto(_Dto):
 
 class DraftReviewPickDto(_Dto):
     seat_number: int
-    pack_number: int
+    round_number: int
     pick_number: int
     card: CardDetailsDto
     bot_provenance: BotProvenanceDto | None
@@ -571,7 +571,14 @@ def _draft_review(
         provenance = event.bot_provenance
         return DraftReviewPickDto(
             seat_number=event.seat_number,
-            pack_number=event.pack_number + 1,
+            round_number=(
+                event.sequence
+                // (
+                    state.draft.configuration.seats
+                    * state.draft.configuration.pack_size
+                )
+                + 1
+            ),
             pick_number=event.pick_number + 1,
             card=_card_details_dto(
                 memberships[instances[event.card_instance_id].cube_card_id],
