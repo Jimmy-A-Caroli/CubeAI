@@ -58,6 +58,57 @@ def _version() -> CubeVersion:
     )
 
 
+def _duplicate_identity_version() -> CubeVersion:
+    duplicate_identity = CardIdentity(
+        "identity-shared",
+        "Shared identity",
+        ResolutionStatus.RESOLVED,
+        "oracle-shared",
+    )
+    return CubeVersion(
+        "duplicate-version",
+        Cube("cube-duplicate", "Duplicate Cube"),
+        (
+            CubeCard(
+                "membership-duplicate-a",
+                ResolutionStatus.RESOLVED,
+                CardPrinting("printing-shared", duplicate_identity),
+            ),
+            CubeCard(
+                "membership-duplicate-b",
+                ResolutionStatus.RESOLVED,
+                CardPrinting("printing-shared", duplicate_identity),
+            ),
+            CubeCard(
+                "membership-c",
+                ResolutionStatus.RESOLVED,
+                CardPrinting(
+                    "printing-c",
+                    CardIdentity(
+                        "identity-c",
+                        "Synthetic C",
+                        ResolutionStatus.RESOLVED,
+                        "oracle-c",
+                    ),
+                ),
+            ),
+            CubeCard(
+                "membership-d",
+                ResolutionStatus.RESOLVED,
+                CardPrinting(
+                    "printing-d",
+                    CardIdentity(
+                        "identity-d",
+                        "Synthetic D",
+                        ResolutionStatus.RESOLVED,
+                        "oracle-d",
+                    ),
+                ),
+            ),
+        ),
+    )
+
+
 class _UnusedSource(CubeSource):
     def import_cube(self, request: SourceRequest) -> ImportResult:
         raise AssertionError("this test does not invoke import")
@@ -431,6 +482,114 @@ def test_review_is_gated_until_completion_then_exposes_human_and_bot_history(
     rendered = json.dumps(review)
     for forbidden in ("instance_id", "cube_card_id", "allocation", "active_packs"):
         assert forbidden not in rendered
+
+
+def test_observations_are_completion_gated_and_replay_decision_context(
+    tmp_path,
+) -> None:
+    app = _application(tmp_path)
+    _, started = _request(app, "POST", "/v1/drafts", _draft_request())
+
+    active_status, active_error = _request(
+        app, "GET", "/v1/drafts/draft-1/observations"
+    )
+
+    assert (active_status, active_error) == (
+        409,
+        {
+            "code": "DRAFT_OBSERVATIONS_UNAVAILABLE",
+            "detail": "draft observations are available after completion",
+        },
+    )
+
+    view = started
+    while view["status"] != "completed":
+        _, view = _request(
+            app,
+            "POST",
+            "/v1/drafts/draft-1/picks",
+            {"card_instance_id": view["current_pack"][0]["instance_id"]},
+        )
+    status, response = _request(app, "GET", "/v1/drafts/draft-1/observations")
+
+    assert status == 200
+    observations = response["observations"]
+    assert [item["sequence"] for item in observations] == [0, 1, 2, 3]
+    assert observations[0]["actor_origin"] == "human"
+    assert observations[0]["pool_before"] == []
+    assert observations[0]["chosen_card"]["instance_id"] in {
+        card["instance_id"] for card in observations[0]["cards_seen"]
+    }
+    assert observations[1]["actor_origin"] == "bot"
+    assert observations[1]["bot_provenance"]["strategy_id"] == "raw-ranking-v0"
+    assert observations[1]["bot_provenance"]["selected_rating"] is not None
+    assert (
+        observations[2]["pool_before"][0]["instance_id"]
+        == observations[0]["chosen_card"]["instance_id"]
+    )
+    chosen = observations[0]["chosen_card"]
+    assert chosen["printing_id"] is not None
+    assert chosen["oracle_id"] is not None
+
+
+def test_observations_preserve_duplicate_memberships_with_shared_identity(
+    tmp_path,
+) -> None:
+    repository = SQLiteDraftRepository(tmp_path / "drafts.sqlite3")
+    version = _duplicate_identity_version()
+    repository.save_cube_version(version)
+    app = create_application(
+        LocalApiServices(
+            repository,
+            _UnusedSource(),
+            _UnusedResolver(),
+            RawRankingStrategyV0(load_raw_ranking_v0_artifact()),
+        )
+    )
+    _, view = _request(
+        app,
+        "POST",
+        "/v1/drafts",
+        {
+            "draft_id": "duplicate-draft",
+            "cube_version_id": version.id,
+            "configuration": {
+                "seats": 1,
+                "packs_per_seat": 1,
+                "pack_size": 4,
+                "seed": 7,
+            },
+        },
+    )
+    while view["status"] != "completed":
+        _, view = _request(
+            app,
+            "POST",
+            "/v1/drafts/duplicate-draft/picks",
+            {"card_instance_id": view["current_pack"][0]["instance_id"]},
+        )
+    _, response = _request(app, "GET", "/v1/drafts/duplicate-draft/observations")
+
+    shared = [
+        card
+        for card in response["observations"][0]["cards_seen"]
+        if card["oracle_id"] == "oracle-shared"
+    ]
+    assert {card["cube_card_id"] for card in shared} == {
+        "membership-duplicate-a",
+        "membership-duplicate-b",
+    }
+    assert len({card["instance_id"] for card in shared}) == 2
+    shared_picks = [
+        item["chosen_card"]
+        for item in response["observations"]
+        if item["chosen_card"]["oracle_id"] == "oracle-shared"
+    ]
+    assert {card["cube_card_id"] for card in shared_picks} == {
+        "membership-duplicate-a",
+        "membership-duplicate-b",
+    }
+    assert len({card["instance_id"] for card in shared_picks}) == 2
 
 
 def test_stale_pick_maps_to_a_stable_error_without_mutating_the_persisted_draft(
