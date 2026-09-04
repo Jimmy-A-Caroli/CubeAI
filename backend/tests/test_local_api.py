@@ -592,6 +592,60 @@ def test_observations_preserve_duplicate_memberships_with_shared_identity(
     assert len({card["instance_id"] for card in shared_picks}) == 2
 
 
+def test_local_human_tracking_survives_restart_without_changing_observations(
+    tmp_path,
+) -> None:
+    app = _application(tmp_path)
+    _, started = _request(app, "POST", "/v1/drafts", _draft_request())
+    target = started["current_pack"][1]["instance_id"]
+
+    assert _request(app, "GET", "/v1/drafts/draft-1/tracking") == (
+        200,
+        {
+            "draft_id": "draft-1",
+            "observer_seat": 0,
+            "tracked_card_instance_ids": [],
+        },
+    )
+
+    status, tracked = _request(app, "PUT", f"/v1/drafts/draft-1/tracking/{target}")
+
+    assert (status, tracked) == (
+        200,
+        {
+            "draft_id": "draft-1",
+            "observer_seat": 0,
+            "tracked_card_instance_ids": [target],
+        },
+    )
+    rejected_status, rejected = _request(
+        app, "PUT", "/v1/drafts/draft-1/tracking/other-draft:card:0:0"
+    )
+    assert (rejected_status, rejected["code"]) == (409, "DRAFT_TRACKING_REJECTED")
+
+    view = started
+    while view["status"] != "completed":
+        _, view = _request(
+            app,
+            "POST",
+            "/v1/drafts/draft-1/picks",
+            {"card_instance_id": view["current_pack"][0]["instance_id"]},
+        )
+    _, before_observations = _request(app, "GET", "/v1/drafts/draft-1/observations")
+
+    restarted = _application(tmp_path)
+    tracking_status, restored_tracking = _request(
+        restarted, "GET", "/v1/drafts/draft-1/tracking"
+    )
+    _, restored_observations = _request(
+        restarted, "GET", "/v1/drafts/draft-1/observations"
+    )
+
+    assert tracking_status == 200
+    assert restored_tracking == tracked
+    assert restored_observations == before_observations
+
+
 def test_stale_pick_maps_to_a_stable_error_without_mutating_the_persisted_draft(
     tmp_path,
 ) -> None:

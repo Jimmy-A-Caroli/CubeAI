@@ -56,6 +56,12 @@ export type DraftReview = {
   bot_picks: DraftReviewPick[];
 };
 
+export type DraftTracking = {
+  draft_id: string;
+  observer_seat: number;
+  tracked_card_instance_ids: string[];
+};
+
 type ErrorPayload = {
   code?: unknown;
   detail?: unknown;
@@ -75,6 +81,9 @@ export type DraftApi = {
   loadDraft(draftId: string): Promise<DraftView>;
   submitPick(draftId: string, cardInstanceId: string): Promise<DraftView>;
   loadReview(draftId: string): Promise<DraftReview>;
+  loadTracking(draftId: string): Promise<DraftTracking>;
+  trackCard(draftId: string, cardInstanceId: string): Promise<DraftTracking>;
+  untrackCard(draftId: string, cardInstanceId: string): Promise<DraftTracking>;
 };
 
 async function responseJson(response: Response): Promise<unknown> {
@@ -132,6 +141,23 @@ export const localDraftApi: DraftApi = {
   loadReview(draftId) {
     return requestDraft<DraftReview>(
       `/v1/drafts/${encodeURIComponent(draftId)}/review`,
+    );
+  },
+  loadTracking(draftId) {
+    return requestDraft<DraftTracking>(
+      `/v1/drafts/${encodeURIComponent(draftId)}/tracking`,
+    );
+  },
+  trackCard(draftId, cardInstanceId) {
+    return requestDraft<DraftTracking>(
+      `/v1/drafts/${encodeURIComponent(draftId)}/tracking/${encodeURIComponent(cardInstanceId)}`,
+      { method: 'PUT' },
+    );
+  },
+  untrackCard(draftId, cardInstanceId) {
+    return requestDraft<DraftTracking>(
+      `/v1/drafts/${encodeURIComponent(draftId)}/tracking/${encodeURIComponent(cardInstanceId)}`,
+      { method: 'DELETE' },
     );
   },
 };

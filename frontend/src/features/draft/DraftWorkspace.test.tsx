@@ -81,6 +81,21 @@ function apiWith(overrides: Partial<DraftApi> = {}): DraftApi {
     loadDraft: vi.fn().mockResolvedValue(firstView),
     submitPick: vi.fn().mockResolvedValue(firstView),
     loadReview: vi.fn().mockResolvedValue(review),
+    loadTracking: vi.fn().mockResolvedValue({
+      draft_id: 'draft-7',
+      observer_seat: 0,
+      tracked_card_instance_ids: [],
+    }),
+    trackCard: vi.fn().mockResolvedValue({
+      draft_id: 'draft-7',
+      observer_seat: 0,
+      tracked_card_instance_ids: ['instance-b'],
+    }),
+    untrackCard: vi.fn().mockResolvedValue({
+      draft_id: 'draft-7',
+      observer_seat: 0,
+      tracked_card_instance_ids: [],
+    }),
     ...overrides,
   };
 }
@@ -123,6 +138,34 @@ describe('DraftWorkspace', () => {
     expect(
       screen.getByRole('button', { name: 'Inspect Lightning Bolt' }),
     ).toBeTruthy();
+    expect(screen.queryByText(/instance-b|cube-b/i)).toBeNull();
+  });
+
+  it('tracks the exact current instance and restores its visual marker', async () => {
+    const trackCard = vi.fn().mockResolvedValue({
+      draft_id: 'draft-7',
+      observer_seat: 0,
+      tracked_card_instance_ids: ['instance-b'],
+    });
+    render(
+      <DraftWorkspace
+        draftId="draft-7"
+        initialView={firstView}
+        api={apiWith({ trackCard })}
+      />,
+    );
+
+    fireEvent.click(
+      screen.getAllByRole('button', { name: 'Track Lightning Bolt' })[1],
+    );
+
+    await waitFor(() =>
+      expect(trackCard).toHaveBeenCalledWith('draft-7', 'instance-b'),
+    );
+    expect(
+      screen.getByRole('button', { name: 'Untrack Lightning Bolt' }),
+    ).toBeTruthy();
+    expect(screen.getByText('3 cards available · 1 tracked')).toBeTruthy();
     expect(screen.queryByText(/instance-b|cube-b/i)).toBeNull();
   });
 

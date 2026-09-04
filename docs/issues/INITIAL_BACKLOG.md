@@ -444,13 +444,16 @@ their stated dependencies and further refinement.
 
 ### M2-003 — Add tracked-card behavior
 
-- **Labels/state:** `component::ui`, `type::feature`, `priority::medium`, `agent::safe`, `BLOCKED`
+- **Labels/state:** `component::ui`, `type::feature`, `priority::medium`, `agent::safe`, `COMPLETE`
 - **Dependencies:** M2-001.
 - **Goal/context:** Let users mark seen instances for later attention without altering draft state.
 - **Scope/out of scope:** Local tracking and wheel/history linkage; no automated recommendations.
 - **Acceptance criteria:** Tracking survives supported resume and distinguishes instances with the same name.
 - **Required tests:** UI/state persistence and removed/returned-card cases.
 - **Expected artifacts/areas:** UI, local preference/application port, tests.
+- **Completion evidence:** [`docs/M2-003-TRACKING-CONTRACT.md`](../M2-003-TRACKING-CONTRACT.md)
+  records the approved local-human owner, SQLite preference store, exact-instance
+  marker, restart/replay guarantees, and focused verification.
 
 ### M2-004 — Add mana curve and color projections
 

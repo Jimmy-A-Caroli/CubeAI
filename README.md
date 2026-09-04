@@ -22,7 +22,9 @@ M2-001 adds a completed-draft observation foundation: deterministic,
 event-derived cards-seen, pool-before-pick, and pick-history contexts with
 actor and recorded Bot provenance. M2-002 derives first-return wheel facts for
 specific draft instances from those observations, without strategic
-interpretation. The observation context is exposed through a completion-only
+interpretation. M2-003 adds a local-human, exact-instance tracking preference
+that persists in the local SQLite state without changing draft events or
+derived facts. The observation context is exposed through a completion-only
 API view; the Draft Inspector and all advice, metrics, and analytics interfaces
 remain future work.
 

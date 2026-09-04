@@ -20,12 +20,19 @@ from cubeai.lab.application import (
     CardMetadataLookup,
     DraftDecisionObservation,
     DraftSessionError,
+    DraftTracking,
+    DraftTrackingError,
+    LOCAL_HUMAN_SEAT,
+    TrackingPersistenceError,
     derive_draft_observations,
     human_seat_view,
     import_local_cube,
     resume_local_draft,
     start_local_draft,
     submit_human_pick_and_advance_bots,
+    track_card,
+    tracked_cards,
+    untrack_card,
     validate_local_cube,
 )
 from cubeai.lab.application.cube_versions import CubeVersionAssemblyResult
@@ -193,6 +200,12 @@ class DraftObservationsDto(_Dto):
     observations: list[DraftDecisionObservationDto]
 
 
+class DraftTrackingDto(_Dto):
+    draft_id: str
+    observer_seat: int
+    tracked_card_instance_ids: list[str]
+
+
 @dataclass(frozen=True, slots=True)
 class LocalApiServices:
     repository: DraftRepository
@@ -210,6 +223,16 @@ def create_application(services: LocalApiServices) -> FastAPI:
     @app.exception_handler(DraftSessionError)
     async def draft_session_error(_: Request, error: DraftSessionError) -> JSONResponse:
         return _error_response(409, "DRAFT_COMMAND_REJECTED", str(error))
+
+    @app.exception_handler(TrackingPersistenceError)
+    async def tracking_persistence_error(
+        _: Request, error: TrackingPersistenceError
+    ) -> JSONResponse:
+        return _error_response(500, "DRAFT_TRACKING_PERSISTENCE_FAILED", str(error))
+
+    @app.exception_handler(DraftTrackingError)
+    async def tracking_error(_: Request, error: DraftTrackingError) -> JSONResponse:
+        return _error_response(409, "DRAFT_TRACKING_REJECTED", str(error))
 
     @app.exception_handler(HTTPException)
     async def http_error(_: Request, error: HTTPException) -> JSONResponse:
@@ -322,6 +345,30 @@ def create_application(services: LocalApiServices) -> FastAPI:
         )
         return _draft_view(services.repository, updated, services.metadata_lookup)
 
+    @app.get("/v1/drafts/{draft_id}/tracking", response_model=DraftTrackingDto)
+    def get_tracking(draft_id: str) -> DraftTrackingDto:
+        return _draft_tracking_dto(
+            draft_id, tracked_cards(services.repository, draft_id)
+        )
+
+    @app.put(
+        "/v1/drafts/{draft_id}/tracking/{card_instance_id}",
+        response_model=DraftTrackingDto,
+    )
+    def add_tracking(draft_id: str, card_instance_id: str) -> DraftTrackingDto:
+        return _draft_tracking_dto(
+            draft_id, track_card(services.repository, draft_id, card_instance_id)
+        )
+
+    @app.delete(
+        "/v1/drafts/{draft_id}/tracking/{card_instance_id}",
+        response_model=DraftTrackingDto,
+    )
+    def remove_tracking(draft_id: str, card_instance_id: str) -> DraftTrackingDto:
+        return _draft_tracking_dto(
+            draft_id, untrack_card(services.repository, draft_id, card_instance_id)
+        )
+
     @app.get("/v1/drafts/{draft_id}/review", response_model=DraftReviewDto)
     def review_draft(draft_id: str) -> DraftReviewDto:
         state = resume_local_draft(services.repository, draft_id)
@@ -381,6 +428,16 @@ def _required_cube_version(
             },
         )
     return version
+
+
+def _draft_tracking_dto(
+    draft_id: str, tracking: tuple[DraftTracking, ...]
+) -> DraftTrackingDto:
+    return DraftTrackingDto(
+        draft_id=draft_id,
+        observer_seat=LOCAL_HUMAN_SEAT,
+        tracked_card_instance_ids=[item.card_instance_id for item in tracking],
+    )
 
 
 def _draft_view(

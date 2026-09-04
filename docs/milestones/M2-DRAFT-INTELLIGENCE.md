@@ -1,10 +1,11 @@
 # M2 — Draft Intelligence and Analytics
 
-**Current checkpoint: observation foundation.** M2-001 and M2-002 are
-complete; their event-derived decision-observation and wheel contracts are
-recorded in
+**Current checkpoint: observation and local tracking foundation.** M2-001,
+M2-002, and M2-003 are complete; their event-derived decision-observation,
+wheel, and local tracking contracts are recorded in
 [`docs/M2-001-OBSERVATION-EVIDENCE.md`](../M2-001-OBSERVATION-EVIDENCE.md)
-and [`docs/M2-002-WHEEL-EVIDENCE.md`](../M2-002-WHEEL-EVIDENCE.md).
+and [`docs/M2-002-WHEEL-EVIDENCE.md`](../M2-002-WHEEL-EVIDENCE.md), and
+[`docs/M2-003-TRACKING-CONTRACT.md`](../M2-003-TRACKING-CONTRACT.md).
 Later M2 candidate issues remain blocked until their declared dependencies and
 refinement are complete.
 
@@ -49,7 +50,7 @@ Make a draft understandable during and after play while preserving the distincti
 |---|---|---|---|
 | M2-001 | Define derived cards-seen and pick-history projections | M1-018 | COMPLETE |
 | M2-002 | Define and test wheel detection | M2-001 | COMPLETE |
-| M2-003 | Add local tracked-card behavior and UI | M2-001 | BLOCKED |
+| M2-003 | Add local tracked-card behavior and UI | M2-001 | COMPLETE |
 | M2-004 | Add mana curve and color-distribution projections | M1-018 | BLOCKED |
 | M2-005 | Define mana-requirement and source-count model | M2-004 | BLOCKED |
 | M2-006 | Define versioned archetype/tag vocabulary | M1-007 | BLOCKED |

@@ -97,6 +97,7 @@
 
 .draft-workspace__card,
 .draft-workspace__confirm,
+.draft-workspace__tracking-control,
 .draft-workspace__error button,
 .draft-workspace__recovery button {
   border: 1px solid #5c6170;
@@ -134,6 +135,20 @@
 
 .draft-workspace__card .card-colours span:last-child {
   display: none;
+}
+
+.draft-workspace__tracking-control {
+  background: transparent;
+  color: #cbd1df;
+  font-size: 0.78rem;
+  margin-top: 0.35rem;
+  padding: 0.35rem;
+  width: 100%;
+}
+
+.draft-workspace__tracking-control[aria-pressed='true'] {
+  border-color: #b3a0ff;
+  color: #e1d8ff;
 }
 
 .draft-workspace__pick-action {

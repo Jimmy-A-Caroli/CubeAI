@@ -118,7 +118,7 @@ def test_migrates_and_rehydrates_exact_state_and_bot_provenance(tmp_path) -> Non
     with sqlite3.connect(database_path) as connection:
         assert connection.execute(
             "SELECT version FROM schema_migrations ORDER BY version"
-        ).fetchall() == [(1,)]
+        ).fetchall() == [(1,), (2,)]
 
 
 def test_save_rolls_back_when_transaction_fails_before_commit(tmp_path) -> None:

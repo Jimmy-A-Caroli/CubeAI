@@ -42,6 +42,15 @@ from cubeai.lab.application.draft_observations import (
     DraftObservationError,
     derive_draft_observations,
 )
+from cubeai.lab.application.draft_tracking import (
+    DraftTracking,
+    DraftTrackingError,
+    LOCAL_HUMAN_SEAT,
+    TrackingPersistenceError,
+    track_card,
+    tracked_cards,
+    untrack_card,
+)
 from cubeai.lab.application.wheel_observations import (
     WheelObservation,
     derive_wheel_observations,
@@ -92,6 +101,13 @@ __all__ = (
     "DraftDecisionObservation",
     "DraftObservationError",
     "derive_draft_observations",
+    "DraftTracking",
+    "DraftTrackingError",
+    "LOCAL_HUMAN_SEAT",
+    "TrackingPersistenceError",
+    "track_card",
+    "tracked_cards",
+    "untrack_card",
     "WheelObservation",
     "derive_wheel_observations",
     "DraftSeatView",
