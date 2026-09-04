@@ -48,6 +48,9 @@ export default function DraftWorkspace({
   const [reviewLoading, setReviewLoading] = useState(false);
   const [reviewError, setReviewError] = useState<string | null>(null);
   const [botSeat, setBotSeat] = useState<number | null>(null);
+  const [trackedCardIds, setTrackedCardIds] = useState<string[]>([]);
+  const [trackingCardId, setTrackingCardId] = useState<string | null>(null);
+  const [trackingError, setTrackingError] = useState<string | null>(null);
   const [loading, setLoading] = useState(initialView === undefined);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -100,6 +103,23 @@ export default function DraftWorkspace({
     void refresh();
   }, [initialView, refresh]);
 
+  useEffect(() => {
+    let active = true;
+    setTrackedCardIds([]);
+    setTrackingError(null);
+    void api
+      .loadTracking(draftId)
+      .then((tracking) => {
+        if (active) setTrackedCardIds(tracking.tracked_card_instance_ids);
+      })
+      .catch((requestError: unknown) => {
+        if (active) setTrackingError(readableError(requestError));
+      });
+    return () => {
+      active = false;
+    };
+  }, [api, draftId]);
+
   const currentView = view?.draft_id === draftId ? view : null;
   const selectedCard = currentView?.current_pack.find(
     (card) => card.instance_id === selectedId,
@@ -121,6 +141,34 @@ export default function DraftWorkspace({
         : review.bot_picks.filter((pick) => pick.seat_number === botSeat),
     [review, botSeat],
   );
+
+  const toggleTracking = async (cardInstanceId: string, cardName: string) => {
+    if (trackingCardId !== null) return;
+    const requestedDraftId = draftId;
+    const wasTracked = trackedCardIds.includes(cardInstanceId);
+    setTrackingCardId(cardInstanceId);
+    setTrackingError(null);
+    try {
+      const tracking = wasTracked
+        ? await api.untrackCard(requestedDraftId, cardInstanceId)
+        : await api.trackCard(requestedDraftId, cardInstanceId);
+      if (currentDraftIdRef.current !== requestedDraftId) return;
+      setTrackedCardIds(tracking.tracked_card_instance_ids);
+      setNotice(
+        wasTracked
+          ? `${cardName} is no longer tracked.`
+          : `${cardName} is tracked for later attention.`,
+      );
+    } catch (requestError) {
+      if (currentDraftIdRef.current === requestedDraftId) {
+        setTrackingError(readableError(requestError));
+      }
+    } finally {
+      if (currentDraftIdRef.current === requestedDraftId) {
+        setTrackingCardId(null);
+      }
+    }
+  };
 
   const submitPick = async () => {
     if (selectedId === null || currentView === null || submitting || completed)
@@ -200,7 +248,10 @@ export default function DraftWorkspace({
   }
 
   return (
-    <main className="draft-workspace" aria-busy={submitting || loading}>
+    <main
+      className="draft-workspace"
+      aria-busy={submitting || loading || trackingCardId !== null}
+    >
       <header className="draft-workspace__header">
         <p className="draft-workspace__eyebrow">
           {completed ? 'Draft result' : 'Local draft'}
@@ -235,6 +286,8 @@ export default function DraftWorkspace({
           {notice}
         </p>
       ) : null}
+
+      {trackingError !== null ? <p role="alert">{trackingError}</p> : null}
 
       {completed ? (
         <section
@@ -279,7 +332,10 @@ export default function DraftWorkspace({
               <p className="draft-workspace__eyebrow">Current pack</p>
               <h2 id="current-pack-heading">Choose one legal card</h2>
             </div>
-            <p>{currentView.current_pack.length} cards available</p>
+            <p>
+              {currentView.current_pack.length} cards available ·{' '}
+              {trackedCardIds.length} tracked
+            </p>
           </div>
           <ul
             className="draft-workspace__card-grid"
@@ -287,6 +343,7 @@ export default function DraftWorkspace({
           >
             {currentView.current_pack.map((card) => {
               const selected = card.instance_id === selectedId;
+              const tracked = trackedCardIds.includes(card.instance_id);
               return (
                 <li key={card.instance_id}>
                   <button
@@ -303,6 +360,17 @@ export default function DraftWorkspace({
                       <small>{card.mana_cost}</small>
                     ) : null}
                     <CardColours card={card} />
+                  </button>
+                  <button
+                    aria-pressed={tracked}
+                    className="draft-workspace__tracking-control"
+                    disabled={trackingCardId !== null || submitting || loading}
+                    onClick={() =>
+                      void toggleTracking(card.instance_id, card.name)
+                    }
+                    type="button"
+                  >
+                    {tracked ? `Untrack ${card.name}` : `Track ${card.name}`}
                   </button>
                 </li>
               );
@@ -368,6 +436,19 @@ export default function DraftWorkspace({
                 >
                   <CardArt card={card} compact />
                   <span>{card.name}</span>
+                </button>
+                <button
+                  aria-pressed={trackedCardIds.includes(card.instance_id)}
+                  className="draft-workspace__tracking-control"
+                  disabled={trackingCardId !== null || submitting || loading}
+                  onClick={() =>
+                    void toggleTracking(card.instance_id, card.name)
+                  }
+                  type="button"
+                >
+                  {trackedCardIds.includes(card.instance_id)
+                    ? `Untrack ${card.name}`
+                    : `Track ${card.name}`}
                 </button>
               </li>
             ))}

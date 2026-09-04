@@ -64,6 +64,18 @@ _MIGRATIONS: tuple[tuple[int, str], ...] = (
         ) STRICT;
         """,
     ),
+    (
+        2,
+        """
+        CREATE TABLE IF NOT EXISTS draft_tracking (
+            draft_id TEXT NOT NULL,
+            observer_seat INTEGER NOT NULL,
+            card_instance_id TEXT NOT NULL,
+            PRIMARY KEY (draft_id, observer_seat, card_instance_id),
+            FOREIGN KEY(draft_id) REFERENCES drafts(id)
+        ) STRICT;
+        """,
+    ),
 )
 
 
@@ -141,6 +153,47 @@ class SQLiteDraftRepository:
             raise ValueError("draft_id must be a nonblank string")
         with self._connect() as connection:
             return self._load_draft(connection, draft_id)
+
+    def track_card_instance(
+        self, draft_id: str, observer_seat: int, card_instance_id: str
+    ) -> None:
+        """Persist one idempotent local marker without changing draft truth."""
+
+        _tracking_key(draft_id, observer_seat, card_instance_id)
+        with self._connect() as connection:
+            connection.execute(
+                "INSERT OR IGNORE INTO draft_tracking("
+                "draft_id, observer_seat, card_instance_id) VALUES (?, ?, ?)",
+                (draft_id, observer_seat, card_instance_id),
+            )
+
+    def untrack_card_instance(
+        self, draft_id: str, observer_seat: int, card_instance_id: str
+    ) -> None:
+        """Remove one local marker without changing draft truth."""
+
+        _tracking_key(draft_id, observer_seat, card_instance_id)
+        with self._connect() as connection:
+            connection.execute(
+                "DELETE FROM draft_tracking WHERE draft_id = ? "
+                "AND observer_seat = ? AND card_instance_id = ?",
+                (draft_id, observer_seat, card_instance_id),
+            )
+
+    def load_tracked_card_instance_ids(
+        self, draft_id: str, observer_seat: int
+    ) -> tuple[str, ...]:
+        """Load one deterministic local-marker set for a draft seat."""
+
+        _tracking_scope(draft_id, observer_seat)
+        with self._connect() as connection:
+            rows = connection.execute(
+                "SELECT card_instance_id FROM draft_tracking "
+                "WHERE draft_id = ? AND observer_seat = ? "
+                "ORDER BY card_instance_id",
+                (draft_id, observer_seat),
+            ).fetchall()
+        return tuple(row["card_instance_id"] for row in rows)
 
     @staticmethod
     def _load_cube_version(
@@ -554,3 +607,22 @@ def _integer(value: dict[str, object], key: str) -> int:
     if not isinstance(item, int) or isinstance(item, bool):
         raise PersistenceError(f"{key} must be an integer")
     return item
+
+
+def _tracking_key(
+    draft_id: object, observer_seat: object, card_instance_id: object
+) -> None:
+    _tracking_scope(draft_id, observer_seat)
+    if not isinstance(card_instance_id, str) or not card_instance_id.strip():
+        raise ValueError("card_instance_id must be a nonblank string")
+
+
+def _tracking_scope(draft_id: object, observer_seat: object) -> None:
+    if not isinstance(draft_id, str) or not draft_id.strip():
+        raise ValueError("draft_id must be a nonblank string")
+    if (
+        not isinstance(observer_seat, int)
+        or isinstance(observer_seat, bool)
+        or observer_seat < 0
+    ):
+        raise ValueError("observer_seat must be a nonnegative integer")
