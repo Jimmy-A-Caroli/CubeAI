@@ -25,6 +25,7 @@ class ActorOrigin(StrEnum):
 
 class RatingLookupOutcome(StrEnum):
     RATED = "rated"
+    FALLBACK = "fallback"
     MISSING = "missing"
 
 

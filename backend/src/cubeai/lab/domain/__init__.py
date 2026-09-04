@@ -29,6 +29,7 @@ from cubeai.lab.domain.bot import (
     BotVisibleCandidate,
     BotVisibleState,
     RatingArtifact,
+    RatingArtifactProvenance,
     RatingEntry,
     RawRankingStrategyV0,
 )
@@ -79,6 +80,7 @@ __all__ = (
     "BotVisibleCandidate",
     "BotVisibleState",
     "RatingArtifact",
+    "RatingArtifactProvenance",
     "RatingEntry",
     "RawRankingStrategyV0",
     "AllocatedPack",

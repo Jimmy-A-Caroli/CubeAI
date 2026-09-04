@@ -38,6 +38,12 @@ boundary for a human pick plus consecutive configured Bot turns.
   a draft is saved; rehydration replays events through the existing legal
   transition function and retains actor, strategy, rating-artifact, and
   tie-break provenance.
+- Re-importing equivalent immutable source/card content reuses the persisted
+  snapshot rather than attempting to overwrite it. A local display-label
+  change and a later resolution retrieval timestamp are not source content and
+  cannot invalidate an existing draft; the first snapshot retains its original
+  resolution provenance. A difference in immutable source content still
+  reaches the repository's `PERSISTENCE_CONFLICT` guard.
 - The database path is caller-selected local state. PostgreSQL, cloud backup,
   cross-device synchronization, analytics storage, and background migration
   services remain out of scope.

@@ -46,7 +46,7 @@ def test_raw_ranking_chooses_the_highest_rated_legal_candidate() -> None:
     assert decision.provenance.tie_break_reason is BotTieBreakReason.HIGHEST_RATING
 
 
-def test_missing_ratings_are_zero_and_all_unrated_cards_choose_lowest_instance_id() -> (
+def test_unlisted_ratings_use_the_artifact_fallback_and_choose_lowest_instance_id() -> (
     None
 ):
     decision = _strategy().choose(
@@ -58,8 +58,33 @@ def test_missing_ratings_are_zero_and_all_unrated_cards_choose_lowest_instance_i
 
     assert decision.selected_draft_card_instance_id == "instance-a"
     assert decision.provenance.selected_rating == 0.0
-    assert decision.provenance.rating_lookup_outcome is RatingLookupOutcome.MISSING
+    assert decision.provenance.rating_lookup_outcome is RatingLookupOutcome.FALLBACK
     assert decision.provenance.tie_break_reason is BotTieBreakReason.INSTANCE_ID
+
+
+def test_fallback_is_a_mid_tier_score_with_explicit_provenance() -> None:
+    strategy = RawRankingStrategyV0(
+        RatingArtifact(
+            "artifact-1",
+            "1",
+            "CubeAI",
+            "Synthetic test prior",
+            "CubeAI-owned",
+            (RatingEntry("oracle-low", 1.0),),
+            fallback_rating=2.6,
+        )
+    )
+
+    decision = strategy.choose(
+        _state(
+            BotVisibleCandidate("instance-low", "membership-1", "oracle-low"),
+            BotVisibleCandidate("instance-fallback", "membership-2", "oracle-unlisted"),
+        )
+    )
+
+    assert decision.selected_draft_card_instance_id == "instance-fallback"
+    assert decision.provenance.selected_rating == 2.6
+    assert decision.provenance.rating_lookup_outcome is RatingLookupOutcome.FALLBACK
 
 
 def test_equal_ratings_and_duplicate_memberships_remain_distinct_choices() -> None:
@@ -119,10 +144,20 @@ def test_artifact_rejects_duplicate_oracle_ids_and_visible_state_rejects_no_choi
         )
 
 
-def test_package_local_artifact_is_owned_versioned_and_intentionally_sparse() -> None:
+def test_package_local_artifact_is_versioned_provenanced_and_covers_target_cube() -> (
+    None
+):
     artifact = load_raw_ranking_v0_artifact()
 
     assert artifact.id == "cubeai-raw-ranking-v0"
-    assert artifact.version == "2026.09.03.1"
-    assert artifact.rating_for("oracle-1") == 3.0
+    assert artifact.version == "2026.09.04.1"
+    assert artifact.provenance is not None
+    assert artifact.provenance.source_name == "Draftsim"
+    assert (
+        artifact.provenance.source_url
+        == "https://draftsim.com/vintage_cube-pick-order.php"
+    )
+    assert len(artifact.entries) >= 480
+    assert artifact.fallback_rating == 2.6
     assert artifact.rating_for("unlisted-oracle") is None
+    assert artifact.score_for("unlisted-oracle") == (2.6, RatingLookupOutcome.FALLBACK)

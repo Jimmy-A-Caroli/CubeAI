@@ -1,13 +1,1949 @@
 {
   "artifact_id": "cubeai-raw-ranking-v0",
-  "artifact_version": "2026.09.03.1",
-  "created_date": "2026-09-03",
-  "ownership": "CubeAI-owned baseline artifact.",
-  "basis": "A deliberately small repository-authored static prior for the synthetic acceptance path; it is not a third-party ranking dataset, observed human behavior, or contextual drafting model.",
-  "rights": "CubeAI-owned artifact. It does not reproduce or redistribute CubeCobra, CubeCobraML, 17Lands, or another third-party rating dataset.",
-  "coverage": "Two Oracle IDs used by the synthetic acceptance path. All unlisted Oracle IDs intentionally use the Bot v0 0.0 fallback.",
+  "artifact_version": "2026.09.04.1",
+  "created_date": "2026-09-04",
+  "ownership": "CubeAI-owned transformed static rating artifact.",
+  "basis": "CubeAI-owned, versioned static prior transformed from Draftsim's public Vintage Cube Pick Order/Tier List only for exact name matches against the 2026-09-04 local CubeCobra modovintage CubeVersion. It is not gameplay behavior, a Draftsim integration, or contextual draft intelligence.",
+  "rights": "CubeAI owns this compact transformed artifact. Draftsim is attributed as a source input; no raw provider page, provider payload, card images, or source-card names are stored here.",
+  "coverage": {
+    "target_cube": "CubeCobra modovintage",
+    "target_card_count": 540,
+    "rated_exact_oracle_id_mappings": 480,
+    "fallback_cards": 60,
+    "unresolved_cards": 0
+  },
+  "fallback": {
+    "rating": 2.6,
+    "basis": "Median of the 539 numeric ratings observed in the Draftsim source scale.",
+    "lookup_outcome": "fallback"
+  },
+  "provenance": {
+    "source_name": "Draftsim",
+    "source_url": "https://draftsim.com/vintage_cube-pick-order.php",
+    "source_updated": "2026-02-24",
+    "acquired_date": "2026-09-04",
+    "transformation_method": "Normalized Draftsim source labels by replacing underscores with spaces, then performed exact name matching against the resolved target CubeVersion and retained only Oracle ID to numeric-rating mappings."
+  },
   "ratings": [
-    {"oracle_id": "oracle-1", "rating": 3.0},
-    {"oracle_id": "oracle-2", "rating": 1.0}
+    {
+      "oracle_id": "00625242-9348-4ef4-b975-f2ac82fee21d",
+      "rating": 2.4
+    },
+    {
+      "oracle_id": "008cb342-79f5-4df6-a6b7-0e9e22ed693f",
+      "rating": 3.0
+    },
+    {
+      "oracle_id": "00c1788d-c52f-4839-9cd8-11fb86c418b6",
+      "rating": 3.5
+    },
+    {
+      "oracle_id": "00e35322-1a9a-41e3-9ce1-359c8eaa3bc7",
+      "rating": 2.2
+    },
+    {
+      "oracle_id": "017aa9b3-a8ea-4588-9c50-e914a7d8e4ee",
+      "rating": 2.5
+    },
+    {
+      "oracle_id": "02090581-61aa-4348-ad57-451be8ee91c2",
+      "rating": 2.4
+    },
+    {
+      "oracle_id": "02238355-9c84-4ae0-b850-269f460144a8",
+      "rating": 3.2
+    },
+    {
+      "oracle_id": "02418479-9455-417f-a6a1-004356faff37",
+      "rating": 3.4
+    },
+    {
+      "oracle_id": "025939a0-424a-41bf-8fc9-2ef9ea5485f7",
+      "rating": 2.4
+    },
+    {
+      "oracle_id": "032b8a0d-491a-4a12-ab9f-689010054d5b",
+      "rating": 2.9
+    },
+    {
+      "oracle_id": "03c141ca-11e4-4927-a6bd-980ee1203c73",
+      "rating": 3.0
+    },
+    {
+      "oracle_id": "040cbd8a-a9e5-454b-a5ae-9b66bb66b8e9",
+      "rating": 2.6
+    },
+    {
+      "oracle_id": "0452be2a-e97a-4269-a9e3-b616265ecb2e",
+      "rating": 2.7
+    },
+    {
+      "oracle_id": "04c7f4fe-2098-4311-866d-6733c08d5178",
+      "rating": 2.2
+    },
+    {
+      "oracle_id": "04e5e84f-8fd4-43ab-8f9d-5b24646f7ae5",
+      "rating": 2.1
+    },
+    {
+      "oracle_id": "05d7222b-cc08-4f1f-8e35-6058599572ba",
+      "rating": 2.9
+    },
+    {
+      "oracle_id": "060209fa-4b7d-4e08-bf8b-8759bba5641b",
+      "rating": 2.6
+    },
+    {
+      "oracle_id": "0677f49e-f8bf-4349-af52-2ccde9287c2e",
+      "rating": 4.8
+    },
+    {
+      "oracle_id": "069f6530-e65c-4d52-85f3-e0a2acd148c5",
+      "rating": 3.1
+    },
+    {
+      "oracle_id": "08cb8a30-9cb4-4517-bee5-8848aa60d1a2",
+      "rating": 2.3
+    },
+    {
+      "oracle_id": "08d80efc-9542-4ba2-824c-c8615d8d07f2",
+      "rating": 2.6
+    },
+    {
+      "oracle_id": "09a70ae8-3859-4a09-901d-dce063fa3b5f",
+      "rating": 2.8
+    },
+    {
+      "oracle_id": "09dd85aa-47bc-4713-a9b9-8b52ff2285ed",
+      "rating": 3.5
+    },
+    {
+      "oracle_id": "09ef446c-a13d-49d9-a94c-cd5f5a2d440b",
+      "rating": 1.0
+    },
+    {
+      "oracle_id": "0a79237e-0811-4a8a-bd4d-db3ca91bff22",
+      "rating": 2.9
+    },
+    {
+      "oracle_id": "0a7d0d1f-a5ac-4db9-860c-9fcbe3fd9e71",
+      "rating": 2.3
+    },
+    {
+      "oracle_id": "0accfb04-bc8b-4cab-997a-2337ac42db8f",
+      "rating": 4.3
+    },
+    {
+      "oracle_id": "0b8c3337-04dd-4798-8203-6d8b8cfb936b",
+      "rating": 3.0
+    },
+    {
+      "oracle_id": "0ba134d8-ee7d-48ec-8dc6-57942b8e9261",
+      "rating": 2.2
+    },
+    {
+      "oracle_id": "0c016ccc-a341-4b76-87ba-69c639d2746d",
+      "rating": 2.9
+    },
+    {
+      "oracle_id": "0c4e2c90-c17b-42cc-b4d7-cf75970fbe90",
+      "rating": 3.5
+    },
+    {
+      "oracle_id": "0c7019a7-3cca-481a-9af0-abedb89c15ad",
+      "rating": 3.8
+    },
+    {
+      "oracle_id": "0c7f18d5-36cb-4bc6-a358-443b97666215",
+      "rating": 3.2
+    },
+    {
+      "oracle_id": "0c85b8f7-0bd0-4680-9ec5-d4b110460a54",
+      "rating": 2.4
+    },
+    {
+      "oracle_id": "0d6b89dc-23fb-48e9-a54b-cea2838ae7c8",
+      "rating": 2.2
+    },
+    {
+      "oracle_id": "0d96b60b-a060-48ee-bb83-93f1c4a10669",
+      "rating": 2.6
+    },
+    {
+      "oracle_id": "0eb11b2d-a397-48da-a0f3-9f0f83f42282",
+      "rating": 2.4
+    },
+    {
+      "oracle_id": "0ef760f4-bbec-4735-8d60-fc24d973452a",
+      "rating": 2.6
+    },
+    {
+      "oracle_id": "0efb0d7e-dea0-4817-a243-15066e9ef333",
+      "rating": 2.5
+    },
+    {
+      "oracle_id": "0fd57894-b917-41c8-a394-360d1d31b236",
+      "rating": 2.1
+    },
+    {
+      "oracle_id": "0ff11a61-6fe3-4c70-aba8-417023a5e54e",
+      "rating": 3.1
+    },
+    {
+      "oracle_id": "108ae90a-50fa-4cfd-b751-d630e41425fe",
+      "rating": 2.6
+    },
+    {
+      "oracle_id": "109cdefd-e8cc-4ac7-b6ba-2cfdef8d780f",
+      "rating": 2.2
+    },
+    {
+      "oracle_id": "119d719d-e965-45b4-9bc9-ac03211b10c2",
+      "rating": 2.0
+    },
+    {
+      "oracle_id": "12cc800c-c7be-4811-8207-fd01a99cc892",
+      "rating": 2.8
+    },
+    {
+      "oracle_id": "13575cf9-65c1-4861-b21e-eb2155e07766",
+      "rating": 2.6
+    },
+    {
+      "oracle_id": "13d4c46b-c2d6-44cc-a252-4a991d471854",
+      "rating": 1.0
+    },
+    {
+      "oracle_id": "13ff3222-91cb-4796-a34e-899ed817694c",
+      "rating": 2.9
+    },
+    {
+      "oracle_id": "14d2979d-5728-42d7-a027-0eb1f754655d",
+      "rating": 2.0
+    },
+    {
+      "oracle_id": "1515b0c2-1b55-4cd4-ad81-fb6b1f3e8188",
+      "rating": 3.4
+    },
+    {
+      "oracle_id": "158a6225-a246-4fd6-aa57-0df8067b4383",
+      "rating": 3.0
+    },
+    {
+      "oracle_id": "16052b52-ade1-406f-a06b-ce7ea607fb63",
+      "rating": 2.4
+    },
+    {
+      "oracle_id": "16437a83-be52-44cd-a768-a767c9347eb2",
+      "rating": 2.6
+    },
+    {
+      "oracle_id": "16cd0b90-f70c-4efa-b252-8de8784ef9a3",
+      "rating": 2.4
+    },
+    {
+      "oracle_id": "16d8ee99-8ec8-429f-9ba7-818a74b6f910",
+      "rating": 2.3
+    },
+    {
+      "oracle_id": "16e015b2-f8a3-4b1a-80be-58a8f5fb5e8c",
+      "rating": 1.0
+    },
+    {
+      "oracle_id": "17039058-822d-409f-938c-b727a366ba63",
+      "rating": 2.3
+    },
+    {
+      "oracle_id": "176f5ba8-6e7b-4234-a298-b6164f51656f",
+      "rating": 3.4
+    },
+    {
+      "oracle_id": "17770eeb-ecbf-4510-af2d-acececfbe146",
+      "rating": 2.7
+    },
+    {
+      "oracle_id": "17dbbca3-ac1c-4d4e-9618-3e66ac3ccd24",
+      "rating": 2.3
+    },
+    {
+      "oracle_id": "17fa98cd-ed8f-483f-9525-7e989a82ebb2",
+      "rating": 2.4
+    },
+    {
+      "oracle_id": "180eda7c-fca2-403b-85cd-8ffebaf9f408",
+      "rating": 3.6
+    },
+    {
+      "oracle_id": "186b2256-4af3-48cb-96b0-b0e80a7ee6dc",
+      "rating": 2.9
+    },
+    {
+      "oracle_id": "1b30210d-10e9-4703-8967-032063bb4f26",
+      "rating": 2.2
+    },
+    {
+      "oracle_id": "1b5e6560-ff2e-4475-96cb-63f64c8a86db",
+      "rating": 2.1
+    },
+    {
+      "oracle_id": "1b704798-0c69-4c18-ac7e-42933ce90028",
+      "rating": 2.8
+    },
+    {
+      "oracle_id": "1b9f9f5b-8712-4f00-90cb-1b7b9970eccc",
+      "rating": 2.8
+    },
+    {
+      "oracle_id": "1c77b4da-b580-4ce9-b127-76de674f5694",
+      "rating": 3.3
+    },
+    {
+      "oracle_id": "1cea6439-7ae5-4887-8c33-7da9fb36e2d4",
+      "rating": 3.4
+    },
+    {
+      "oracle_id": "1d67f5ff-1fce-45e5-b6a1-416c569351e2",
+      "rating": 2.4
+    },
+    {
+      "oracle_id": "1da10d5c-36a8-473f-a5d4-782ad61d8057",
+      "rating": 3.0
+    },
+    {
+      "oracle_id": "1de1b591-a73f-4974-b507-8c63e07a0868",
+      "rating": 2.6
+    },
+    {
+      "oracle_id": "20283c4a-f1f0-42f0-bc08-6da87474426b",
+      "rating": 2.2
+    },
+    {
+      "oracle_id": "2068185c-1b50-47d0-aa3f-bf505d199428",
+      "rating": 2.4
+    },
+    {
+      "oracle_id": "2111588d-9af5-4a33-989e-b074d83f0463",
+      "rating": 4.3
+    },
+    {
+      "oracle_id": "215c287d-56a5-46da-b49e-8524b6d320a4",
+      "rating": 2.2
+    },
+    {
+      "oracle_id": "216a2a92-9ca3-4ca3-8af7-686c13b04290",
+      "rating": 2.2
+    },
+    {
+      "oracle_id": "217062f5-96f1-454c-9507-17f34ef37070",
+      "rating": 2.5
+    },
+    {
+      "oracle_id": "2251e34e-4ce8-4452-9dc6-d8cce8583996",
+      "rating": 2.9
+    },
+    {
+      "oracle_id": "229d6627-1292-4ae1-8849-b0f956fa6540",
+      "rating": 2.4
+    },
+    {
+      "oracle_id": "22a78443-db21-4656-b38a-e3e3186fd94b",
+      "rating": 2.3
+    },
+    {
+      "oracle_id": "22e3cf1d-3559-4ce1-954c-8dc815342979",
+      "rating": 3.4
+    },
+    {
+      "oracle_id": "22f1a4a4-c423-4d1c-8775-0ed604a9fa51",
+      "rating": 2.4
+    },
+    {
+      "oracle_id": "23467047-6dba-4498-b783-1ebc4f74b8c2",
+      "rating": 2.6
+    },
+    {
+      "oracle_id": "236ce592-1321-4a7c-b695-fd84496f8924",
+      "rating": 3.1
+    },
+    {
+      "oracle_id": "23b11fdc-61b5-4f5e-ad80-f81b729fc91d",
+      "rating": 3.1
+    },
+    {
+      "oracle_id": "23d3e5fe-3f82-44cf-91a1-6646a12a0255",
+      "rating": 2.2
+    },
+    {
+      "oracle_id": "250cb58b-2924-4dff-92fe-ac0ebbbeb218",
+      "rating": 2.3
+    },
+    {
+      "oracle_id": "254878f0-be90-4653-a395-0c41258fceaf",
+      "rating": 3.9
+    },
+    {
+      "oracle_id": "254f87cc-e0c2-484d-b5e8-1ea8c366990c",
+      "rating": 2.3
+    },
+    {
+      "oracle_id": "262a5d83-506c-4781-9bc9-1a2b5d83955c",
+      "rating": 2.0
+    },
+    {
+      "oracle_id": "27e0948b-9916-473b-8d8c-a51bdfbc7457",
+      "rating": 1.0
+    },
+    {
+      "oracle_id": "29737a60-3ebd-40d9-b935-c4f54b90d45d",
+      "rating": 3.0
+    },
+    {
+      "oracle_id": "2993dc7d-723d-4a9b-94bd-4bb02a9f7243",
+      "rating": 2.6
+    },
+    {
+      "oracle_id": "299fc083-0834-4064-8344-f895aff68867",
+      "rating": 3.8
+    },
+    {
+      "oracle_id": "2b0afb89-0944-4861-b9c3-e909e2ac215e",
+      "rating": 4.3
+    },
+    {
+      "oracle_id": "2b8144a0-08d2-4c28-9fd7-5d90f90105e4",
+      "rating": 2.4
+    },
+    {
+      "oracle_id": "2bace3ea-7d28-4a1c-857a-d3c3a1c11b59",
+      "rating": 3.3
+    },
+    {
+      "oracle_id": "2bb2eda7-3b38-4c56-870f-c3218a1056f5",
+      "rating": 2.4
+    },
+    {
+      "oracle_id": "2bd111bb-ce02-414c-b5b7-e0e037d8d96b",
+      "rating": 2.0
+    },
+    {
+      "oracle_id": "2c63e4e1-89d2-4bc6-a232-94e75c4b1c8a",
+      "rating": 4.1
+    },
+    {
+      "oracle_id": "2cb98ca9-d7bb-416b-a17e-ee5f8e4d78f2",
+      "rating": 2.9
+    },
+    {
+      "oracle_id": "2d1bbeda-2e81-4aaa-9494-094ec3dd6c3b",
+      "rating": 2.6
+    },
+    {
+      "oracle_id": "2d899466-b1eb-4901-b626-1f2fb09b786d",
+      "rating": 2.3
+    },
+    {
+      "oracle_id": "2f533667-e29b-4bec-897a-e7a9eee08314",
+      "rating": 2.8
+    },
+    {
+      "oracle_id": "2f70f1bb-29fa-4abb-afc2-653acd0a08b9",
+      "rating": 2.0
+    },
+    {
+      "oracle_id": "301d1d8e-d3fc-4010-8b29-4724fa0b31cd",
+      "rating": 1.0
+    },
+    {
+      "oracle_id": "30b24e8e-3b0e-4d8e-90f3-f66eb7c1858c",
+      "rating": 2.4
+    },
+    {
+      "oracle_id": "3123ec89-8e95-4761-ba17-747ec667509f",
+      "rating": 2.1
+    },
+    {
+      "oracle_id": "322f0459-f394-44f0-977b-55fd0cbe0712",
+      "rating": 1.0
+    },
+    {
+      "oracle_id": "324824cb-f938-401c-b9b5-d8908b431ef0",
+      "rating": 2.6
+    },
+    {
+      "oracle_id": "32e5339e-9e4f-46f8-b305-f9d6d3ba8bb5",
+      "rating": 3.0
+    },
+    {
+      "oracle_id": "33d405ea-7a9a-4970-b70f-9c05d90dd6f0",
+      "rating": 2.1
+    },
+    {
+      "oracle_id": "3407eb6e-b74d-4159-a801-d7163937953c",
+      "rating": 4.1
+    },
+    {
+      "oracle_id": "340bbe8b-e987-4c3e-ab4e-9dee63e57d4f",
+      "rating": 1.9
+    },
+    {
+      "oracle_id": "34515b16-c9a4-4f98-8c77-416a7a523407",
+      "rating": 2.3
+    },
+    {
+      "oracle_id": "34f34409-326d-4994-a0ea-1a69aa278f03",
+      "rating": 4.0
+    },
+    {
+      "oracle_id": "35807c14-4647-482f-9ba1-6d640fd5e8d8",
+      "rating": 4.6
+    },
+    {
+      "oracle_id": "358789f9-7d87-411d-919e-d597da665cbd",
+      "rating": 3.4
+    },
+    {
+      "oracle_id": "36cd2364-d113-47d1-b2c4-b088d9eb88dd",
+      "rating": 2.4
+    },
+    {
+      "oracle_id": "370c37f7-2484-40e8-8fd9-c10cf6f5d5f2",
+      "rating": 2.3
+    },
+    {
+      "oracle_id": "37108cd4-bbab-4ce3-9ed6-f60e8422e703",
+      "rating": 3.8
+    },
+    {
+      "oracle_id": "37688720-03de-4eca-a82d-a0afe8d58adc",
+      "rating": 2.6
+    },
+    {
+      "oracle_id": "376ee366-e082-402f-b4db-6592fcfcacd2",
+      "rating": 4.8
+    },
+    {
+      "oracle_id": "377179d5-ac83-4d34-b5b1-f3d8caa60f79",
+      "rating": 2.9
+    },
+    {
+      "oracle_id": "383e3fe4-8558-4561-8632-6eadb5d5963c",
+      "rating": 2.6
+    },
+    {
+      "oracle_id": "38515f89-348b-4cf3-b7bd-1f6fe4ce2fba",
+      "rating": 3.7
+    },
+    {
+      "oracle_id": "395611fa-aec2-4c9e-92c3-70cf95cc00f4",
+      "rating": 2.3
+    },
+    {
+      "oracle_id": "3a16bdda-8499-47e4-b870-b9576f4c1a83",
+      "rating": 2.4
+    },
+    {
+      "oracle_id": "3a310554-3f69-4158-bb94-9d6965c7125a",
+      "rating": 4.4
+    },
+    {
+      "oracle_id": "3aa83ed2-f48b-4ce6-a614-2c54ddf50538",
+      "rating": 4.3
+    },
+    {
+      "oracle_id": "3b1c6c1e-e298-4f45-8ab7-e0bb5358e11f",
+      "rating": 1.9
+    },
+    {
+      "oracle_id": "3bba3b36-f8d7-4fd6-892a-797226210b6e",
+      "rating": 2.5
+    },
+    {
+      "oracle_id": "3bc757c1-3adb-4321-8832-8e1cc9e687f7",
+      "rating": 2.6
+    },
+    {
+      "oracle_id": "3bc8a406-3ae7-4f56-a33c-b4a2c115b917",
+      "rating": 2.6
+    },
+    {
+      "oracle_id": "3c22e031-4804-4c31-bd3c-c3f29d456b34",
+      "rating": 3.3
+    },
+    {
+      "oracle_id": "3d268e48-3004-4384-bf52-e63243fb5e02",
+      "rating": 2.7
+    },
+    {
+      "oracle_id": "3d6fa57a-aa53-4b5c-b8af-a7612c823117",
+      "rating": 1.9
+    },
+    {
+      "oracle_id": "3e057471-e415-4105-9064-8236a0a5047d",
+      "rating": 4.3
+    },
+    {
+      "oracle_id": "3f17c60e-923a-4392-9da8-87d9ded009b7",
+      "rating": 3.3
+    },
+    {
+      "oracle_id": "3f3b2c10-21f8-4e13-be83-4ef3fa36e123",
+      "rating": 2.4
+    },
+    {
+      "oracle_id": "419a8ab2-cff6-4811-a559-8791c9bb3d8e",
+      "rating": 2.7
+    },
+    {
+      "oracle_id": "43985bbc-a0f6-4812-984e-392bc8562633",
+      "rating": 2.3
+    },
+    {
+      "oracle_id": "4457ed35-7c10-48c8-9776-456485fdf070",
+      "rating": 2.8
+    },
+    {
+      "oracle_id": "45181cb8-2090-4471-ba90-e5a8f04d525f",
+      "rating": 3.3
+    },
+    {
+      "oracle_id": "45f1e957-09f0-4d46-8e32-238f26060a87",
+      "rating": 2.5
+    },
+    {
+      "oracle_id": "464c0150-3dbc-403b-9ada-fef25ab1f29d",
+      "rating": 2.7
+    },
+    {
+      "oracle_id": "46b1a169-bc32-47bf-b379-fa0c3d13878f",
+      "rating": 3.0
+    },
+    {
+      "oracle_id": "46ce3698-e4e6-44e9-8b99-2b12a703e91e",
+      "rating": 2.2
+    },
+    {
+      "oracle_id": "47a785ed-8095-4685-8daa-02c4e2b0ffcd",
+      "rating": 3.2
+    },
+    {
+      "oracle_id": "49136bdc-bc50-49a2-999a-1ef9c16ea130",
+      "rating": 3.2
+    },
+    {
+      "oracle_id": "499a4715-6776-461b-bee4-22ed172d455e",
+      "rating": 2.5
+    },
+    {
+      "oracle_id": "4b033a0a-c1ae-44d7-9662-72cbbfda024b",
+      "rating": 2.3
+    },
+    {
+      "oracle_id": "4b22be3a-8ce1-47d1-b82e-6c3ccfb0548b",
+      "rating": 3.6
+    },
+    {
+      "oracle_id": "4b515bb0-f275-4400-8032-3173b799ab40",
+      "rating": 4.0
+    },
+    {
+      "oracle_id": "4bc79fb3-81bb-42ed-9bbb-93f8cede3094",
+      "rating": 2.7
+    },
+    {
+      "oracle_id": "4c0a0448-b9d6-43a0-8549-64066dac63f0",
+      "rating": 1.5
+    },
+    {
+      "oracle_id": "4c6a0c30-b547-4eff-8ff4-0ca25803c076",
+      "rating": 3.3
+    },
+    {
+      "oracle_id": "4c9bcba6-87b5-4fb3-97ee-6fe5b739337d",
+      "rating": 2.2
+    },
+    {
+      "oracle_id": "4dcd0583-cee0-46a6-ba43-93bca5eb0428",
+      "rating": 2.6
+    },
+    {
+      "oracle_id": "4df0d381-fc05-4d30-9307-48963aa2ecfd",
+      "rating": 3.3
+    },
+    {
+      "oracle_id": "4e0b647a-6e1a-421b-bca9-8d5e346bda80",
+      "rating": 2.5
+    },
+    {
+      "oracle_id": "4ec85850-f274-4c0c-9a03-0488267caa14",
+      "rating": 3.5
+    },
+    {
+      "oracle_id": "4fc5f871-a809-4a4a-adfb-eb4cd52837c8",
+      "rating": 2.0
+    },
+    {
+      "oracle_id": "50330e48-db74-4c5f-a0bc-f9a8607e8f31",
+      "rating": 2.2
+    },
+    {
+      "oracle_id": "5089ec1a-f881-4d55-af14-5d996171203b",
+      "rating": 5.0
+    },
+    {
+      "oracle_id": "50d6fd91-23d3-4d32-804f-6233e4386904",
+      "rating": 2.5
+    },
+    {
+      "oracle_id": "510a6ac5-f098-4145-ac07-771b1b6f7cdf",
+      "rating": 2.6
+    },
+    {
+      "oracle_id": "51b55057-8b14-4277-894b-4813b4f7eb39",
+      "rating": 2.6
+    },
+    {
+      "oracle_id": "522dd417-364b-44ab-8ca9-fb55db5f26a6",
+      "rating": 2.5
+    },
+    {
+      "oracle_id": "5277a68e-1ceb-4b40-8e10-3d0564f5d7be",
+      "rating": 1.5
+    },
+    {
+      "oracle_id": "52867cdd-8bf2-4cae-bb8d-0f16a18a455b",
+      "rating": 2.4
+    },
+    {
+      "oracle_id": "52c3fe55-74ee-44cb-b62b-dc6c5dfdc33e",
+      "rating": 3.1
+    },
+    {
+      "oracle_id": "53f7c868-b03e-4fc2-8dcf-a75bbfa3272b",
+      "rating": 1.0
+    },
+    {
+      "oracle_id": "54022a10-c9f0-458d-a0ed-228843cd9a40",
+      "rating": 1.0
+    },
+    {
+      "oracle_id": "550c74d4-1fcb-406a-b02a-639a760a4380",
+      "rating": 5.0
+    },
+    {
+      "oracle_id": "58582fac-4c42-4a1c-9ab1-4a892b500da4",
+      "rating": 3.0
+    },
+    {
+      "oracle_id": "59119143-c0fa-49dd-adf0-e2fd3029c48b",
+      "rating": 4.3
+    },
+    {
+      "oracle_id": "59b02ca7-e7bd-4820-ac32-87ea1a8c64c0",
+      "rating": 2.4
+    },
+    {
+      "oracle_id": "5a343a5f-3f9b-43c3-8532-8391de7a5443",
+      "rating": 3.1
+    },
+    {
+      "oracle_id": "5aa3abf1-d56b-4f42-8c84-7e5a2c15ee0f",
+      "rating": 2.5
+    },
+    {
+      "oracle_id": "5ad94412-6f79-4c5d-bbd4-4ef5779a7b6d",
+      "rating": 2.3
+    },
+    {
+      "oracle_id": "5b5bf1fa-6502-4790-b66b-f0f8504ebc7c",
+      "rating": 1.0
+    },
+    {
+      "oracle_id": "5b6bdf5a-2742-4851-92cd-a857a3852836",
+      "rating": 2.9
+    },
+    {
+      "oracle_id": "5bd06f9e-9a42-455d-ad26-24bc04e51c7c",
+      "rating": 3.2
+    },
+    {
+      "oracle_id": "5c26c30b-bc4a-4d20-8406-ef9022256e0d",
+      "rating": 2.7
+    },
+    {
+      "oracle_id": "5c58353a-fd60-4528-bf0d-669626cda0b2",
+      "rating": 3.3
+    },
+    {
+      "oracle_id": "5d4ea910-3b16-4f98-89be-c1b2cfff4bf0",
+      "rating": 2.9
+    },
+    {
+      "oracle_id": "5d86a59a-ba1f-45f7-b829-dca6f9f3e624",
+      "rating": 3.9
+    },
+    {
+      "oracle_id": "5e57a8cd-f4f0-40b2-84a0-e002751c0d40",
+      "rating": 3.2
+    },
+    {
+      "oracle_id": "5f0be4ce-898e-4849-ab8f-a85fb05c3017",
+      "rating": 2.2
+    },
+    {
+      "oracle_id": "5f627e45-deee-4a4f-8128-57b0d8ebc553",
+      "rating": 1.5
+    },
+    {
+      "oracle_id": "60433b48-d27f-413c-905c-43839b1943f1",
+      "rating": 3.7
+    },
+    {
+      "oracle_id": "60c60923-ff1b-43f7-8768-731499fcffc9",
+      "rating": 3.0
+    },
+    {
+      "oracle_id": "60e7130a-d321-4e50-93a4-999013c76054",
+      "rating": 3.0
+    },
+    {
+      "oracle_id": "610af0f7-b5e3-43fb-9d02-7c59bd99034c",
+      "rating": 2.0
+    },
+    {
+      "oracle_id": "63afc3d1-7653-476e-838f-fc18d4a62a21",
+      "rating": 2.5
+    },
+    {
+      "oracle_id": "63bfb9ca-d9d5-4c17-be39-82eb115bc20c",
+      "rating": 2.4
+    },
+    {
+      "oracle_id": "63c1ac21-e3d8-40c2-8c09-3f31c52992ef",
+      "rating": 2.0
+    },
+    {
+      "oracle_id": "63dfe794-5f56-41ec-9883-5523b41cc3e0",
+      "rating": 2.8
+    },
+    {
+      "oracle_id": "646f9ad8-9d18-4b42-954a-e21a62e9f0e8",
+      "rating": 3.1
+    },
+    {
+      "oracle_id": "647feda9-2876-4430-902f-10dc1f4f99a9",
+      "rating": 2.2
+    },
+    {
+      "oracle_id": "652e87af-7cf0-407f-9fb7-1a630fb8dd47",
+      "rating": 2.4
+    },
+    {
+      "oracle_id": "6587a463-a108-4854-b6d1-944e89b8c8a4",
+      "rating": 3.2
+    },
+    {
+      "oracle_id": "65986c1b-8e51-4604-b685-d82fa7d1263a",
+      "rating": 2.8
+    },
+    {
+      "oracle_id": "66fa2326-1b5d-41fb-b919-83bf9f383577",
+      "rating": 1.5
+    },
+    {
+      "oracle_id": "67d60b24-d429-4ded-90d9-06e49f28c396",
+      "rating": 3.2
+    },
+    {
+      "oracle_id": "68954295-54e3-4303-a6bc-fc4547a4e3a3",
+      "rating": 2.4
+    },
+    {
+      "oracle_id": "68c7e459-0932-4644-a3c0-9a1eae1db7a3",
+      "rating": 2.2
+    },
+    {
+      "oracle_id": "6927bd2e-cb05-487a-af86-89ede6e8dabd",
+      "rating": 3.1
+    },
+    {
+      "oracle_id": "699b192c-f3f2-4ac5-9ca9-e35bcf08ad8a",
+      "rating": 2.6
+    },
+    {
+      "oracle_id": "69bc2afd-9f53-47f2-b9c8-f12732784e10",
+      "rating": 2.5
+    },
+    {
+      "oracle_id": "6ad8011d-3471-4369-9d68-b264cc027487",
+      "rating": 4.9
+    },
+    {
+      "oracle_id": "6b8cf2a0-b045-4d91-9d91-c602d40c6237",
+      "rating": 2.6
+    },
+    {
+      "oracle_id": "6bae00e8-06cf-4ac4-a1cc-757e454109fe",
+      "rating": 2.0
+    },
+    {
+      "oracle_id": "6c326439-5620-4ec6-a56a-fe9c3d5d2a46",
+      "rating": 1.5
+    },
+    {
+      "oracle_id": "6df1c314-b97b-4bbc-8b7e-a07785347a49",
+      "rating": 2.5
+    },
+    {
+      "oracle_id": "6e111622-c7cc-49cf-83e8-3555e06518c1",
+      "rating": 3.0
+    },
+    {
+      "oracle_id": "6e760cfe-45b9-4a3f-b2e2-4ca6ec2bd13a",
+      "rating": 2.3
+    },
+    {
+      "oracle_id": "6e9ef5ef-6aed-4d3e-a59b-9e3dc8740b1b",
+      "rating": 2.2
+    },
+    {
+      "oracle_id": "703243f0-8cb3-420f-958f-5fd4bde30293",
+      "rating": 3.3
+    },
+    {
+      "oracle_id": "70486bee-6ee7-41ea-b834-8caf4699302b",
+      "rating": 2.8
+    },
+    {
+      "oracle_id": "70fa2eba-565e-4fed-adc9-7f5d9fcbf1fa",
+      "rating": 2.0
+    },
+    {
+      "oracle_id": "721eb5a2-d7cf-4db0-8013-ef3f596c52a5",
+      "rating": 2.3
+    },
+    {
+      "oracle_id": "72e8d67a-41e6-4074-bcbd-b54ead995237",
+      "rating": 1.0
+    },
+    {
+      "oracle_id": "7359e82b-db79-488d-a1d4-75a00f12a4cf",
+      "rating": 1.5
+    },
+    {
+      "oracle_id": "736892cb-a34b-4bb9-b56c-e26e3db207a2",
+      "rating": 4.4
+    },
+    {
+      "oracle_id": "73864fcc-1bde-4bc0-831e-2b93e546e417",
+      "rating": 2.1
+    },
+    {
+      "oracle_id": "749d2994-44e7-40d3-8630-7bebed239e9e",
+      "rating": 2.0
+    },
+    {
+      "oracle_id": "74b7fe23-5d3a-4092-8d78-7c0eba8f6f73",
+      "rating": 3.5
+    },
+    {
+      "oracle_id": "74c0164c-130f-4572-9066-626c77f6e2ff",
+      "rating": 3.4
+    },
+    {
+      "oracle_id": "74d3277a-38e5-4732-afed-084a56148f20",
+      "rating": 4.0
+    },
+    {
+      "oracle_id": "75d56a0a-2f64-4e80-b83e-85942d3e6dd7",
+      "rating": 3.4
+    },
+    {
+      "oracle_id": "774dce79-67e0-4820-8013-c7a7347993ce",
+      "rating": 3.0
+    },
+    {
+      "oracle_id": "776341cb-d2ec-423f-9250-92dc8bd8d503",
+      "rating": 2.5
+    },
+    {
+      "oracle_id": "78db3190-59bc-4033-95bc-32d8ed872b6a",
+      "rating": 1.0
+    },
+    {
+      "oracle_id": "78f9c223-9982-4282-a496-a6f892f0a5bf",
+      "rating": 2.2
+    },
+    {
+      "oracle_id": "7973820b-fdaf-46ec-9e3e-d4c0e77b5067",
+      "rating": 2.4
+    },
+    {
+      "oracle_id": "7aa31280-12c3-479d-a6dd-f1c669043083",
+      "rating": 2.0
+    },
+    {
+      "oracle_id": "7b515c56-7b1e-42a8-82b0-1b30201fb162",
+      "rating": 3.3
+    },
+    {
+      "oracle_id": "7c2a4fe5-43e8-4e20-bef2-0278d18afc4b",
+      "rating": 2.0
+    },
+    {
+      "oracle_id": "7c427c3d-ecd8-45ef-bebd-8f10f4a311db",
+      "rating": 3.2
+    },
+    {
+      "oracle_id": "7cafc972-a6f5-4cac-a3d3-8a3ae36ffb1e",
+      "rating": 2.6
+    },
+    {
+      "oracle_id": "7e64b1dc-a238-4bff-98ff-2bea44340568",
+      "rating": 3.3
+    },
+    {
+      "oracle_id": "7ed52301-81ea-4e7f-b985-cfab0593cae4",
+      "rating": 2.3
+    },
+    {
+      "oracle_id": "7f77a84e-5a4b-4834-aefa-3cecc175ae8e",
+      "rating": 2.8
+    },
+    {
+      "oracle_id": "7fd7457a-388d-4cca-a7cf-86b4ea922037",
+      "rating": 3.9
+    },
+    {
+      "oracle_id": "7ffae8f8-3006-4969-a339-6d30678f87ea",
+      "rating": 2.0
+    },
+    {
+      "oracle_id": "7fffbe7f-ad78-4bb6-a611-c37e495c6ee0",
+      "rating": 2.3
+    },
+    {
+      "oracle_id": "81abb451-5ee0-4f90-bacc-a8ff69726a27",
+      "rating": 3.4
+    },
+    {
+      "oracle_id": "82004860-e589-4e38-8d61-8c0210e4ea39",
+      "rating": 4.1
+    },
+    {
+      "oracle_id": "824597b8-c89a-47ec-8526-7efc6e24ef0e",
+      "rating": 4.8
+    },
+    {
+      "oracle_id": "8291543f-d086-48aa-b2b7-5481ca8c9198",
+      "rating": 2.1
+    },
+    {
+      "oracle_id": "83101ba8-a569-4827-8c53-9ca0dfcd59a7",
+      "rating": 2.5
+    },
+    {
+      "oracle_id": "83df0f44-86ca-4adb-9f3a-da1ba6dd7a6d",
+      "rating": 3.0
+    },
+    {
+      "oracle_id": "840119bf-e60f-4ff7-9c9b-d420d09df545",
+      "rating": 1.9
+    },
+    {
+      "oracle_id": "876ac6f6-74de-4666-84c6-83d81f054723",
+      "rating": 2.9
+    },
+    {
+      "oracle_id": "8785f42f-87b9-4a0a-89ce-ea423649ba9c",
+      "rating": 3.2
+    },
+    {
+      "oracle_id": "88bef744-550e-4f33-b1ff-a8ee990ec754",
+      "rating": 2.6
+    },
+    {
+      "oracle_id": "88f8f683-738e-48f3-afff-c8f73f1033a2",
+      "rating": 2.1
+    },
+    {
+      "oracle_id": "89c83a6d-f6c8-4984-a888-0db62dfb93b1",
+      "rating": 2.0
+    },
+    {
+      "oracle_id": "8a3ad2ef-8bcb-40c0-85de-f03328c2b644",
+      "rating": 2.5
+    },
+    {
+      "oracle_id": "8a76a9b9-3127-45fe-b20f-a8f643276281",
+      "rating": 2.9
+    },
+    {
+      "oracle_id": "8c1fe337-375a-4add-93b6-0ac39ed72b4f",
+      "rating": 2.4
+    },
+    {
+      "oracle_id": "8c34b089-aad1-476e-958a-3077bf1bbb51",
+      "rating": 1.0
+    },
+    {
+      "oracle_id": "8c4d7cbc-9cfc-4f0a-8844-e458ab806056",
+      "rating": 3.4
+    },
+    {
+      "oracle_id": "8d98d674-6811-4d45-b22a-63792e272a2b",
+      "rating": 3.4
+    },
+    {
+      "oracle_id": "8dd5f5af-d2d8-4356-8617-8381081b930c",
+      "rating": 2.2
+    },
+    {
+      "oracle_id": "8e7b079d-9ede-421c-bd2b-f9a5126a8e6f",
+      "rating": 3.0
+    },
+    {
+      "oracle_id": "8f1016c7-0551-4813-987d-36abf3b2ffeb",
+      "rating": 2.9
+    },
+    {
+      "oracle_id": "8fcf50cd-e6d0-4516-850f-d42ee75dcc3a",
+      "rating": 1.9
+    },
+    {
+      "oracle_id": "900ca697-ad38-4b2b-bc74-2ff7eb6ea951",
+      "rating": 2.3
+    },
+    {
+      "oracle_id": "9078db26-3a54-4a11-9aae-e45c38da7226",
+      "rating": 2.6
+    },
+    {
+      "oracle_id": "91c835d1-22ca-4c90-9ba6-c8e01bbc0347",
+      "rating": 3.5
+    },
+    {
+      "oracle_id": "929117cd-caa6-402b-9d7b-1f684d75695c",
+      "rating": 2.7
+    },
+    {
+      "oracle_id": "948217ac-289e-455f-8c7c-519aa75fa345",
+      "rating": 3.1
+    },
+    {
+      "oracle_id": "94f0a572-e91c-4b56-a5d1-6cbbeabd210d",
+      "rating": 2.6
+    },
+    {
+      "oracle_id": "94f6c407-e665-4032-be13-a01e40c1f306",
+      "rating": 2.3
+    },
+    {
+      "oracle_id": "956381ba-6d37-4a8a-846c-bad79222dbee",
+      "rating": 4.5
+    },
+    {
+      "oracle_id": "9575d7ce-f26d-4b90-87a3-6329e9799572",
+      "rating": 2.5
+    },
+    {
+      "oracle_id": "96312b75-3110-4506-9f95-0c6c17d9da11",
+      "rating": 2.8
+    },
+    {
+      "oracle_id": "96c2d71e-0fc9-42aa-bc6b-6d0ae3f66f8b",
+      "rating": 1.9
+    },
+    {
+      "oracle_id": "975ec9a3-6f20-4177-8211-82526e092538",
+      "rating": 2.6
+    },
+    {
+      "oracle_id": "977c2f33-b622-4172-9efb-7f523becd32b",
+      "rating": 2.4
+    },
+    {
+      "oracle_id": "97acd977-164d-49d5-b3a1-72e0d75c9016",
+      "rating": 3.0
+    },
+    {
+      "oracle_id": "981298e6-ddee-49c0-9377-f47f019b4138",
+      "rating": 2.8
+    },
+    {
+      "oracle_id": "9843d8a6-bcbf-40c2-8c41-316e97db9c62",
+      "rating": 2.5
+    },
+    {
+      "oracle_id": "98492d7d-3b9e-4ae1-ac45-1b508d6d2670",
+      "rating": 1.9
+    },
+    {
+      "oracle_id": "98a389f4-2905-47f3-b60e-3d4afb3e5cb0",
+      "rating": 3.8
+    },
+    {
+      "oracle_id": "98aa9424-5912-4bd6-9300-b3972a31d8af",
+      "rating": 2.8
+    },
+    {
+      "oracle_id": "9918eb7b-054e-4b1c-afc7-1163ab642d50",
+      "rating": 3.1
+    },
+    {
+      "oracle_id": "992d9a72-d34d-47d7-96fb-37f0efb515ef",
+      "rating": 2.3
+    },
+    {
+      "oracle_id": "99915b5a-5092-4900-8824-6de2aab1b2c1",
+      "rating": 2.8
+    },
+    {
+      "oracle_id": "9d4b1e44-3c66-4b1b-8a1d-308aa4f841f8",
+      "rating": 2.9
+    },
+    {
+      "oracle_id": "9d5917d5-4fb3-4f37-9278-e08c1f73aae5",
+      "rating": 2.0
+    },
+    {
+      "oracle_id": "9dc61ef6-da22-42a8-b348-dfd5722deadf",
+      "rating": 3.4
+    },
+    {
+      "oracle_id": "9dd7f27a-e862-47d7-9158-034cf4d353b8",
+      "rating": 3.0
+    },
+    {
+      "oracle_id": "9e7a240d-dc33-47ac-9f17-77fab4c1c340",
+      "rating": 2.6
+    },
+    {
+      "oracle_id": "9e96d12b-8381-4706-8089-3521aa2b5422",
+      "rating": 2.4
+    },
+    {
+      "oracle_id": "9ea747cf-5d04-4aa7-bdc3-8145860cd1ba",
+      "rating": 2.9
+    },
+    {
+      "oracle_id": "a044474a-cd72-4e9d-bd8d-a08f2de9cdc0",
+      "rating": 3.1
+    },
+    {
+      "oracle_id": "a05f641c-15c9-43dc-ae0d-1ea372fd33d5",
+      "rating": 2.8
+    },
+    {
+      "oracle_id": "a0be9bb2-3234-4c6c-b8ce-0879b1f43003",
+      "rating": 3.8
+    },
+    {
+      "oracle_id": "a0d3bb63-2977-41b2-bcc3-2488e6696cb8",
+      "rating": 2.3
+    },
+    {
+      "oracle_id": "a2b48695-f7d7-42ce-a8a0-2a723428542a",
+      "rating": 2.5
+    },
+    {
+      "oracle_id": "a3635b3f-839c-4fe5-83a5-7c70e8630184",
+      "rating": 3.2
+    },
+    {
+      "oracle_id": "a5bbfe32-2fb9-48a0-bc8a-e9899aac1fda",
+      "rating": 2.6
+    },
+    {
+      "oracle_id": "a6708b11-1bcd-4208-a967-fe91f2e3313c",
+      "rating": 1.0
+    },
+    {
+      "oracle_id": "a70d9645-7c25-4fcb-9d16-fb73ce8b55e2",
+      "rating": 2.7
+    },
+    {
+      "oracle_id": "a8abd966-de7b-46a3-8ac7-8747ab35653a",
+      "rating": 2.2
+    },
+    {
+      "oracle_id": "a984db23-40ea-428d-829f-e944267280f8",
+      "rating": 2.4
+    },
+    {
+      "oracle_id": "aa1a6646-c1e6-4bff-9092-43ee3e137914",
+      "rating": 2.9
+    },
+    {
+      "oracle_id": "aaadfe41-b2be-4183-b45e-a70e53a59d2e",
+      "rating": 2.9
+    },
+    {
+      "oracle_id": "ab26fbe2-e808-48b9-8d0d-3fbb6c3d554f",
+      "rating": 2.5
+    },
+    {
+      "oracle_id": "ab655810-f67e-4576-9174-35b16f5e3235",
+      "rating": 1.5
+    },
+    {
+      "oracle_id": "abbcb153-0763-44c6-964f-b4ff0eb64257",
+      "rating": 3.8
+    },
+    {
+      "oracle_id": "ac2086fe-98ee-4280-9c7c-c5c2d6548a8b",
+      "rating": 3.0
+    },
+    {
+      "oracle_id": "ac2173f9-f223-440a-9231-fd98762bdc6f",
+      "rating": 2.0
+    },
+    {
+      "oracle_id": "ac641490-ca14-48d7-8cc4-b69ce984befa",
+      "rating": 2.6
+    },
+    {
+      "oracle_id": "acf4d685-a718-42f7-9a7a-dee069ae8db2",
+      "rating": 3.5
+    },
+    {
+      "oracle_id": "ae7604bb-4818-45a3-960c-cf3d83f15964",
+      "rating": 3.5
+    },
+    {
+      "oracle_id": "afaef788-34d1-460b-b884-9d7ae6ddeb18",
+      "rating": 2.1
+    },
+    {
+      "oracle_id": "b01d61cc-9844-4191-86a0-f2db6d42d6e5",
+      "rating": 3.0
+    },
+    {
+      "oracle_id": "b081352b-d17b-4031-bbcc-c5c02cbfa6b6",
+      "rating": 3.8
+    },
+    {
+      "oracle_id": "b12cbda1-ac09-49eb-96b3-a4df27bc37ea",
+      "rating": 2.8
+    },
+    {
+      "oracle_id": "b1544f21-7e98-461b-aed5-e748b0168c52",
+      "rating": 4.2
+    },
+    {
+      "oracle_id": "b1a0e129-27f0-4a09-b00d-497e18777306",
+      "rating": 2.4
+    },
+    {
+      "oracle_id": "b23a3d30-6b8e-4aad-890f-db0c3af43ace",
+      "rating": 3.1
+    },
+    {
+      "oracle_id": "b23cba46-6ed2-442d-bc39-7c4933f6b083",
+      "rating": 3.1
+    },
+    {
+      "oracle_id": "b2ec080f-ad5d-4274-91e3-bc6ac89fc3e4",
+      "rating": 2.0
+    },
+    {
+      "oracle_id": "b304ac72-7f40-40de-b8d6-6392909b6029",
+      "rating": 4.2
+    },
+    {
+      "oracle_id": "b33656ae-3473-4223-845f-f9147f87678b",
+      "rating": 2.2
+    },
+    {
+      "oracle_id": "b3a81bb1-cbd5-41a0-8dd4-faea06593f84",
+      "rating": 2.4
+    },
+    {
+      "oracle_id": "b3d81980-76f2-44e2-b1c9-01e30c726312",
+      "rating": 3.0
+    },
+    {
+      "oracle_id": "b49642f6-20bd-468d-9dac-e578f9ac3091",
+      "rating": 2.6
+    },
+    {
+      "oracle_id": "b4ce2c8f-a19c-461e-8a2e-0ec2bd3ebca3",
+      "rating": 4.4
+    },
+    {
+      "oracle_id": "b685757b-521e-4353-a233-97052359723d",
+      "rating": 2.4
+    },
+    {
+      "oracle_id": "b6859c7a-4c4d-4652-938f-ecedce29d506",
+      "rating": 2.9
+    },
+    {
+      "oracle_id": "b749e9e4-0f2a-4157-8cca-facd6b48157f",
+      "rating": 2.5
+    },
+    {
+      "oracle_id": "b76d1ae6-ad1d-4bac-b4c3-2e03e0e84d9b",
+      "rating": 3.5
+    },
+    {
+      "oracle_id": "b83a3ba0-249e-4c39-bbf0-cb005413f7d2",
+      "rating": 1.9
+    },
+    {
+      "oracle_id": "ba284fe6-bb29-455c-8321-9714a0cdc05e",
+      "rating": 2.4
+    },
+    {
+      "oracle_id": "bb7cebb7-a979-4879-b834-deab13f2a22c",
+      "rating": 2.8
+    },
+    {
+      "oracle_id": "bbfb3e4a-b389-4391-8141-13b68c0ef2e0",
+      "rating": 2.9
+    },
+    {
+      "oracle_id": "bddf8f4a-3149-4dd6-a9e5-7747e7e45a1c",
+      "rating": 2.6
+    },
+    {
+      "oracle_id": "bde94af8-faea-41ff-8eed-ba642eac9968",
+      "rating": 2.3
+    },
+    {
+      "oracle_id": "bf1341dd-41a3-49f6-87ec-63170dde4324",
+      "rating": 2.1
+    },
+    {
+      "oracle_id": "c0d8fef4-65f4-4769-982d-b397d2b7e977",
+      "rating": 3.2
+    },
+    {
+      "oracle_id": "c0efafc6-8ffb-4908-ae64-3f391722370a",
+      "rating": 2.4
+    },
+    {
+      "oracle_id": "c207aaee-0b67-4520-ad02-2c289228be2a",
+      "rating": 3.2
+    },
+    {
+      "oracle_id": "c259e16f-2a44-4552-8678-815f757a02e8",
+      "rating": 1.0
+    },
+    {
+      "oracle_id": "c396db03-bf11-4e20-b630-4f9aa8fd78da",
+      "rating": 2.3
+    },
+    {
+      "oracle_id": "c53ba31a-ba27-4e17-9a92-311acb1cab29",
+      "rating": 1.0
+    },
+    {
+      "oracle_id": "c5acf2a5-40f4-433d-a74d-1cb56c521464",
+      "rating": 3.2
+    },
+    {
+      "oracle_id": "c61fe162-2202-4e56-9ba0-393547f9875f",
+      "rating": 2.7
+    },
+    {
+      "oracle_id": "c6e0574c-3e2b-4c40-b17a-05bce3d49309",
+      "rating": 1.9
+    },
+    {
+      "oracle_id": "c718911c-c955-4eb9-9e16-be4bd49a4e4e",
+      "rating": 3.7
+    },
+    {
+      "oracle_id": "c77dc11e-d95d-4e7e-bb24-d971c179e9b0",
+      "rating": 3.0
+    },
+    {
+      "oracle_id": "c7a15ca4-085f-4d92-8387-c3711c04c8fa",
+      "rating": 3.0
+    },
+    {
+      "oracle_id": "c7aecca5-2f67-4245-ab2d-e723d8b23a67",
+      "rating": 2.5
+    },
+    {
+      "oracle_id": "c7c7bffa-442d-4ba5-b778-ad394c192f27",
+      "rating": 2.2
+    },
+    {
+      "oracle_id": "c7fa1dda-9312-4ec8-82cd-a1ba7bc33497",
+      "rating": 2.5
+    },
+    {
+      "oracle_id": "c823e687-6311-4c99-974b-fd77d204141a",
+      "rating": 4.3
+    },
+    {
+      "oracle_id": "c85d824b-c190-4d04-ab99-918ad0e6516c",
+      "rating": 2.4
+    },
+    {
+      "oracle_id": "c8d95ca8-7d12-4072-aeaf-e20f248c7e39",
+      "rating": 2.9
+    },
+    {
+      "oracle_id": "c8de43a3-ebd3-4000-b343-a6ffed11d34d",
+      "rating": 2.7
+    },
+    {
+      "oracle_id": "c97361b5-af16-4a7b-af85-a429dbaf4ad2",
+      "rating": 2.8
+    },
+    {
+      "oracle_id": "ca204b66-8d0c-431a-8d34-282f7c2d17da",
+      "rating": 2.3
+    },
+    {
+      "oracle_id": "ca4b6689-04ee-4227-9bdc-cb5a9590c745",
+      "rating": 2.2
+    },
+    {
+      "oracle_id": "caa02547-66e3-4e27-a2d3-5e94f3e7a069",
+      "rating": 3.5
+    },
+    {
+      "oracle_id": "cac55e46-b730-4569-b92c-a4b5922fc20c",
+      "rating": 2.0
+    },
+    {
+      "oracle_id": "cb027150-848c-4a66-88ad-e20222304dd8",
+      "rating": 3.6
+    },
+    {
+      "oracle_id": "cb70a360-898e-443a-b053-38e35ea2baa2",
+      "rating": 3.0
+    },
+    {
+      "oracle_id": "cb9994b9-924b-4e10-9075-9cfbec88f2bf",
+      "rating": 3.0
+    },
+    {
+      "oracle_id": "cc187110-1148-4090-bbb8-e205694a39f5",
+      "rating": 2.6
+    },
+    {
+      "oracle_id": "ccfb8b4d-651c-418a-aa19-cb23105b3f2f",
+      "rating": 2.7
+    },
+    {
+      "oracle_id": "cd11c27b-9368-4622-bc5a-2e0b993cc42b",
+      "rating": 3.1
+    },
+    {
+      "oracle_id": "cd133d30-51ff-4114-a7d7-029345f0f0d7",
+      "rating": 2.9
+    },
+    {
+      "oracle_id": "cd51cc2d-0d39-4aba-b0ea-70e8118149bc",
+      "rating": 3.5
+    },
+    {
+      "oracle_id": "cef82674-1f61-407b-801b-a76a3803e598",
+      "rating": 3.0
+    },
+    {
+      "oracle_id": "cf0dcb27-f02e-4065-81dc-75fbbb09ea3f",
+      "rating": 1.0
+    },
+    {
+      "oracle_id": "d001febc-d511-4e65-a631-91dc9415056b",
+      "rating": 3.4
+    },
+    {
+      "oracle_id": "d00ade82-caab-43c6-9756-6e9e6edfc519",
+      "rating": 2.3
+    },
+    {
+      "oracle_id": "d0209d3f-3f7e-4fd5-bce5-10bce6f29c86",
+      "rating": 4.9
+    },
+    {
+      "oracle_id": "d04e0975-f401-41b8-a9db-9bcf9cbbce66",
+      "rating": 2.8
+    },
+    {
+      "oracle_id": "d0ade00d-a496-441d-9b7e-7dc033d3292c",
+      "rating": 2.6
+    },
+    {
+      "oracle_id": "d0be5969-0442-4557-a5fc-bee56e1835c2",
+      "rating": 2.8
+    },
+    {
+      "oracle_id": "d0ee5bdc-2b69-4b73-9a20-ffcc18783b29",
+      "rating": 2.5
+    },
+    {
+      "oracle_id": "d1b815d1-2848-40d4-a555-66822d1becbc",
+      "rating": 2.1
+    },
+    {
+      "oracle_id": "d21a89eb-7c5b-459a-acc7-12b20b13bf79",
+      "rating": 3.4
+    },
+    {
+      "oracle_id": "d2bcff58-7a8a-46ef-b6b3-39501d4c8e6e",
+      "rating": 2.3
+    },
+    {
+      "oracle_id": "d30d8968-ec24-4155-97e2-28efd52c8810",
+      "rating": 2.8
+    },
+    {
+      "oracle_id": "d3a0b660-358c-41bd-9cd2-41fbf3491b1a",
+      "rating": 2.7
+    },
+    {
+      "oracle_id": "d3b2d8a2-d3bc-448c-9cf6-6bead6010c28",
+      "rating": 2.6
+    },
+    {
+      "oracle_id": "d43f5977-0532-4653-bc57-ce29f9a531c9",
+      "rating": 2.4
+    },
+    {
+      "oracle_id": "d51831b1-7394-456e-a1de-6787a59f5932",
+      "rating": 2.2
+    },
+    {
+      "oracle_id": "d5d91377-fd66-4dbe-a092-07f2ea379ca7",
+      "rating": 1.5
+    },
+    {
+      "oracle_id": "d5ed1233-df87-4b90-8918-13922ec95249",
+      "rating": 4.8
+    },
+    {
+      "oracle_id": "d64b0848-0193-4025-ba62-63ecd8fb9f50",
+      "rating": 4.0
+    },
+    {
+      "oracle_id": "d683d985-9888-4d21-8b5f-69e69ce4a03b",
+      "rating": 2.4
+    },
+    {
+      "oracle_id": "d6c7d7a6-2d38-4c06-ab83-bee9cc18de52",
+      "rating": 2.4
+    },
+    {
+      "oracle_id": "d71cd08e-3e84-41ff-b9db-9e343c0af6b4",
+      "rating": 3.1
+    },
+    {
+      "oracle_id": "d847542b-7522-43ec-91b0-f0aba5d7dddd",
+      "rating": 3.3
+    },
+    {
+      "oracle_id": "d90af00a-d322-4265-9954-7b1e80702e18",
+      "rating": 3.0
+    },
+    {
+      "oracle_id": "da3e7d3d-2ca0-40c3-9602-fca37c92f507",
+      "rating": 2.5
+    },
+    {
+      "oracle_id": "dab520d0-20b4-4273-ba6b-eb07f85ea433",
+      "rating": 2.8
+    },
+    {
+      "oracle_id": "db6174d7-211d-4817-b8e4-8384594c83f9",
+      "rating": 2.6
+    },
+    {
+      "oracle_id": "dba3dcc1-2177-4a8c-8cf3-7d4fb83c7a16",
+      "rating": 3.0
+    },
+    {
+      "oracle_id": "dba4fd31-8931-42dd-bd86-45479c2abf74",
+      "rating": 4.6
+    },
+    {
+      "oracle_id": "dbcbdf37-c40f-4068-b4a7-a849cab1056c",
+      "rating": 2.4
+    },
+    {
+      "oracle_id": "dbd6a94b-62ff-4a10-9d52-bdd90b26e425",
+      "rating": 2.7
+    },
+    {
+      "oracle_id": "dcb9c2a7-ae54-4ddc-a567-640bf4bf4366",
+      "rating": 3.5
+    },
+    {
+      "oracle_id": "de2440de-e948-4811-903c-0bbe376ff64d",
+      "rating": 3.9
+    },
+    {
+      "oracle_id": "e0c00a74-bdf8-4fee-8042-42c5878e9e3c",
+      "rating": 4.3
+    },
+    {
+      "oracle_id": "e157ad1e-be35-47f3-92db-01799f8fb6a5",
+      "rating": 4.5
+    },
+    {
+      "oracle_id": "e27193b7-1a47-4555-865d-b1fd4c6d597f",
+      "rating": 2.1
+    },
+    {
+      "oracle_id": "e2962883-6daf-4a84-af73-917afc73092c",
+      "rating": 2.4
+    },
+    {
+      "oracle_id": "e349be42-5f14-44a9-9608-281985c10e2d",
+      "rating": 2.9
+    },
+    {
+      "oracle_id": "e46f6644-6bf1-47b1-817c-906bd3eca99f",
+      "rating": 2.6
+    },
+    {
+      "oracle_id": "e519cebf-0f09-4da9-abef-82928738514d",
+      "rating": 2.8
+    },
+    {
+      "oracle_id": "e5e8fce4-c97a-4ae4-9583-003c565e3bd6",
+      "rating": 3.1
+    },
+    {
+      "oracle_id": "e6555cca-e608-4c87-b835-9cd47fd1f543",
+      "rating": 2.1
+    },
+    {
+      "oracle_id": "e7aee670-e6ac-4b3a-b3d1-7b7013db8f3d",
+      "rating": 2.6
+    },
+    {
+      "oracle_id": "e80772e2-8623-4094-81a2-70828b2b151c",
+      "rating": 1.0
+    },
+    {
+      "oracle_id": "e861bc08-4f0b-4d22-9b85-9d20227fd5b4",
+      "rating": 2.4
+    },
+    {
+      "oracle_id": "e87906d2-db1a-4e19-b910-adb4eb339945",
+      "rating": 3.9
+    },
+    {
+      "oracle_id": "e8d0accc-b320-4c07-8a71-a09db860351e",
+      "rating": 1.5
+    },
+    {
+      "oracle_id": "e8d78a83-c932-4b55-8f75-7094c672c3a9",
+      "rating": 3.3
+    },
+    {
+      "oracle_id": "e9117015-1050-44dd-a46b-e7ffe2085fae",
+      "rating": 3.1
+    },
+    {
+      "oracle_id": "e9b6a394-691c-425a-9307-76d8edc7375e",
+      "rating": 2.8
+    },
+    {
+      "oracle_id": "ea5103f5-27e0-4eb1-902c-7f34652d6bf3",
+      "rating": 4.2
+    },
+    {
+      "oracle_id": "eaabd151-2160-4bff-82c0-3fa88659be98",
+      "rating": 2.4
+    },
+    {
+      "oracle_id": "ead1ee6a-e0da-46d5-89e8-31e8c0270bc2",
+      "rating": 3.0
+    },
+    {
+      "oracle_id": "ead4c01a-e2ae-49c9-95d9-651d81005907",
+      "rating": 2.2
+    },
+    {
+      "oracle_id": "eb0d8093-5f93-4b25-9384-08f9731bfb28",
+      "rating": 2.6
+    },
+    {
+      "oracle_id": "eb9c9a34-88a8-4afe-a053-806f6b29834f",
+      "rating": 1.0
+    },
+    {
+      "oracle_id": "ec19a9bc-6fc1-4150-976b-37a47b165016",
+      "rating": 3.4
+    },
+    {
+      "oracle_id": "ec2b3779-55f7-4169-aa66-6312fb52721f",
+      "rating": 1.0
+    },
+    {
+      "oracle_id": "ec3d4466-547c-4e02-b1b5-a156ec4637e9",
+      "rating": 2.4
+    },
+    {
+      "oracle_id": "ecd49d85-9c8c-4cc9-9a83-072ecd433677",
+      "rating": 3.4
+    },
+    {
+      "oracle_id": "ecd8d7f4-7b11-4097-afc0-ef3c81edd90c",
+      "rating": 3.1
+    },
+    {
+      "oracle_id": "ed85fa82-e4fa-434b-92a8-36b6075708d1",
+      "rating": 4.8
+    },
+    {
+      "oracle_id": "edad60c6-80de-4033-af1b-a703ac332983",
+      "rating": 3.0
+    },
+    {
+      "oracle_id": "edd8d1e8-be43-4c38-bb3a-83081fbaf0b5",
+      "rating": 3.9
+    },
+    {
+      "oracle_id": "ededbdae-d9dc-4206-9335-d7158f2d7700",
+      "rating": 1.0
+    },
+    {
+      "oracle_id": "ee302659-59ed-4eef-babe-451b9ccf7f14",
+      "rating": 2.3
+    },
+    {
+      "oracle_id": "ee6099b0-fb1f-42f1-b862-7708c6e36d05",
+      "rating": 3.3
+    },
+    {
+      "oracle_id": "ef0f06f1-3991-4897-bf62-d4cab7ec79a0",
+      "rating": 3.3
+    },
+    {
+      "oracle_id": "ef86989d-ce80-4e55-aece-7d11710eeffa",
+      "rating": 3.5
+    },
+    {
+      "oracle_id": "efc12fda-054b-466a-a863-06cf54878172",
+      "rating": 3.3
+    },
+    {
+      "oracle_id": "f0449cbd-855c-4c20-a1f5-f76a395d8d39",
+      "rating": 3.4
+    },
+    {
+      "oracle_id": "f07b821c-bbc1-4def-b009-6c03689478d0",
+      "rating": 2.0
+    },
+    {
+      "oracle_id": "f161111d-9747-47b3-bb10-3c8bded32e21",
+      "rating": 3.0
+    },
+    {
+      "oracle_id": "f1750962-a87c-49f6-b731-02ae971ac6ea",
+      "rating": 2.3
+    },
+    {
+      "oracle_id": "f1c2dbe2-fbe0-4058-bdf1-91d1b1832786",
+      "rating": 2.5
+    },
+    {
+      "oracle_id": "f2f165b6-ef0a-42ad-9352-ba68be8248b0",
+      "rating": 3.0
+    },
+    {
+      "oracle_id": "f3c5978a-70fa-431f-933b-b954bd0db0ea",
+      "rating": 4.5
+    },
+    {
+      "oracle_id": "f3c7af78-a77d-4134-82a2-a5ce84285a84",
+      "rating": 3.9
+    },
+    {
+      "oracle_id": "f413a83d-a40d-434c-b20a-4c707c0527fa",
+      "rating": 2.4
+    },
+    {
+      "oracle_id": "f509ac02-f22e-4d1a-9fe1-afa96dd7806d",
+      "rating": 2.6
+    },
+    {
+      "oracle_id": "f5420901-b5e6-4d54-b3e8-5f45e37f1fab",
+      "rating": 3.1
+    },
+    {
+      "oracle_id": "f5896356-5744-4f7e-a4e5-1cc36dde5958",
+      "rating": 2.5
+    },
+    {
+      "oracle_id": "f7156897-2b02-4ecd-868d-d4d59244e9ed",
+      "rating": 2.4
+    },
+    {
+      "oracle_id": "f748b2fb-6c2a-400a-8e96-fa4e4a1dfe80",
+      "rating": 2.5
+    },
+    {
+      "oracle_id": "f759d112-76db-4091-a22b-b9f19ab6fa5f",
+      "rating": 1.0
+    },
+    {
+      "oracle_id": "f78af825-023a-42e9-8374-5c52303a1417",
+      "rating": 2.7
+    },
+    {
+      "oracle_id": "f7e7b78c-c769-4720-8585-1874773eb342",
+      "rating": 1.9
+    },
+    {
+      "oracle_id": "f97fd068-b83a-4621-bf8c-cc96e880ce90",
+      "rating": 2.0
+    },
+    {
+      "oracle_id": "f9d3b046-0b95-4103-a630-4b3fb88bb60b",
+      "rating": 3.0
+    },
+    {
+      "oracle_id": "f9db72dc-9a5b-48a4-a86e-7464d9a2166a",
+      "rating": 2.6
+    },
+    {
+      "oracle_id": "fa43077b-5d8b-4fb1-8dda-2a9185e6715e",
+      "rating": 3.3
+    },
+    {
+      "oracle_id": "fb3f5097-0da0-458c-8508-60823567e2da",
+      "rating": 2.8
+    },
+    {
+      "oracle_id": "fb81f95c-70f8-4eb7-8d15-15d0ae23ec03",
+      "rating": 1.5
+    },
+    {
+      "oracle_id": "fbf9f8c5-849f-45d5-8129-5fc683c21a04",
+      "rating": 3.8
+    },
+    {
+      "oracle_id": "fc0707c7-d504-4ccf-a0d2-3eb6e26e7a57",
+      "rating": 3.0
+    },
+    {
+      "oracle_id": "fc9ec820-4245-4a96-b009-5308a818ca58",
+      "rating": 2.3
+    },
+    {
+      "oracle_id": "fcb7c93c-46ab-49b5-a6e0-35d73f3be8f0",
+      "rating": 2.8
+    },
+    {
+      "oracle_id": "fd74f8eb-0253-42dd-8277-186d4934da38",
+      "rating": 4.1
+    },
+    {
+      "oracle_id": "fdd46004-eaba-4024-8687-39b23dc6a58c",
+      "rating": 1.5
+    },
+    {
+      "oracle_id": "fedbd40b-e3a5-449c-a8a3-b42e9da191a9",
+      "rating": 2.1
+    }
   ]
 }

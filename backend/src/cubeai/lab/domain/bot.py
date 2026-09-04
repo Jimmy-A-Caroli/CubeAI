@@ -33,6 +33,27 @@ class RatingEntry:
 
 
 @dataclass(frozen=True, slots=True)
+class RatingArtifactProvenance:
+    """Attribution and transformation facts for a reviewed rating artifact."""
+
+    source_name: str
+    source_url: str
+    source_updated: str
+    acquired_date: str
+    transformation_method: str
+
+    def __post_init__(self) -> None:
+        for field in (
+            "source_name",
+            "source_url",
+            "source_updated",
+            "acquired_date",
+            "transformation_method",
+        ):
+            _require_text(getattr(self, field), field)
+
+
+@dataclass(frozen=True, slots=True)
 class RatingArtifact:
     """A small, reviewed CubeAI-owned static rating snapshot."""
 
@@ -42,6 +63,8 @@ class RatingArtifact:
     basis: str
     rights: str
     entries: tuple[RatingEntry, ...]
+    fallback_rating: float = 0.0
+    provenance: RatingArtifactProvenance | None = None
 
     def __post_init__(self) -> None:
         for field in ("id", "version", "ownership", "basis", "rights"):
@@ -51,6 +74,16 @@ class RatingArtifact:
             raise ValueError("entries must contain RatingEntry values")
         if len({entry.oracle_id for entry in entries}) != len(entries):
             raise ValueError("entries must have unique Oracle IDs")
+        if (
+            not isinstance(self.fallback_rating, (int, float))
+            or isinstance(self.fallback_rating, bool)
+            or not isfinite(self.fallback_rating)
+        ):
+            raise ValueError("fallback_rating must be finite numeric")
+        if self.provenance is not None and not isinstance(
+            self.provenance, RatingArtifactProvenance
+        ):
+            raise ValueError("provenance must be a RatingArtifactProvenance")
         object.__setattr__(self, "entries", entries)
 
     def rating_for(self, oracle_id: str) -> float | None:
@@ -59,6 +92,14 @@ class RatingArtifact:
             (entry.rating for entry in self.entries if entry.oracle_id == oracle_id),
             None,
         )
+
+    def score_for(self, oracle_id: str) -> tuple[float, RatingLookupOutcome]:
+        """Return the explicit prior score and whether it came from a fallback."""
+
+        rating = self.rating_for(oracle_id)
+        if rating is None:
+            return self.fallback_rating, RatingLookupOutcome.FALLBACK
+        return rating, RatingLookupOutcome.RATED
 
 
 @dataclass(frozen=True, slots=True)
@@ -146,16 +187,16 @@ class RawRankingStrategyV0:
         if not isinstance(visible_state, BotVisibleState):
             raise ValueError("visible_state must be a BotVisibleState")
         scored = tuple(
-            (candidate, self.artifact.rating_for(candidate.oracle_id))
+            (candidate, *self.artifact.score_for(candidate.oracle_id))
             for candidate in visible_state.candidates
         )
-        highest_rating = max(0.0 if rating is None else rating for _, rating in scored)
+        highest_rating = max(rating for _, rating, _ in scored)
         finalists = tuple(
-            (candidate, rating)
-            for candidate, rating in scored
-            if (0.0 if rating is None else rating) == highest_rating
+            (candidate, rating, outcome)
+            for candidate, rating, outcome in scored
+            if rating == highest_rating
         )
-        selected, selected_rating = min(
+        selected, selected_rating, selected_outcome = min(
             finalists, key=lambda item: item[0].draft_card_instance_id
         )
         return BotPickDecision(
@@ -166,11 +207,7 @@ class RawRankingStrategyV0:
                 self.artifact.id,
                 self.artifact.version,
                 highest_rating,
-                (
-                    RatingLookupOutcome.MISSING
-                    if selected_rating is None
-                    else RatingLookupOutcome.RATED
-                ),
+                selected_outcome,
                 (
                     BotTieBreakReason.INSTANCE_ID
                     if len(finalists) > 1

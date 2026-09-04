@@ -107,9 +107,13 @@ class _FixtureSource(CubeSource):
 
 
 class _FixtureResolver(MetadataResolver):
+    def __init__(self) -> None:
+        self._resolution_count = 0
+
     def resolve(
         self, candidates, *, offline: bool = False
     ) -> MetadataResolutionSnapshot:
+        self._resolution_count += 1
         resolutions = tuple(
             MetadataResolution(
                 candidate,
@@ -133,7 +137,9 @@ class _FixtureResolver(MetadataResolver):
             for index, candidate in enumerate(candidates)
         )
         return MetadataResolutionSnapshot(
-            "m1-acceptance-resolution", "2026-09-04T00:00:00+00:00", resolutions
+            f"m1-acceptance-resolution-{self._resolution_count}",
+            "2026-09-04T00:00:00+00:00",
+            resolutions,
         )
 
 
@@ -340,6 +346,59 @@ def test_m1_acceptance_replays_the_fixed_fixture_through_restart(tmp_path) -> No
     assert resumed["status"] == "completed"
     assert resumed["current_pack"] == []
     assert len(resumed["pool"]) == 2
+
+
+def test_repeated_import_reuses_equivalent_immutable_snapshot_for_new_drafts(
+    tmp_path,
+) -> None:
+    repository = SQLiteDraftRepository(tmp_path / "drafts.sqlite3")
+    app = create_application(
+        LocalApiServices(
+            repository,
+            _FixtureSource(),
+            _FixtureResolver(),
+            RawRankingStrategyV0(load_raw_ranking_v0_artifact()),
+        )
+    )
+
+    first_status, first_import = _request(
+        app,
+        "POST",
+        "/v1/cube-imports",
+        {"identifier": "fixture", "cube_name": "First local label"},
+    )
+    second_status, second_import = _request(
+        app,
+        "POST",
+        "/v1/cube-imports",
+        {"identifier": "fixture", "cube_name": "Renamed local label"},
+    )
+
+    assert (first_status, second_status) == (200, 200)
+    assert first_import["usable"] is True
+    assert second_import["usable"] is True
+    assert first_import["cube_version_id"] == second_import["cube_version_id"]
+    cube_version_id = first_import["cube_version_id"]
+    assert isinstance(cube_version_id, str)
+    persisted = repository.load_cube_version(cube_version_id)
+    assert persisted is not None
+    assert persisted.cube.name == "First local label"
+    assert persisted.resolution_snapshot_id == "m1-acceptance-resolution-1"
+
+    configuration = {"seats": 2, "packs_per_seat": 1, "pack_size": 2, "seed": 13}
+    for draft_id in ("first-draft", "second-draft"):
+        status, view = _request(
+            app,
+            "POST",
+            "/v1/drafts",
+            {
+                "draft_id": draft_id,
+                "cube_version_id": cube_version_id,
+                "configuration": configuration,
+            },
+        )
+        assert status == 201
+        assert view["cube_version_id"] == cube_version_id
 
 
 def _complete_m1_fixture_draft(app) -> tuple[object, ...]:
