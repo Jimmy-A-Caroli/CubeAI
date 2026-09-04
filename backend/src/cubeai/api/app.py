@@ -18,7 +18,9 @@ from cubeai.lab.adapters.sqlite_drafts import (
 )
 from cubeai.lab.application import (
     CardMetadataLookup,
+    DraftDecisionObservation,
     DraftSessionError,
+    derive_draft_observations,
     human_seat_view,
     import_local_cube,
     resume_local_draft,
@@ -163,6 +165,34 @@ class DraftReviewDto(_Dto):
     bot_picks: list[DraftReviewPickDto]
 
 
+class ObservationCardDto(CardDetailsDto):
+    instance_id: str
+    cube_card_id: str
+    printing_id: str | None
+    oracle_id: str | None
+
+
+class DraftDecisionObservationDto(_Dto):
+    sequence: int
+    seat_number: int
+    actor_origin: str
+    actor_id: str
+    pack_number: int
+    pick_number: int
+    chosen_card: ObservationCardDto
+    cards_seen: list[ObservationCardDto]
+    pool_before: list[ObservationCardDto]
+    bot_provenance: BotProvenanceDto | None
+
+
+class DraftObservationsDto(_Dto):
+    draft_id: str
+    cube_version_id: str
+    cube_name: str
+    configuration: DraftConfigurationDto
+    observations: list[DraftDecisionObservationDto]
+
+
 @dataclass(frozen=True, slots=True)
 class LocalApiServices:
     repository: DraftRepository
@@ -305,6 +335,19 @@ def create_application(services: LocalApiServices) -> FastAPI:
             )
         return _draft_review(services.repository, state, services.metadata_lookup)
 
+    @app.get("/v1/drafts/{draft_id}/observations", response_model=DraftObservationsDto)
+    def draft_observations(draft_id: str) -> DraftObservationsDto:
+        state = resume_local_draft(services.repository, draft_id)
+        if state.status is not DraftStatus.COMPLETED:
+            raise HTTPException(
+                status_code=409,
+                detail={
+                    "code": "DRAFT_OBSERVATIONS_UNAVAILABLE",
+                    "detail": "draft observations are available after completion",
+                },
+            )
+        return _draft_observations(services.repository, state, services.metadata_lookup)
+
     return app
 
 
@@ -385,6 +428,22 @@ def _card_dto(
         **_card_details_dto(
             memberships[instance.cube_card_id], metadata_lookup
         ).model_dump(),
+    )
+
+
+def _observation_card_dto(
+    instance: DraftCardInstance,
+    memberships: Mapping[str, CubeCard],
+    metadata_lookup: CardMetadataLookup | None,
+) -> ObservationCardDto:
+    membership = memberships[instance.cube_card_id]
+    printing = membership.printing
+    return ObservationCardDto(
+        instance_id=instance.id,
+        cube_card_id=instance.cube_card_id,
+        printing_id=None if printing is None else printing.id,
+        oracle_id=None if printing is None else printing.card_identity.oracle_id,
+        **_card_details_dto(membership, metadata_lookup).model_dump(),
     )
 
 
@@ -500,6 +559,75 @@ def _draft_review(
             for event in state.pick_events
             if event.actor_origin is ActorOrigin.BOT
         ],
+    )
+
+
+def _draft_observations(
+    repository: DraftRepository,
+    state: DraftState,
+    metadata_lookup: CardMetadataLookup | None,
+) -> DraftObservationsDto:
+    version = _required_cube_version(repository, state.draft.cube_version_id)
+    memberships = {card.id: card for card in version.cards}
+
+    def observation_dto(
+        observation: DraftDecisionObservation,
+    ) -> DraftDecisionObservationDto:
+        event = observation.event
+        return DraftDecisionObservationDto(
+            sequence=event.sequence,
+            seat_number=event.seat_number,
+            actor_origin=event.actor_origin.value,
+            actor_id=event.actor_id,
+            pack_number=event.pack_number + 1,
+            pick_number=event.pick_number + 1,
+            chosen_card=_observation_card_dto(
+                observation.chosen_card, memberships, metadata_lookup
+            ),
+            cards_seen=[
+                _observation_card_dto(card, memberships, metadata_lookup)
+                for card in observation.cards_seen
+            ],
+            pool_before=[
+                _observation_card_dto(card, memberships, metadata_lookup)
+                for card in observation.pool_before
+            ],
+            bot_provenance=_bot_provenance_dto(event),
+        )
+
+    return DraftObservationsDto(
+        draft_id=state.draft.id,
+        cube_version_id=version.id,
+        cube_name=version.cube.name,
+        configuration=DraftConfigurationDto(
+            seats=state.draft.configuration.seats,
+            packs_per_seat=state.draft.configuration.packs_per_seat,
+            pack_size=state.draft.configuration.pack_size,
+            seed=state.draft.configuration.seed,
+        ),
+        observations=[
+            observation_dto(observation)
+            for observation in derive_draft_observations(state)
+        ],
+    )
+
+
+def _bot_provenance_dto(event: PickEvent) -> BotProvenanceDto | None:
+    provenance = event.bot_provenance
+    if provenance is None:
+        return None
+    return BotProvenanceDto(
+        strategy_id=provenance.strategy_id,
+        strategy_version=provenance.strategy_version,
+        rating_artifact_id=provenance.rating_artifact_id,
+        rating_artifact_version=provenance.rating_artifact_version,
+        selected_rating=provenance.selected_rating,
+        rating_lookup_outcome=provenance.rating_lookup_outcome.value,
+        tie_break_reason=(
+            "deterministic_order"
+            if provenance.tie_break_reason.value == "instance_id"
+            else provenance.tie_break_reason.value
+        ),
     )
 
 

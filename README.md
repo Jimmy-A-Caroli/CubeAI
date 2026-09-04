@@ -18,6 +18,12 @@ available, accessible card fallbacks/details when they are not, a result-first
 pool, and completion-only human/Bot pick review. M1-018 has verified the
 deterministic local end-to-end workflow and closes M1.
 
+M2-001 adds a completed-draft observation foundation: deterministic,
+event-derived cards-seen, pool-before-pick, and pick-history contexts with
+actor and recorded Bot provenance. It is exposed through a completion-only API
+view; the Draft Inspector and all advice, metrics, and analytics interfaces
+remain future work.
+
 The `backend/` workspace keeps source candidates, card/printing identities,
 Cube memberships, immutable versions, validation, allocation, and transitions
 framework-independent. The `frontend/` workspace supplies the React/TypeScript
@@ -73,8 +79,9 @@ remote resource directly and falls back accessibly on absence or load failure.
 Offline image caching is not implemented, and the browser never calls provider
 APIs to resolve cards or receives raw provider/persistence payloads. Bot v0 is
 a static raw-ranking baseline, not human-like drafting; archetype inference is
-not implemented. Analytics, simulation batches, gameplay, multiplayer, cloud
-hosting, and authentication are future work or require further validation.
+not implemented. Analytics beyond the completed-draft observation foundation,
+simulation batches, gameplay, multiplayer, cloud hosting, and authentication
+are future work or require further validation.
 
 ## Available local validation
 

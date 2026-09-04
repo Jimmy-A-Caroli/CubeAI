@@ -1,5 +1,11 @@
 # M2 — Draft Intelligence and Analytics
 
+**Current checkpoint: observation foundation.** M2-001 is complete; its
+event-derived decision-observation contract is recorded in
+[`docs/M2-001-OBSERVATION-EVIDENCE.md`](../M2-001-OBSERVATION-EVIDENCE.md).
+Later M2 candidate issues remain blocked until their declared dependencies and
+refinement are complete.
+
 ## Goal
 
 Make a draft understandable during and after play while preserving the distinction between observation, heuristic advice, and empirical performance.
@@ -37,19 +43,19 @@ Make a draft understandable during and after play while preserving the distincti
 
 ## Candidate issues
 
-| ID | Outcome | Depends on |
-|---|---|---|
-| M2-001 | Define derived cards-seen and pick-history projections | M1-018 |
-| M2-002 | Define and test wheel detection | M2-001 |
-| M2-003 | Add local tracked-card behavior and UI | M2-001 |
-| M2-004 | Add mana curve and color-distribution projections | M1-018 |
-| M2-005 | Define mana-requirement and source-count model | M2-004 |
-| M2-006 | Define versioned archetype/tag vocabulary | M1-007 |
-| M2-007 | Add explainable draft-fit feature scores | M2-004, M2-006 |
-| M2-008 | Build post-draft Draft Inspector and timeline review | M2-001, M2-007 |
-| M2-009 | Define provenance-aware pick metric schemas | M2-001 |
-| M2-010 | Build initial analytics views and filters | M2-009 |
-| M2-011 | Add lightweight human pick-review annotations | M2-008 |
+| ID | Outcome | Depends on | State |
+|---|---|---|---|
+| M2-001 | Define derived cards-seen and pick-history projections | M1-018 | COMPLETE |
+| M2-002 | Define and test wheel detection | M2-001 | BLOCKED |
+| M2-003 | Add local tracked-card behavior and UI | M2-001 | BLOCKED |
+| M2-004 | Add mana curve and color-distribution projections | M1-018 | BLOCKED |
+| M2-005 | Define mana-requirement and source-count model | M2-004 | BLOCKED |
+| M2-006 | Define versioned archetype/tag vocabulary | M1-007 | BLOCKED |
+| M2-007 | Add explainable draft-fit feature scores | M2-004, M2-006 | BLOCKED |
+| M2-008 | Build post-draft Draft Inspector and timeline review | M2-001, M2-007 | BLOCKED |
+| M2-009 | Define provenance-aware pick metric schemas | M2-001 | BLOCKED |
+| M2-010 | Build initial analytics views and filters | M2-009 | BLOCKED |
+| M2-011 | Add lightweight human pick-review annotations | M2-008 | BLOCKED |
 
 These issues require refinement after M1 establishes actual event and API schemas.
 

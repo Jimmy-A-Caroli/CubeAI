@@ -37,6 +37,11 @@ from cubeai.lab.application.ratings import load_raw_ranking_v0_artifact
 from cubeai.lab.application.bot_turns import BotTurnError, advance_bot_turns
 from cubeai.lab.application.repositories import DraftRepository
 from cubeai.lab.application.draft_commands import submit_human_pick_and_advance_bots
+from cubeai.lab.application.draft_observations import (
+    DraftDecisionObservation,
+    DraftObservationError,
+    derive_draft_observations,
+)
 from cubeai.lab.application.draft_sessions import (
     DraftSeatView,
     DraftSessionError,
@@ -80,6 +85,9 @@ __all__ = (
     "advance_bot_turns",
     "DraftRepository",
     "submit_human_pick_and_advance_bots",
+    "DraftDecisionObservation",
+    "DraftObservationError",
+    "derive_draft_observations",
     "DraftSeatView",
     "DraftSessionError",
     "human_seat_view",

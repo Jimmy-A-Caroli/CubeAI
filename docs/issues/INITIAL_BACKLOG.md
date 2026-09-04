@@ -412,17 +412,22 @@ seat-visible current-pack access.
 
 ## M2 — Draft Intelligence and Analytics
 
-M2 issues are intentionally moderate-detail and remain `BLOCKED` until M1-018 and schema refinement.
+M2 issues are intentionally moderate-detail. M2-001 was refined after M1-018
+and is complete; all remaining M2 issues remain `BLOCKED` pending their stated
+dependencies and further refinement.
 
 ### M2-001 — Derive cards-seen and pick-history projections
 
-- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::supervised`, `BLOCKED`
+- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `agent::supervised`, `COMPLETE`
 - **Dependencies:** M1-018.
 - **Goal/context:** Reconstruct seat-visible history from immutable draft events.
 - **Scope/out of scope:** Define projections and API views; do not add advice or mutate event truth.
 - **Acceptance criteria:** Every visible pack and pick is reproducible with duplicate-instance identity and correct visibility.
 - **Required tests:** Golden event projection and hidden-information cases.
 - **Expected artifacts/areas:** analytics projections/API/tests.
+- **Completion evidence:** `docs/M2-001-OBSERVATION-EVIDENCE.md`; pure replay
+  projection and completion-only API view preserve ordered instance identity,
+  cards seen, pool-before-pick, actor origin, and recorded Bot provenance.
 
 ### M2-002 — Define and implement wheel detection
 
