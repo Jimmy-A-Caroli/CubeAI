@@ -92,7 +92,7 @@
 .draft-workspace__card-grid {
   display: grid;
   gap: 0.75rem;
-  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
 }
 
 .draft-workspace__card,
@@ -108,9 +108,8 @@
   background: #232735;
   color: inherit;
   display: grid;
-  gap: 0.6rem;
-  min-height: 8.25rem;
-  padding: 1rem;
+  gap: 0.45rem;
+  padding: 0.5rem;
   text-align: left;
   width: 100%;
 }
@@ -127,7 +126,6 @@
 
 .draft-workspace__card small {
   color: #b8bfce;
-  overflow-wrap: anywhere;
 }
 
 .draft-workspace__pick-action {
@@ -172,7 +170,8 @@
 
 .draft-workspace__confirm,
 .draft-workspace__error button,
-.draft-workspace__recovery button {
+.draft-workspace__recovery button,
+.draft-workspace__result-actions button {
   background: #b3a0ff;
   border-color: #b3a0ff;
   color: #16131f;
@@ -188,6 +187,34 @@
 .draft-workspace__pool {
   margin-top: 1.5rem;
   padding: clamp(1rem, 3vw, 2rem);
+}
+
+.draft-workspace__pool-grid,
+.draft-workspace__review-list {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.draft-workspace__pool-grid button,
+.draft-workspace__review-list button {
+  background: transparent;
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+  display: grid;
+  font: inherit;
+  gap: 0.35rem;
+  padding: 0;
+  text-align: left;
+  width: 100%;
+}
+
+.draft-workspace__pool-grid span {
+  font-size: 0.9rem;
 }
 
 .draft-workspace__pool-groups {
@@ -236,6 +263,68 @@
 .draft-workspace__completion h2,
 .draft-workspace__recovery h1 {
   margin-bottom: 0.75rem;
+}
+
+.draft-workspace__result-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.draft-workspace__secondary-action,
+.draft-workspace__text-action {
+  background: transparent !important;
+  border: 1px solid #7d8496 !important;
+  color: #edf0f8 !important;
+  cursor: pointer;
+  font: inherit;
+  padding: 0.55rem 0.75rem;
+}
+
+.draft-workspace__text-action {
+  margin-top: 0.5rem;
+}
+
+.draft-workspace__review {
+  border: 1px solid #343844;
+  margin-top: 1.5rem;
+  padding: clamp(1rem, 3vw, 2rem);
+}
+
+.draft-workspace__review-list {
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+}
+
+.draft-workspace__review-list strong,
+.draft-workspace__review-list span {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.draft-workspace__review-list p {
+  color: #b8bfce;
+  font-size: 0.82rem;
+  line-height: 1.35;
+}
+
+.draft-workspace__bot-review {
+  border-top: 1px solid #343844;
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+}
+
+.draft-workspace__bot-review label,
+.draft-workspace__bot-review select {
+  display: block;
+}
+
+.draft-workspace__bot-review select {
+  background: #191c26;
+  border: 1px solid #5c6170;
+  color: inherit;
+  font: inherit;
+  margin: 0.4rem 0 1rem;
+  padding: 0.45rem;
 }
 
 .draft-workspace__error {

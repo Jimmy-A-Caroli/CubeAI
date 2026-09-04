@@ -136,6 +136,12 @@ def _printing_to_json(printing: ResolvedPrinting) -> str:
         "original_reference": printing.original_reference,
         "fetched_at": printing.fetched_at,
         "response_schema_version": printing.response_schema_version,
+        "mana_cost": printing.mana_cost,
+        "type_line": printing.type_line,
+        "oracle_text": printing.oracle_text,
+        "power": printing.power,
+        "toughness": printing.toughness,
+        "loyalty": printing.loyalty,
     }
     return json.dumps(payload, sort_keys=True, separators=(",", ":"))
 
@@ -175,6 +181,12 @@ def _printing_from_json(payload: str) -> ResolvedPrinting:
         _require_text(decoded.get("original_reference"), "original_reference"),
         _require_text(decoded.get("fetched_at"), "fetched_at"),
         schema_version,
+        _optional_text(decoded.get("mana_cost"), "mana_cost"),
+        _optional_text(decoded.get("type_line"), "type_line"),
+        _optional_text(decoded.get("oracle_text"), "oracle_text"),
+        _optional_text(decoded.get("power"), "power"),
+        _optional_text(decoded.get("toughness"), "toughness"),
+        _optional_text(decoded.get("loyalty"), "loyalty"),
     )
 
 
@@ -350,6 +362,11 @@ class ScryfallMetadataResolver:
         return MetadataResolutionSnapshot(
             _snapshot_id(retrieved_at, ordered), retrieved_at, ordered
         )
+
+    def lookup_printing(self, printing_id: str) -> ResolvedPrinting | None:
+        """Return cached approved display metadata without making a provider call."""
+
+        return self._cache.get(printing_id)
 
     def _candidate_reference(
         self, candidate: ImportCandidate
@@ -571,6 +588,12 @@ def _parse_printing(
         _normalise_uuid(row.get("id")),
         _format_time(fetched_at),
         RESPONSE_SCHEMA_VERSION,
+        _optional_text(row.get("mana_cost"), "mana_cost"),
+        _optional_text(row.get("type_line"), "type_line"),
+        _optional_text(row.get("oracle_text"), "oracle_text"),
+        _optional_text(row.get("power"), "power"),
+        _optional_text(row.get("toughness"), "toughness"),
+        _optional_text(row.get("loyalty"), "loyalty"),
     )
 
 

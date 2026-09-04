@@ -13,8 +13,11 @@ CubeCobra read adapter, exact printing-ID Scryfall resolution with a local
 cache, immutable Cube versions, capacity validation, deterministic allocation,
 deterministic local draft state machine, raw-ranking Bot v0, local SQLite
 restart persistence, a versioned local FastAPI contract, and a keyboard-ready
-Cube import, validation, and human-seat drafting flow. M1-018 remains the
-supervised end-to-end exit package.
+Cube import, validation, and human-seat drafting flow. The local draft UI now
+uses only existing resolved-metadata cache data to show visual card fallbacks,
+on-demand card details with an honest unavailable-data fallback, a result-first
+pool, and completion-only human/Bot pick review. M1-018 remains the supervised
+end-to-end exit package.
 
 The `backend/` workspace keeps source candidates, card/printing identities,
 Cube memberships, immutable versions, validation, allocation, and transitions
@@ -65,11 +68,15 @@ Development will be issue-driven. M0 and M1 are decomposed in the [initial backl
 CubeCobra import and exact-ID metadata resolution are implemented as bounded
 adapters. Deterministic local allocation/transitions, raw-ranking Bot v0,
 local SQLite save/resume, and a focused import-to-human-draft UI are available
-through framework-independent CubeLab boundaries. M1 still needs its
-supervised end-to-end exit review and a successful opt-in public-provider
-smoke in a network environment that can reach CubeCobra. Analytics, simulation,
-gameplay, Forge feasibility, and all hosted-service concerns remain future work
-or require further validation.
+through framework-independent CubeLab boundaries. The metadata cache records
+provider image URLs but does not hold image bytes, so the UI deliberately uses
+a local visual fallback rather than forwarding URLs or requesting provider/CDN
+images. Cached text details remain available on demand; the browser does not
+call providers, download images, or receive raw provider or persistence
+payloads. M1 still needs its supervised end-to-end exit review and a successful
+opt-in public-provider smoke in a network environment that can reach
+CubeCobra. Analytics, simulation, gameplay, Forge feasibility, and all hosted-
+service concerns remain future work or require further validation.
 
 ## Available local validation
 

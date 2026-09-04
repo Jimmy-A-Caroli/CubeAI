@@ -2,7 +2,13 @@
 
 CubeUI is CubeAI's single web-first frontend codebase. It checks local health,
 imports and validates a supported CubeCobra identifier, starts one local draft,
-and renders only the API-provided human-seat pack and pool. Vite proxies
+and renders only the API-provided human-seat pack and pool. Resolved metadata
+already held by the local backend cache supplies on-demand details; because the
+cache has provider image URLs rather than local image bytes, cards use an
+accessible local visual fallback and the browser never calls a card provider
+directly. Completed drafts can show the saved human picks and recorded Bot
+provenance, while active drafts remain limited to the current human-seat view.
+Vite proxies
 `/health` and `/v1` to the local backend when started through the repository
 root `dev` command. Routing, authentication, offline/PWA/sync, global state,
 and a design system remain deferred.
@@ -44,5 +50,5 @@ terminal (`uv --directory backend run --locked python -m cubeai.api`). The root
 - `test` runs the Vitest unit suite, and `build` runs the production TypeScript
   and Vite build.
 
-The focused axe accessibility unit test is not a substitute for later browser
-accessibility coverage requested by product features.
+The focused axe accessibility unit test is not a substitute for browser
+accessibility coverage requested by later product features.

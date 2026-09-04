@@ -23,6 +23,7 @@ from cubeai.lab.application.imports import (
     SourceSnapshotReference,
 )
 from cubeai.lab.application.metadata import (
+    CardMetadataLookup,
     MetadataDiagnostic,
     MetadataDiagnosticCode,
     MetadataResolution,
@@ -48,6 +49,7 @@ from cubeai.lab.application.local_imports import LocalCubeImport, import_local_c
 
 __all__ = (
     "CandidateResolution",
+    "CardMetadataLookup",
     "CubeSource",
     "DiagnosticCode",
     "DiagnosticSeverity",

@@ -143,7 +143,32 @@ class _FixtureResolver(MetadataResolver):
         )
 
 
-def _application(tmp_path):
+class _DisplayLookup:
+    """Cache-shaped display data for API presentation tests only."""
+
+    def lookup_printing(self, printing_id: str) -> ResolvedPrinting | None:
+        return ResolvedPrinting(
+            "scryfall",
+            printing_id,
+            f"oracle-{printing_id}",
+            "Cached display record",
+            "syn",
+            "1",
+            "en",
+            "normal",
+            (),
+            (("normal", "https://images.example.invalid/card.jpg"),),
+            printing_id,
+            "2026-09-04T00:00:00+00:00",
+            mana_cost="{U}",
+            type_line="Creature — Wizard",
+            oracle_text="A cached rules line.",
+            power="1",
+            toughness="1",
+        )
+
+
+def _application(tmp_path, metadata_lookup=None):
     repository = SQLiteDraftRepository(tmp_path / "drafts.sqlite3")
     repository.save_cube_version(_version())
     return create_application(
@@ -152,6 +177,7 @@ def _application(tmp_path):
             _UnusedSource(),
             _UnusedResolver(),
             RawRankingStrategyV0(load_raw_ranking_v0_artifact()),
+            metadata_lookup,
         )
     )
 
@@ -256,6 +282,65 @@ def test_hidden_draft_state_is_absent_from_the_view_and_openapi_contract(
         assert forbidden not in rendered
         assert forbidden not in schema
     assert "/v1/drafts/{draft_id}/seats/{seat_number}" not in app.openapi()["paths"]
+
+
+def test_draft_view_uses_cached_display_data_without_exposing_hidden_state(
+    tmp_path,
+) -> None:
+    app = _application(tmp_path, _DisplayLookup())
+
+    status, started = _request(app, "POST", "/v1/drafts", _draft_request())
+
+    assert status == 201
+    card = started["current_pack"][0]
+    assert card["image_url"] is None
+    assert card["mana_cost"] == "{U}"
+    assert card["type_line"] == "Creature — Wizard"
+    assert card["oracle_text"] == "A cached rules line."
+    assert card["power"] == "1"
+    assert card["toughness"] == "1"
+    rendered = json.dumps(started)
+    assert "images.example.invalid" not in rendered
+    assert "allocation" not in rendered
+
+
+def test_review_is_gated_until_completion_then_exposes_human_and_bot_history(
+    tmp_path,
+) -> None:
+    app = _application(tmp_path)
+    _, started = _request(app, "POST", "/v1/drafts", _draft_request())
+
+    active_status, active_error = _request(app, "GET", "/v1/drafts/draft-1/review")
+
+    assert (active_status, active_error) == (
+        409,
+        {
+            "code": "DRAFT_REVIEW_UNAVAILABLE",
+            "detail": "draft review is available after completion",
+        },
+    )
+
+    view = started
+    while view["status"] != "completed":
+        selected = view["current_pack"][0]["instance_id"]
+        _, view = _request(
+            app,
+            "POST",
+            "/v1/drafts/draft-1/picks",
+            {"card_instance_id": selected},
+        )
+    review_status, review = _request(app, "GET", "/v1/drafts/draft-1/review")
+
+    assert review_status == 200
+    assert len(review["human_picks"]) == 2
+    assert len(review["bot_picks"]) == 2
+    assert review["human_picks"][0]["bot_provenance"] is None
+    provenance = review["bot_picks"][0]["bot_provenance"]
+    assert provenance["strategy_id"] == "raw-ranking-v0"
+    assert provenance["selected_rating"] is not None
+    rendered = json.dumps(review)
+    for forbidden in ("instance_id", "cube_card_id", "allocation", "active_packs"):
+        assert forbidden not in rendered
 
 
 def test_stale_pick_maps_to_a_stable_error_without_mutating_the_persisted_draft(

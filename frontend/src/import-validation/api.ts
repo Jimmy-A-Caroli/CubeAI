@@ -31,6 +31,13 @@ export interface DraftCard {
   instance_id: string;
   cube_card_id: string;
   name: string;
+  image_url: string | null;
+  mana_cost: string | null;
+  type_line: string | null;
+  oracle_text: string | null;
+  power: string | null;
+  toughness: string | null;
+  loyalty: string | null;
 }
 
 export interface DraftView {
@@ -40,6 +47,8 @@ export interface DraftView {
   seat_number: number;
   pack_number: number;
   pick_number: number;
+  cube_name: string;
+  configuration: DraftConfiguration;
   current_pack: DraftCard[];
   pool: DraftCard[];
 }

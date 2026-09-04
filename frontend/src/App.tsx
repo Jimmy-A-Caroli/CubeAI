@@ -42,15 +42,14 @@ export default function App() {
         <ImportValidationPanel onDraftStarted={setDraft} />
       ) : (
         <section className="app-shell__draft" aria-label="Active local draft">
-          <div className="app-shell__draft-actions">
-            <p>
-              Your draft is saved locally. You can resume it after a refresh.
-            </p>
-            <button type="button" onClick={() => setDraft(null)}>
-              Start another draft
-            </button>
-          </div>
-          <DraftWorkspace draftId={draft.draft_id} initialView={draft} />
+          <p className="app-shell__draft-note">
+            Your draft is saved locally. You can resume it after a refresh.
+          </p>
+          <DraftWorkspace
+            draftId={draft.draft_id}
+            initialView={draft}
+            onNewDraft={() => setDraft(null)}
+          />
         </section>
       )}
     </main>
