@@ -54,9 +54,9 @@ The M1 draft UI is a functional, clean, intentionally simple visual foundation t
 | M1-013 | Execute deterministic bot turns | M1-011, M1-012 | COMPLETE — `543e8a6`; reviewed deterministic bot turns |
 | M1-014 | Persist Cube versions and drafts in SQLite | M1-007, M1-013 | COMPLETE — `2bfe017`; reviewed local SQLite restart, provenance, and atomic command persistence |
 | M1-015 | Expose import, validation, draft command, and view APIs | M1-008, M1-013, M1-014 | COMPLETE — `ae64900`; reviewed local API with stable errors and human-seat-safe views |
-| M1-016 | Build Cube import and validation UI | M1-015, M0-005 | READY |
-| M1-017 | Build pack, pick, and drafted-pool UI | M1-015, M0-005 | READY |
-| M1-018 | Verify end-to-end deterministic local draft | M1-016, M1-017 | BLOCKED |
+| M1-016 | Build Cube import and validation UI | M1-015, M0-005 | COMPLETE |
+| M1-017 | Build pack, pick, and drafted-pool UI | M1-015, M0-005 | COMPLETE |
+| M1-018 | Verify end-to-end deterministic local draft | M1-016, M1-017 | READY |
 
 Full issue definitions are in [the initial backlog](../issues/INITIAL_BACKLOG.md).
 

@@ -109,6 +109,7 @@ class CardDto(_Dto):
 class DraftViewDto(_Dto):
     draft_id: str
     cube_version_id: str
+    seat_number: int
     status: str
     pack_number: int
     pick_number: int
@@ -283,6 +284,7 @@ def _draft_view(repository: DraftRepository, state: DraftState) -> DraftViewDto:
     return DraftViewDto(
         draft_id=view.draft_id,
         cube_version_id=view.cube_version_id,
+        seat_number=view.seat_number,
         status=view.status.value,
         pack_number=view.pack_round + 1,
         pick_number=view.pick_number + 1,

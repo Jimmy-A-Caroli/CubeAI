@@ -6,21 +6,23 @@ The project is focused on the Cube loop: import a Cube, validate it, draft it, u
 
 ## Status
 
-CubeAI has completed the Alpha-0 CubeLab draft-core boundary and the first
-three Alpha-1 work packages. In addition to the repository foundations,
-M1-001 through M1-014 now provide a supported
+CubeAI has completed the Alpha-0 CubeLab draft-core boundary and Alpha-1
+through M1-017. In addition to the repository foundations, M1-001 through
+M1-017 now provide a supported
 CubeCobra read adapter, exact printing-ID Scryfall resolution with a local
 cache, immutable Cube versions, capacity validation, deterministic allocation,
-deterministic local draft state machine, raw-ranking Bot v0, caller-selected
-SQLite restart persistence, and a versioned local FastAPI contract. The product
-remains pre-UI for importing and drafting.
+deterministic local draft state machine, raw-ranking Bot v0, local SQLite
+restart persistence, a versioned local FastAPI contract, and a keyboard-ready
+Cube import, validation, and human-seat drafting flow. M1-018 remains the
+supervised end-to-end exit package.
 
 The `backend/` workspace keeps source candidates, card/printing identities,
 Cube memberships, immutable versions, validation, allocation, and transitions
 framework-independent. The `frontend/` workspace supplies the React/TypeScript
 foundation and independent formatting, lint, typecheck, unit-test, and
-production-build commands. The HTTP API exposes only a local, one-human-seat
-draft view; import/draft UI has not yet been implemented.
+production-build commands. The HTTP API and UI expose only a local,
+one-human-seat draft view; import and validation diagnostics do not become
+hidden client state.
 
 The accepted Scryfall policy is exact printing-ID resolution, a durable local
 cache, network calls only for required misses, and explicit
@@ -61,11 +63,13 @@ Development will be issue-driven. M0 and M1 are decomposed in the [initial backl
 ## Current limitations
 
 CubeCobra import and exact-ID metadata resolution are implemented as bounded
-adapters. Deterministic local allocation/transitions, raw-ranking Bot v0, and
-local SQLite save/resume and versioned HTTP draft commands/views are available
-through framework-independent CubeLab boundaries. Import/draft UI, analytics,
-simulation, gameplay, Forge feasibility, and all hosted-service concerns remain
-future work or require further validation.
+adapters. Deterministic local allocation/transitions, raw-ranking Bot v0,
+local SQLite save/resume, and a focused import-to-human-draft UI are available
+through framework-independent CubeLab boundaries. M1 still needs its
+supervised end-to-end exit review and a successful opt-in public-provider
+smoke in a network environment that can reach CubeCobra. Analytics, simulation,
+gameplay, Forge feasibility, and all hosted-service concerns remain future work
+or require further validation.
 
 ## Available local validation
 
@@ -105,8 +109,9 @@ uv --directory backend run --locked python ../scripts/cubeai.py dev
 
 The runner starts the backend health server at
 `http://127.0.0.1:8000/health` and Vite on its reported local URL (normally
-`http://127.0.0.1:5173/`). Vite proxies `/health` to the local backend; open
-the Vite URL to see `Backend connected`. Use `Ctrl+C` to stop the two local
+`http://127.0.0.1:5173/`). Vite proxies `/health` and `/v1` to the local
+backend; open the Vite URL to import a CubeCobra identifier, validate it, and
+start or resume the one-human-seat draft. Use `Ctrl+C` to stop the two local
 processes. This command is intentionally minimal and does not add Docker,
 deployment configuration, or durable local-service management.
 

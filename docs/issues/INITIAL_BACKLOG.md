@@ -374,7 +374,7 @@ seat-visible current-pack access.
 
 ### M1-016 — Build Cube import and validation UI
 
-- **Labels/state:** `component::ui`, `type::feature`, `priority::high`, `agent::safe`, `READY`
+- **Labels/state:** `component::ui`, `type::feature`, `priority::high`, `agent::safe`, `COMPLETE`
 - **Dependencies:** M1-015, M0-005.
 - **Goal/context:** Let a local user enter a CubeCobra URL/ID and understand whether the Cube is draftable.
 - **Scope:** Source form, loading/error states, Cube/version summary, grouped diagnostics with affected entries, retry, and start-draft configuration/defaults.
@@ -382,10 +382,11 @@ seat-visible current-pack access.
 - **Acceptance criteria:** Keyboard-accessible workflow; network, unsupported source, unresolved entry, and capacity problems are distinguishable; user cannot start an unusable Cube; supported warnings remain visible.
 - **Required tests:** Component tests for every state, accessibility checks, API-client contract mocks, one browser happy/error flow.
 - **Expected artifacts/areas:** frontend feature components/client/types/tests.
+- **Completion evidence:** Reviewed accessible local import, validation, diagnostics, retry, and start-draft flow; the app shell hands the resulting API view to the draft workspace without client-side hidden state.
 
 ### M1-017 — Build pack, pick, and drafted-pool UI
 
-- **Labels/state:** `component::ui`, `type::feature`, `priority::high`, `agent::safe`, `READY`
+- **Labels/state:** `component::ui`, `type::feature`, `priority::high`, `agent::safe`, `COMPLETE`
 - **Dependencies:** M1-015, M0-005.
 - **Goal/context:** Complete a draft quickly with a clear current pack, selected card, progress, and pool.
 - **Scope:** Current pack grid/list, card detail on demand, pick confirmation/command state, pack/seat progress, drafted pool grouped by a simple deterministic view, completion state, resume/error recovery.
@@ -393,10 +394,11 @@ seat-visible current-pack access.
 - **Acceptance criteria:** Legal card selection and pending command are unambiguous; duplicate cards/printings remain distinguishable; stale pick refreshes safely; keyboard flow can complete a pick; only API-provided information is displayed.
 - **Required tests:** Component and accessibility tests, duplicate/stale/loading/error states, browser flow over a small fixture draft.
 - **Expected artifacts/areas:** frontend draft feature/client/tests.
+- **Completion evidence:** Reviewed seat-safe current-pack, selection, stale-error recovery, deterministic grouped pool, and completion views, including duplicate instance identity.
 
 ### M1-018 — Verify the deterministic local draft MVP
 
-- **Labels/state:** `component::lab`, `component::ui`, `component::infra`, `type::test`, `priority::high`, `agent::supervised`, `BLOCKED`
+- **Labels/state:** `component::lab`, `component::ui`, `component::infra`, `type::test`, `priority::high`, `agent::supervised`, `READY`
 - **Dependencies:** M1-016, M1-017.
 - **Goal/context:** Prove the milestone from clean setup through completed draft and restart behavior.
 - **Scope:** Fixed synthetic/contract fixture acceptance scenario; same-seed replay comparison; supported public Cube opt-in smoke; documentation and measured usability/performance notes; M1 exit review.

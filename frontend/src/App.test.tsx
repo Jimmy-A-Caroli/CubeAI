@@ -8,7 +8,7 @@ describe('App', () => {
     vi.unstubAllGlobals();
   });
 
-  it('renders the accessible foundation heading and connected backend status', async () => {
+  it('renders the local-draft entry point and connected backend status', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({ ok: true, json: () => ({ status: 'ok' }) }),
@@ -17,7 +17,13 @@ describe('App', () => {
     render(<App />);
 
     expect(
-      screen.getByRole('heading', { level: 1, name: 'CubeAI foundation' }),
+      screen.getByRole('heading', { level: 1, name: 'Draft a Cube, locally' }),
+    ).toBeTruthy();
+    expect(
+      screen.getByRole('heading', {
+        level: 2,
+        name: 'Import a CubeCobra Cube',
+      }),
     ).toBeTruthy();
     await waitFor(() => {
       expect(screen.getByRole('status').textContent).toBe('Backend connected');

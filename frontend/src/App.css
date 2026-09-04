@@ -1,23 +1,30 @@
 .app-shell {
   display: grid;
   min-height: 100vh;
-  place-items: center;
-  padding: 2rem;
+  align-content: start;
+  gap: 2rem;
+  margin: 0 auto;
+  max-width: 78rem;
+  padding: clamp(1.25rem, 4vw, 3.5rem);
 }
 
-.foundation {
-  max-width: 32rem;
-  text-align: center;
+.app-shell__header {
+  align-items: end;
+  border-bottom: 1px solid #343744;
+  display: flex;
+  gap: 1.5rem;
+  justify-content: space-between;
+  padding-bottom: 1.5rem;
 }
 
-.foundation-mark {
+.app-shell__mark {
   color: var(--accent);
   font-size: 2rem;
   line-height: 1;
-  margin: 0 0 1.25rem;
+  margin: 0 0 0.75rem;
 }
 
-h1 {
+.app-shell h1 {
   font-size: clamp(2rem, 7vw, 3.5rem);
   font-weight: 600;
   letter-spacing: -0.05em;
@@ -25,8 +32,44 @@ h1 {
   margin: 0;
 }
 
+.app-shell__eyebrow {
+  color: #b7bdcf;
+  font-size: 0.875rem;
+  margin: 0 0 0.35rem;
+}
+
 .status {
   color: var(--status);
   font-size: 1rem;
-  margin: 1.5rem 0 0;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.app-shell__draft {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.app-shell__draft-actions {
+  align-items: center;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+}
+
+.app-shell__draft-actions p {
+  color: #b7bdcf;
+  margin: 0;
+}
+
+@media (max-width: 42rem) {
+  .app-shell__header,
+  .app-shell__draft-actions {
+    align-items: start;
+    flex-direction: column;
+  }
+
+  .status {
+    white-space: normal;
+  }
 }

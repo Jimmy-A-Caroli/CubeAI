@@ -4,17 +4,23 @@ import json
 from cubeai.api.app import LocalApiServices, create_application
 from cubeai.lab.adapters.sqlite_drafts import SQLiteDraftRepository
 from cubeai.lab.application.imports import (
+    CandidateResolution,
     CubeSource,
     DiagnosticCode,
     DiagnosticSeverity,
+    ImportCandidate,
     ImportDiagnostic,
     ImportResult,
     ImportOutcome,
     SourceRequest,
+    SourceSnapshotReference,
 )
 from cubeai.lab.application.metadata import (
+    MetadataResolution,
+    MetadataResolutionOutcome,
     MetadataResolutionSnapshot,
     MetadataResolver,
+    ResolvedPrinting,
 )
 from cubeai.lab.application.ratings import load_raw_ranking_v0_artifact
 from cubeai.lab.domain import (
@@ -79,6 +85,58 @@ class _UnavailableSource(CubeSource):
         )
 
 
+class _FixtureSource(CubeSource):
+    """Four resolved memberships for the fixed M1 acceptance geometry."""
+
+    def import_cube(self, request: SourceRequest) -> ImportResult:
+        snapshot = SourceSnapshotReference(
+            "synthetic-fixture", "m1-acceptance-cube", "2026-09-04T00:00:00+00:00"
+        )
+        candidates = tuple(
+            ImportCandidate(
+                f"membership-{index}",
+                snapshot,
+                index,
+                printing_hint=f"printing-{index}",
+                oracle_id=f"oracle-{index}",
+                resolution=CandidateResolution.RESOLUTION_HINTED,
+            )
+            for index in range(4)
+        )
+        return ImportResult(snapshot, candidates)
+
+
+class _FixtureResolver(MetadataResolver):
+    def resolve(
+        self, candidates, *, offline: bool = False
+    ) -> MetadataResolutionSnapshot:
+        resolutions = tuple(
+            MetadataResolution(
+                candidate,
+                MetadataResolutionOutcome.RESOLVED,
+                ResolvedPrinting(
+                    "synthetic-fixture",
+                    f"printing-{index}",
+                    f"oracle-{index}",
+                    f"Synthetic {index}",
+                    "syn",
+                    str(index),
+                    "en",
+                    "normal",
+                    (),
+                    (),
+                    f"printing-{index}",
+                    "2026-09-04T00:00:00+00:00",
+                ),
+                f"fixture:printing-{index}",
+            )
+            for index, candidate in enumerate(candidates)
+        )
+        return MetadataResolutionSnapshot(
+            "m1-acceptance-resolution", "2026-09-04T00:00:00+00:00", resolutions
+        )
+
+
 def _application(tmp_path):
     repository = SQLiteDraftRepository(tmp_path / "drafts.sqlite3")
     repository.save_cube_version(_version())
@@ -87,6 +145,18 @@ def _application(tmp_path):
             repository,
             _UnusedSource(),
             _UnusedResolver(),
+            RawRankingStrategyV0(load_raw_ranking_v0_artifact()),
+        )
+    )
+
+
+def _fixture_application(tmp_path):
+    repository = SQLiteDraftRepository(tmp_path / "drafts.sqlite3")
+    return create_application(
+        LocalApiServices(
+            repository,
+            _FixtureSource(),
+            _FixtureResolver(),
             RawRankingStrategyV0(load_raw_ranking_v0_artifact()),
         )
     )
@@ -147,6 +217,7 @@ def test_local_api_starts_resumes_and_advances_a_human_pick_with_bot_turns(
 
     status, started = _request(app, "POST", "/v1/drafts", _draft_request())
     assert status == 201
+    assert started["seat_number"] == 0
     assert len(started["current_pack"]) == 2
     selected = started["current_pack"][0]["instance_id"]
 
@@ -252,3 +323,71 @@ def test_provider_failure_returns_a_safe_structured_import_outcome(tmp_path) -> 
             "message": "provider unavailable",
         }
     ]
+
+
+def test_m1_acceptance_replays_the_fixed_fixture_through_restart(tmp_path) -> None:
+    first_directory = tmp_path / "first"
+    second_directory = tmp_path / "second"
+
+    first = _complete_m1_fixture_draft(_fixture_application(first_directory))
+    second = _complete_m1_fixture_draft(_fixture_application(second_directory))
+
+    assert first == second
+
+    restarted = _fixture_application(first_directory)
+    status, resumed = _request(restarted, "GET", "/v1/drafts/m1-acceptance-draft")
+    assert status == 200
+    assert resumed["status"] == "completed"
+    assert resumed["current_pack"] == []
+    assert len(resumed["pool"]) == 2
+
+
+def _complete_m1_fixture_draft(app) -> tuple[object, ...]:
+    import_status, imported = _request(
+        app,
+        "POST",
+        "/v1/cube-imports",
+        {"identifier": "fixture", "cube_name": "M1 acceptance fixture"},
+    )
+    assert import_status == 200
+    assert imported["usable"] is True
+    cube_version_id = imported["cube_version_id"]
+    assert isinstance(cube_version_id, str)
+
+    configuration = {"seats": 2, "packs_per_seat": 1, "pack_size": 2, "seed": 13}
+    validation_status, validation = _request(
+        app, "POST", f"/v1/cube-versions/{cube_version_id}/validation", configuration
+    )
+    assert validation_status == 200
+    assert validation["draftable"] is True
+
+    start_status, view = _request(
+        app,
+        "POST",
+        "/v1/drafts",
+        {
+            "draft_id": "m1-acceptance-draft",
+            "cube_version_id": cube_version_id,
+            "configuration": configuration,
+        },
+    )
+    assert start_status == 201
+    assert view["seat_number"] == 0
+
+    initial_pack = tuple(card["instance_id"] for card in view["current_pack"])
+    while view["status"] != "completed":
+        selected = view["current_pack"][0]["instance_id"]
+        pick_status, view = _request(
+            app,
+            "POST",
+            "/v1/drafts/m1-acceptance-draft/picks",
+            {"card_instance_id": selected},
+        )
+        assert pick_status == 200
+
+    return (
+        initial_pack,
+        tuple(card["instance_id"] for card in view["pool"]),
+        view["status"],
+        view["current_pack"],
+    )
