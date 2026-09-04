@@ -35,7 +35,7 @@ MINIMUM_REQUEST_INTERVAL_SECONDS = 0.5
 RATE_LIMIT_COOLDOWN_SECONDS = 30.0
 RETRY_DELAY_SECONDS = 0.5
 REQUEST_TIMEOUT_SECONDS = 10.0
-RESPONSE_SCHEMA_VERSION = 1
+RESPONSE_SCHEMA_VERSION = 2
 
 
 class _Response(Protocol):
@@ -142,6 +142,8 @@ def _printing_to_json(printing: ResolvedPrinting) -> str:
         "power": printing.power,
         "toughness": printing.toughness,
         "loyalty": printing.loyalty,
+        "colors": list(printing.colors),
+        "color_identity": list(printing.color_identity),
     }
     return json.dumps(payload, sort_keys=True, separators=(",", ":"))
 
@@ -187,6 +189,8 @@ def _printing_from_json(payload: str) -> ResolvedPrinting:
         _optional_text(decoded.get("power"), "power"),
         _optional_text(decoded.get("toughness"), "toughness"),
         _optional_text(decoded.get("loyalty"), "loyalty"),
+        _color_codes(decoded.get("colors", []), "colors"),
+        _color_codes(decoded.get("color_identity", []), "color_identity"),
     )
 
 
@@ -194,6 +198,25 @@ def _optional_text(value: object, field: str) -> str | None:
     if value is None:
         return None
     return _require_text(value, field)
+
+
+def _optional_card_text(value: object, field: str) -> str | None:
+    """Map empty optional card-display fields to their semantic absence."""
+
+    if value is None or value == "":
+        return None
+    return _require_text(value, field)
+
+
+def _color_codes(value: object, field: str) -> tuple[str, ...]:
+    if not isinstance(value, list) or any(
+        not isinstance(code, str) or code not in {"W", "U", "B", "R", "G"}
+        for code in value
+    ):
+        raise ValueError(f"{field} must be a WUBRG colour-code array")
+    if len(value) != len(set(value)):
+        raise ValueError(f"{field} must not repeat colour codes")
+    return tuple(value)
 
 
 class SQLiteScryfallCache:
@@ -383,6 +406,8 @@ class ScryfallMetadataResolver:
     def _cache_outcome(
         self, printing: ResolvedPrinting, now: datetime
     ) -> MetadataResolutionOutcome:
+        if printing.response_schema_version != RESPONSE_SCHEMA_VERSION:
+            return MetadataResolutionOutcome.CACHED_STALE
         fetched_at = _parse_time(printing.fetched_at)
         age = now - fetched_at
         if timedelta() <= age < CACHE_FRESH_FOR:
@@ -588,12 +613,14 @@ def _parse_printing(
         _normalise_uuid(row.get("id")),
         _format_time(fetched_at),
         RESPONSE_SCHEMA_VERSION,
-        _optional_text(row.get("mana_cost"), "mana_cost"),
-        _optional_text(row.get("type_line"), "type_line"),
-        _optional_text(row.get("oracle_text"), "oracle_text"),
-        _optional_text(row.get("power"), "power"),
-        _optional_text(row.get("toughness"), "toughness"),
-        _optional_text(row.get("loyalty"), "loyalty"),
+        _optional_card_text(row.get("mana_cost"), "mana_cost"),
+        _optional_card_text(row.get("type_line"), "type_line"),
+        _optional_card_text(row.get("oracle_text"), "oracle_text"),
+        _optional_card_text(row.get("power"), "power"),
+        _optional_card_text(row.get("toughness"), "toughness"),
+        _optional_card_text(row.get("loyalty"), "loyalty"),
+        _color_codes(row.get("colors", []), "colors"),
+        _color_codes(row.get("color_identity", []), "color_identity"),
     )
 
 

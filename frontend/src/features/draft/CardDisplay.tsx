@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 import type { DraftCard, DraftReviewPick } from './draftApi';
 import './CardDisplay.css';
@@ -11,15 +11,49 @@ type CardArtProps = {
 };
 
 export function CardArt({ card, compact = false }: CardArtProps) {
+  const [imageFailed, setImageFailed] = useState(false);
+
+  useEffect(() => setImageFailed(false), [card.image_url]);
+
+  if (card.image_url !== null && !imageFailed) {
+    return (
+      <img
+        alt={card.name}
+        className={`card-art${compact ? ' card-art--compact' : ''}`}
+        onError={() => setImageFailed(true)}
+        src={card.image_url}
+      />
+    );
+  }
+
   return (
     <div
-      aria-label={`Card image preview unavailable locally for ${card.name}`}
+      aria-label={`Card image unavailable for ${card.name}`}
       className={`card-art card-art--fallback${compact ? ' card-art--compact' : ''}`}
       role="img"
     >
       <span>{card.name}</span>
       {card.mana_cost !== null ? <small>{card.mana_cost}</small> : null}
     </div>
+  );
+}
+
+const colourNames: Record<string, string> = {
+  W: 'White',
+  U: 'Blue',
+  B: 'Black',
+  R: 'Red',
+  G: 'Green',
+};
+
+export function CardColours({ card }: { card: CardDetails }) {
+  if (card.colors.length === 0) return null;
+  const names = card.colors.map((colour) => colourNames[colour] ?? colour);
+  return (
+    <p aria-label={`Colours: ${names.join(', ')}`} className="card-colours">
+      <span aria-hidden="true">{card.colors.join(' ')}</span>
+      <span>Colours: {names.join(', ')}</span>
+    </p>
   );
 }
 
@@ -87,6 +121,7 @@ export function CardDetailDialog({ card, onClose }: CardDetailDialogProps) {
         <div className="card-detail__content">
           <h2 id="card-detail-title">{card.name}</h2>
           {card.mana_cost !== null ? <p>{card.mana_cost}</p> : null}
+          <CardColours card={card} />
           {card.type_line !== null ? <p>{card.type_line}</p> : null}
           {card.oracle_text !== null ? (
             <p className="card-detail__oracle">{card.oracle_text}</p>
@@ -106,7 +141,7 @@ export function CardDetailDialog({ card, onClose }: CardDetailDialogProps) {
             </dl>
           ) : null}
           <p className="card-detail__source">
-            Card metadata: Scryfall. Image preview unavailable locally.
+            Card data and imagery: Scryfall.
           </p>
         </div>
       </section>

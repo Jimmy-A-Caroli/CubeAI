@@ -139,11 +139,16 @@ def test_exact_collection_contract_maps_printing_and_preserves_identity_layers(
     assert result.printing.collector_number == "1"
     assert result.printing.language == "en"
     assert result.printing.layout == "normal"
+    assert result.printing.mana_cost == "{R}"
+    assert result.printing.type_line == "Creature — Wizard"
+    assert result.printing.oracle_text == "Synthetic rules text."
+    assert result.printing.colors == ("R",)
+    assert result.printing.color_identity == ("R",)
     assert result.printing.image_uris == (
         ("normal", "https://images.example.invalid/synthetic-ember.jpg"),
     )
     assert (
-        result.cache_reference == f"scryfall:{PRINTING_ID}:2026-09-03T12:00:00+00:00:v1"
+        result.cache_reference == f"scryfall:{PRINTING_ID}:2026-09-03T12:00:00+00:00:v2"
     )
     assert snapshot.snapshot_id.startswith("scryfall-resolution-v1:")
     request = opener.calls[0]
@@ -155,6 +160,71 @@ def test_exact_collection_contract_maps_printing_and_preserves_identity_layers(
     assert request.get_header("Accept") == "application/json;q=0.9,*/*;q=0.8"
     assert request.get_header("Content-type") == "application/json"
     assert json.loads(request.data or b"{}") == {"identifiers": [{"id": PRINTING_ID}]}
+
+
+def test_empty_optional_card_display_text_remains_resolved_as_absent(
+    tmp_path: Path,
+) -> None:
+    response = _fixture_document()
+    response["data"][0]["mana_cost"] = ""
+    resolver, _, _ = _resolver(tmp_path, [FakeResponse(200, _body(response))])
+
+    result = resolver.resolve((_candidate(),)).resolutions[0]
+
+    assert result.outcome is MetadataResolutionOutcome.RESOLVED
+    assert result.printing is not None
+    assert result.printing.mana_cost is None
+
+
+def test_outdated_cache_schema_refreshes_online_and_is_explicit_offline(
+    tmp_path: Path,
+) -> None:
+    resolver, _, clock = _resolver(
+        tmp_path, [FakeResponse(200, _body(_fixture_document()))]
+    )
+    first = resolver.resolve((_candidate(),))
+    assert first.resolutions[0].printing is not None
+
+    cached = SQLiteScryfallCache(tmp_path / "scryfall-cache.sqlite3").get(PRINTING_ID)
+    assert cached is not None
+    old_schema = cached.__class__(
+        cached.provider,
+        cached.printing_id,
+        cached.oracle_id,
+        cached.name,
+        cached.set_code,
+        cached.collector_number,
+        cached.language,
+        cached.layout,
+        cached.faces,
+        cached.image_uris,
+        cached.original_reference,
+        cached.fetched_at,
+        1,
+        cached.mana_cost,
+        cached.type_line,
+        cached.oracle_text,
+        cached.power,
+        cached.toughness,
+        cached.loyalty,
+        cached.colors,
+        cached.color_identity,
+    )
+    SQLiteScryfallCache(tmp_path / "scryfall-cache.sqlite3").put(old_schema)
+
+    offline, _, _ = _resolver(tmp_path, [], clock=clock)
+    assert (
+        offline.resolve((_candidate(),), offline=True).resolutions[0].outcome
+        is MetadataResolutionOutcome.CACHED_STALE
+    )
+    online, opener, _ = _resolver(
+        tmp_path, [FakeResponse(200, _body(_fixture_document()))], clock=clock
+    )
+    assert (
+        online.resolve((_candidate(),)).resolutions[0].outcome
+        is MetadataResolutionOutcome.RESOLVED
+    )
+    assert len(opener.calls) == 1
 
 
 def test_cache_is_durable_fresh_and_stale_offline_without_network(

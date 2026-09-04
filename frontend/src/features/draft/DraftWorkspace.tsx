@@ -10,6 +10,7 @@ import {
 } from './draftApi';
 import {
   CardArt,
+  CardColours,
   CardDetailDialog,
   reviewCard,
   type CardDetails,
@@ -301,6 +302,7 @@ export default function DraftWorkspace({
                     {card.mana_cost !== null ? (
                       <small>{card.mana_cost}</small>
                     ) : null}
+                    <CardColours card={card} />
                   </button>
                 </li>
               );
@@ -396,18 +398,31 @@ export default function DraftWorkspace({
             onInspect={setInspectedCard}
           />
           <div className="draft-workspace__bot-review">
-            <label htmlFor="bot-seat">Bot picks</label>
-            <select
-              id="bot-seat"
-              value={botSeat ?? ''}
-              onChange={(event) => setBotSeat(Number(event.target.value))}
-            >
-              {botSeats.map((seat) => (
-                <option key={seat} value={seat}>
-                  Bot {seat + 1}
-                </option>
-              ))}
-            </select>
+            <fieldset>
+              <legend>Bot draft histories</legend>
+              <div className="draft-workspace__bot-tabs">
+                {botSeats.map((seat) => (
+                  <button
+                    aria-pressed={botSeat === seat}
+                    key={seat}
+                    onClick={() => setBotSeat(seat)}
+                    type="button"
+                  >
+                    Bot {seat + 1}
+                  </button>
+                ))}
+              </div>
+            </fieldset>
+            {botSeat !== null ? (
+              <>
+                <h3>Bot {botSeat + 1} draft history</h3>
+                <p className="draft-workspace__bot-explanation">
+                  Bot v0 selected each listed card from its raw ranking. Ratings
+                  and deterministic tie-break evidence are shown per pick; it
+                  does not evaluate archetypes or predict gameplay.
+                </p>
+              </>
+            ) : null}
             <ReviewPickList
               picks={selectedBotPicks}
               onInspect={setInspectedCard}
@@ -445,8 +460,8 @@ function ReviewPickList({
           </button>
           {pick.bot_provenance !== null ? (
             <p>
-              Strategy: {pick.bot_provenance.strategy_id}@
-              {pick.bot_provenance.strategy_version} · Rating:{' '}
+              Bot v0 decision · Strategy: {pick.bot_provenance.strategy_id}@
+              {pick.bot_provenance.strategy_version} · Selected rating:{' '}
               {pick.bot_provenance.selected_rating} · Tie-break:{' '}
               {pick.bot_provenance.tie_break_reason}
             </p>

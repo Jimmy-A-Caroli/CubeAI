@@ -1,7 +1,7 @@
 import asyncio
 import json
 
-from cubeai.api.app import LocalApiServices, create_application
+from cubeai.api.app import LocalApiServices, _image_url, create_application
 from cubeai.lab.adapters.sqlite_drafts import SQLiteDraftRepository
 from cubeai.lab.application.imports import (
     CandidateResolution,
@@ -21,6 +21,7 @@ from cubeai.lab.application.metadata import (
     MetadataResolutionSnapshot,
     MetadataResolver,
     ResolvedPrinting,
+    ScryfallFace,
 )
 from cubeai.lab.application.ratings import load_raw_ranking_v0_artifact
 from cubeai.lab.domain import (
@@ -165,6 +166,7 @@ class _DisplayLookup:
             oracle_text="A cached rules line.",
             power="1",
             toughness="1",
+            colors=("U",),
         )
 
 
@@ -293,15 +295,103 @@ def test_draft_view_uses_cached_display_data_without_exposing_hidden_state(
 
     assert status == 201
     card = started["current_pack"][0]
-    assert card["image_url"] is None
+    assert card["image_url"] == "https://images.example.invalid/card.jpg"
     assert card["mana_cost"] == "{U}"
     assert card["type_line"] == "Creature — Wizard"
     assert card["oracle_text"] == "A cached rules line."
     assert card["power"] == "1"
     assert card["toughness"] == "1"
+    assert card["colors"] == ["U"]
     rendered = json.dumps(started)
-    assert "images.example.invalid" not in rendered
     assert "allocation" not in rendered
+
+
+def test_card_image_selection_prefers_printing_and_uses_face_or_fallback() -> None:
+    base = dict(
+        provider="scryfall",
+        printing_id="printing-1",
+        oracle_id="oracle-1",
+        name="Split Card",
+        set_code="syn",
+        collector_number="1",
+        language="en",
+        layout="transform",
+        original_reference="printing-1",
+        fetched_at="2026-09-04T00:00:00+00:00",
+    )
+    face = ScryfallFace(
+        "Back Face",
+        "oracle-1",
+        (("normal", "https://images.example.invalid/face.jpg"),),
+    )
+
+    assert (
+        _image_url(
+            ResolvedPrinting(
+                **base,
+                faces=(face,),
+                image_uris=(("normal", "https://images.example.invalid/printing.jpg"),),
+            )
+        )
+        == "https://images.example.invalid/printing.jpg"
+    )
+    assert _image_url(ResolvedPrinting(**base, faces=(face,), image_uris=())) == (
+        "https://images.example.invalid/face.jpg"
+    )
+    assert _image_url(ResolvedPrinting(**base, faces=(), image_uris=())) is None
+    for key in ("grid", "display", "thumb"):
+        assert (
+            _image_url(
+                ResolvedPrinting(
+                    **base,
+                    faces=(),
+                    image_uris=((key, f"https://images.example.invalid/{key}.jpg"),),
+                )
+            )
+            == f"https://images.example.invalid/{key}.jpg"
+        )
+        assert (
+            _image_url(
+                ResolvedPrinting(
+                    **base,
+                    faces=(
+                        ScryfallFace(
+                            "Back Face",
+                            "oracle-1",
+                            ((key, f"https://images.example.invalid/face-{key}.jpg"),),
+                        ),
+                    ),
+                    image_uris=(),
+                )
+            )
+            == f"https://images.example.invalid/face-{key}.jpg"
+        )
+    assert (
+        _image_url(
+            ResolvedPrinting(
+                **base,
+                faces=(),
+                image_uris=(("art_crop", "https://images.example.invalid/art.jpg"),),
+            )
+        )
+        == "https://images.example.invalid/art.jpg"
+    )
+    assert (
+        _image_url(
+            ResolvedPrinting(
+                **base,
+                faces=(
+                    ScryfallFace(
+                        "Back Face",
+                        "oracle-1",
+                        (("border_crop", "https://images.example.invalid/border.jpg"),),
+                    ),
+                ),
+                image_uris=(),
+            )
+        )
+        == "https://images.example.invalid/border.jpg"
+    )
 
 
 def test_review_is_gated_until_completion_then_exposes_human_and_bot_history(

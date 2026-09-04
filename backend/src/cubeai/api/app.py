@@ -28,7 +28,7 @@ from cubeai.lab.application import (
 )
 from cubeai.lab.application.cube_versions import CubeVersionAssemblyResult
 from cubeai.lab.application.imports import CubeSource, ImportResult
-from cubeai.lab.application.metadata import MetadataResolver
+from cubeai.lab.application.metadata import MetadataResolver, ResolvedPrinting
 from cubeai.lab.application.repositories import DraftRepository
 from cubeai.lab.application.ratings import load_raw_ranking_v0_artifact
 from cubeai.lab.domain.bot import BotStrategy, RawRankingStrategyV0
@@ -116,6 +116,7 @@ class CardDetailsDto(_Dto):
     power: str | None
     toughness: str | None
     loyalty: str | None
+    colors: list[str]
 
 
 class CardDto(CardDetailsDto):
@@ -400,6 +401,7 @@ def _card_details_dto(
             power=None,
             toughness=None,
             loyalty=None,
+            colors=[],
         )
     printing = (
         metadata_lookup.lookup_printing(membership.printing.id)
@@ -408,16 +410,36 @@ def _card_details_dto(
     )
     return CardDetailsDto(
         name=membership.printing.card_identity.name,
-        # The cache records remote provider URLs, not locally held image bytes.
-        # Returning one would induce a direct browser-to-provider request.
-        image_url=None,
+        image_url=None if printing is None else _image_url(printing),
         mana_cost=None if printing is None else printing.mana_cost,
         type_line=None if printing is None else printing.type_line,
         oracle_text=None if printing is None else printing.oracle_text,
         power=None if printing is None else printing.power,
         toughness=None if printing is None else printing.toughness,
         loyalty=None if printing is None else printing.loyalty,
+        colors=[]
+        if printing is None
+        else list(printing.colors or printing.color_identity),
     )
+
+
+def _image_url(printing: ResolvedPrinting) -> str | None:
+    """Choose an existing printing image URL without changing printing identity."""
+
+    if (image_url := _preferred_image_url(printing.image_uris)) is not None:
+        return image_url
+    for face in printing.faces:
+        if (image_url := _preferred_image_url(face.image_uris)) is not None:
+            return image_url
+    return None
+
+
+def _preferred_image_url(image_uris: tuple[tuple[str, str], ...]) -> str | None:
+    image_by_size = dict(image_uris)
+    for size in ("normal", "grid", "large", "display", "small", "thumb"):
+        if (image_url := image_by_size.get(size)) is not None:
+            return image_url
+    return next(iter(image_by_size.values()), None)
 
 
 def _draft_review(

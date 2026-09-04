@@ -96,6 +96,8 @@ class ResolvedPrinting:
     power: str | None = None
     toughness: str | None = None
     loyalty: str | None = None
+    colors: tuple[str, ...] = ()
+    color_identity: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
         for field, value in (
@@ -123,6 +125,13 @@ class ResolvedPrinting:
             value = getattr(self, field)
             if value is not None:
                 _require_text(value, field)
+        for field in ("colors", "color_identity"):
+            values = tuple(getattr(self, field))
+            if any(value not in {"W", "U", "B", "R", "G"} for value in values) or len(
+                values
+            ) != len(set(values)):
+                raise ValueError(f"{field} must contain distinct WUBRG colour codes")
+            object.__setattr__(self, field, values)
         faces = tuple(self.faces)
         images = tuple(self.image_uris)
         if any(not isinstance(face, ScryfallFace) for face in faces):

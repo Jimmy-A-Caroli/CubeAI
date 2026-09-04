@@ -56,7 +56,17 @@ COMMANDS: dict[str, tuple[Command, ...]] = {
 
 DEV_COMMANDS: tuple[Command, Command] = (
     ("uv", "--directory", "backend", "run", "--locked", "python", "-m", "cubeai.api"),
-    (COREPACK, "npm", "--prefix", "frontend", "run", "dev", "--", "--host", "127.0.0.1"),
+    (
+        COREPACK,
+        "npm",
+        "--prefix",
+        "frontend",
+        "run",
+        "dev",
+        "--",
+        "--host",
+        "127.0.0.1",
+    ),
 )
 
 

@@ -23,6 +23,21 @@
   font-weight: 400;
 }
 
+.card-colours {
+  align-items: center;
+  color: #d8ddea;
+  display: flex;
+  font-size: 0.9rem;
+  gap: 0.45rem;
+}
+
+.card-colours span:first-child {
+  color: #f0dba5;
+  font-family: ui-monospace, monospace;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
 .card-detail__backdrop {
   align-items: center;
   background: rgb(7 9 14 / 82%);

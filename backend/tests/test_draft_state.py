@@ -76,9 +76,7 @@ def test_two_seat_golden_passes_left_then_completes_with_conserved_instances() -
         "draft-1:card:1:1",
         "draft-1:card:0:1",
     ]
-    allocated_ids = {
-        card.id for pack in completed.allocation for card in pack.cards
-    }
+    allocated_ids = {card.id for pack in completed.allocation for card in pack.cards}
     picked_ids = {event.card_instance_id for event in completed.pick_events}
     assert picked_ids == allocated_ids
     assert len(completed.pick_events) == len(picked_ids)

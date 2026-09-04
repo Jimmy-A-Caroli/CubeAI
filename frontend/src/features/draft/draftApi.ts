@@ -9,6 +9,7 @@ export type DraftCard = {
   power: string | null;
   toughness: string | null;
   loyalty: string | null;
+  colors: string[];
 };
 
 export type DraftConfiguration = {

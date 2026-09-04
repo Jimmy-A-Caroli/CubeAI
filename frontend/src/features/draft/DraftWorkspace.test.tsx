@@ -13,6 +13,7 @@ const noDetails = {
   power: null,
   toughness: null,
   loyalty: null,
+  colors: [],
 };
 
 const card = (
@@ -125,7 +126,7 @@ describe('DraftWorkspace', () => {
     expect(screen.queryByText(/instance-b|cube-b/i)).toBeNull();
   });
 
-  it('offers a local-only visual fallback and keyboard-accessible card details', async () => {
+  it('renders a cached image, falls back cleanly on failure, and keeps details keyboard-accessible', async () => {
     const detailed: DraftView = {
       ...firstView,
       current_pack: [
@@ -135,6 +136,7 @@ describe('DraftWorkspace', () => {
           mana_cost: '{R}',
           type_line: 'Instant',
           oracle_text: 'Lightning Bolt deals 3 damage to any target.',
+          colors: ['R'],
         },
       ],
     };
@@ -146,11 +148,10 @@ describe('DraftWorkspace', () => {
       />,
     );
 
-    expect(
-      screen.getByRole('img', {
-        name: 'Card image preview unavailable locally for Lightning Bolt',
-      }),
-    ).toBeTruthy();
+    const image = screen.getByAltText('Lightning Bolt');
+    expect(image.getAttribute('src')).toBe(
+      'https://images.example.invalid/lightning-bolt.jpg',
+    );
     fireEvent.click(
       screen.getByRole('button', { name: 'Select Lightning Bolt' }),
     );
@@ -160,6 +161,7 @@ describe('DraftWorkspace', () => {
     expect(screen.getByRole('dialog').textContent).toContain(
       'Lightning Bolt deals 3 damage',
     );
+    expect(screen.getAllByText('Colours: Red')).toHaveLength(2);
     expect(screen.getByRole('button', { name: 'Close card details' })).toBe(
       document.activeElement,
     );
@@ -170,6 +172,14 @@ describe('DraftWorkspace', () => {
     fireEvent.keyDown(screen.getByRole('dialog'), { key: 'Escape' });
     await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
     await waitFor(() => expect(inspectButton).toBe(document.activeElement));
+
+    fireEvent.error(image);
+    expect(
+      screen.getByRole('img', {
+        name: 'Card image unavailable for Lightning Bolt',
+      }),
+    ).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Make pick' })).toBeTruthy();
   });
 
   it('loads its seat-safe view and provides explicit retry recovery on an unavailable draft', async () => {
@@ -241,8 +251,15 @@ describe('DraftWorkspace', () => {
 
     await waitFor(() => expect(loadReview).toHaveBeenCalledWith('draft-7'));
     expect(screen.getByRole('heading', { name: 'Your picks' })).toBeTruthy();
-    expect(screen.getByLabelText('Bot picks').textContent).toContain('Bot 2');
-    expect(screen.getByText(/Strategy: raw-ranking-v0@1/)).toBeTruthy();
+    expect(
+      screen.getByRole('button', { name: 'Bot 2', pressed: true }),
+    ).toBeTruthy();
+    expect(
+      screen.getByRole('heading', { name: 'Bot 2 draft history' }),
+    ).toBeTruthy();
+    expect(
+      screen.getByText(/Bot v0 decision · Strategy: raw-ranking-v0@1/),
+    ).toBeTruthy();
   });
 
   it('has no basic accessibility violations in the selectable pack state', async () => {

@@ -3,12 +3,13 @@
 CubeUI is CubeAI's single web-first frontend codebase. It checks local health,
 imports and validates a supported CubeCobra identifier, starts one local draft,
 and renders only the API-provided human-seat pack and pool. Resolved metadata
-already held by the local backend cache supplies on-demand details; because the
-cache has provider image URLs rather than local image bytes, cards use an
-accessible local visual fallback and the browser never calls a card provider
-directly. Completed drafts can show the saved human picks and recorded Bot
-provenance, while active drafts remain limited to the current human-seat view.
-Vite proxies
+already held by the local backend cache supplies on-demand details and an exact
+printing image URL; the browser may render that final image resource but never
+calls a provider API to resolve a card. Cards show source-backed mana and
+colour data when available, and retain an accessible local fallback for
+missing or failed images. Completed drafts can show the saved human picks and
+each recorded Bot's pick history, including its raw-ranking evidence, while
+active drafts remain limited to the current human-seat view. Vite proxies
 `/health` and `/v1` to the local backend when started through the repository
 root `dev` command. Routing, authentication, offline/PWA/sync, global state,
 and a design system remain deferred.
