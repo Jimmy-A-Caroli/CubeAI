@@ -148,7 +148,10 @@ def benchmark_batches(
                     )
                     checksum = _batch_checksum(checksum, result)
                     completed += 1
-                    if count >= 10_000 and time.perf_counter() - start > time_limit_seconds:
+                    if (
+                        count >= 10_000
+                        and time.perf_counter() - start > time_limit_seconds
+                    ):
                         stopped = completed < count
                         break
                 _, peak_bytes = tracemalloc.get_traced_memory()
@@ -221,7 +224,9 @@ def build_result_document(
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--drafts", type=int, nargs="+", default=(100, 1_000, 10_000))
-    parser.add_argument("--strategies", choices=tuple(STRATEGIES), nargs="+", default=tuple(STRATEGIES))
+    parser.add_argument(
+        "--strategies", choices=tuple(STRATEGIES), nargs="+", default=tuple(STRATEGIES)
+    )
     parser.add_argument("--seed", type=int, default=20260828)
     parser.add_argument("--repetitions", type=int, default=3)
     parser.add_argument("--output", type=Path)

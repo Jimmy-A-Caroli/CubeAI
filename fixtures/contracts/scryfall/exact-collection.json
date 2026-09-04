@@ -17,6 +17,11 @@
         "collector_number": "1",
         "lang": "en",
         "layout": "normal",
+        "mana_cost": "{R}",
+        "type_line": "Creature — Wizard",
+        "oracle_text": "Synthetic rules text.",
+        "colors": ["R"],
+        "color_identity": ["R"],
         "image_uris": {
           "normal": "https://images.example.invalid/synthetic-ember.jpg"
         }

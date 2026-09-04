@@ -3,14 +3,14 @@
 from __future__ import annotations
 
 import argparse
-from dataclasses import asdict, dataclass, field, fields
 import gzip
 import json
-from pathlib import Path
 import platform
 import sqlite3
 import sys
 import tempfile
+from dataclasses import asdict, dataclass, field, fields
+from pathlib import Path
 from typing import Any
 
 from experiments.draft_engine import run_draft
@@ -155,7 +155,9 @@ def measure_sample(drafts: int, seed: int) -> StorageSample:
             "draft_metadata_bytes",
         )
     }
-    with tempfile.TemporaryDirectory(prefix="cubeai-data-volume-") as temporary_directory:
+    with tempfile.TemporaryDirectory(
+        prefix="cubeai-data-volume-"
+    ) as temporary_directory:
         directory = Path(temporary_directory)
         ndjson_path = directory / "sample.ndjson"
         sqlite_path = directory / "sample.sqlite"
@@ -178,7 +180,15 @@ def measure_sample(drafts: int, seed: int) -> StorageSample:
                         (draft_id, draft_seed, _SEATS, _PACKS_PER_SEAT, _PACK_SIZE),
                     )
                     component_bytes["draft_metadata_bytes"] += _write_line(
-                        output, ["r", draft_id, draft_seed, _SEATS, _PACKS_PER_SEAT, _PACK_SIZE]
+                        output,
+                        [
+                            "r",
+                            draft_id,
+                            draft_seed,
+                            _SEATS,
+                            _PACKS_PER_SEAT,
+                            _PACK_SIZE,
+                        ],
                     )
                     row_counts["draft_metadata_rows"] += 1
 
@@ -238,8 +248,12 @@ def measure_sample(drafts: int, seed: int) -> StorageSample:
                             )
                             row_counts["pool_rows"] += 1
                             pool_rows.append((draft_id, seat, pool_order, card_id))
-                    connection.executemany("INSERT INTO picks VALUES (?, ?, ?, ?, ?, ?)", pick_rows)
-                    connection.executemany("INSERT INTO seen VALUES (?, ?, ?, ?, ?)", seen_rows)
+                    connection.executemany(
+                        "INSERT INTO picks VALUES (?, ?, ?, ?, ?, ?)", pick_rows
+                    )
+                    connection.executemany(
+                        "INSERT INTO seen VALUES (?, ?, ?, ?, ?)", seen_rows
+                    )
                     connection.executemany(
                         "INSERT INTO pool_entries VALUES (?, ?, ?, ?)", pool_rows
                     )
@@ -272,10 +286,14 @@ def _scale_value(value: int, source_drafts: int, target_drafts: int) -> int:
     return (value * target_drafts + source_drafts - 1) // source_drafts
 
 
-def _scale_dataclass(value: StorageRows | StorageBytes, source_drafts: int, target_drafts: int) -> Any:
+def _scale_dataclass(
+    value: StorageRows | StorageBytes, source_drafts: int, target_drafts: int
+) -> Any:
     return type(value)(
         **{
-            item.name: _scale_value(getattr(value, item.name), source_drafts, target_drafts)
+            item.name: _scale_value(
+                getattr(value, item.name), source_drafts, target_drafts
+            )
             for item in fields(value)
         }
     )
@@ -293,7 +311,9 @@ def project(sample: StorageSample, target_drafts: int) -> StorageProjection:
     )
 
 
-def build_result_document(sample_drafts: int, targets: tuple[int, ...], seed: int) -> dict[str, Any]:
+def build_result_document(
+    sample_drafts: int, targets: tuple[int, ...], seed: int
+) -> dict[str, Any]:
     """Build a JSON result with measured values and projections kept separate."""
     sample = measure_sample(sample_drafts, seed)
     return {
@@ -327,7 +347,9 @@ def build_result_document(sample_drafts: int, targets: tuple[int, ...], seed: in
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--sample-drafts", type=int, default=1_000)
-    parser.add_argument("--targets", type=int, nargs="+", default=(1_000, 10_000, 100_000, 1_000_000))
+    parser.add_argument(
+        "--targets", type=int, nargs="+", default=(1_000, 10_000, 100_000, 1_000_000)
+    )
     parser.add_argument("--seed", type=int, default=20260828)
     parser.add_argument("--output", type=Path)
     arguments = parser.parse_args()

@@ -1,8 +1,12 @@
-import unittest
 import json
+import unittest
 from pathlib import Path
 
-from experiments.analytics import aggregate_python, aggregate_sqlite, build_result_document
+from experiments.analytics import (
+    aggregate_python,
+    aggregate_sqlite,
+    build_result_document,
+)
 from experiments.model import PickEvent, SyntheticCard
 
 

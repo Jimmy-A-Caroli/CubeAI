@@ -31,7 +31,9 @@ class DraftEngineTests(unittest.TestCase):
             seen_packs.append(tuple(card.card_id for card in pack))
             return min(pack, key=lambda card: card.rating).card_id
 
-        result = run_draft(make_cards(4, 3), 2, 1, 2, seed=4, chooser=choose_lowest_rating)
+        result = run_draft(
+            make_cards(4, 3), 2, 1, 2, seed=4, chooser=choose_lowest_rating
+        )
 
         self.assertEqual(4, len(seen_packs))
         self.assertEqual(
@@ -40,7 +42,10 @@ class DraftEngineTests(unittest.TestCase):
         cards_by_id = {card.card_id: card for card in make_cards(4, 3)}
         self.assertEqual(
             [event.card_id for event in result.events],
-            [min(pack, key=lambda card_id: cards_by_id[card_id].rating) for pack in seen_packs],
+            [
+                min(pack, key=lambda card_id: cards_by_id[card_id].rating)
+                for pack in seen_packs
+            ],
         )
 
 

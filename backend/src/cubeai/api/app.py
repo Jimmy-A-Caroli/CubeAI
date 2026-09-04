@@ -17,6 +17,7 @@ from cubeai.lab.adapters.sqlite_drafts import (
     SQLiteDraftRepository,
 )
 from cubeai.lab.application import (
+    CardMetadataLookup,
     DraftSessionError,
     human_seat_view,
     import_local_cube,
@@ -27,12 +28,18 @@ from cubeai.lab.application import (
 )
 from cubeai.lab.application.cube_versions import CubeVersionAssemblyResult
 from cubeai.lab.application.imports import CubeSource, ImportResult
-from cubeai.lab.application.metadata import MetadataResolver
+from cubeai.lab.application.metadata import MetadataResolver, ResolvedPrinting
 from cubeai.lab.application.repositories import DraftRepository
 from cubeai.lab.application.ratings import load_raw_ranking_v0_artifact
 from cubeai.lab.domain.bot import BotStrategy, RawRankingStrategyV0
 from cubeai.lab.domain.cube import CubeCard, CubeVersion
-from cubeai.lab.domain.draft import DraftCardInstance, DraftConfiguration
+from cubeai.lab.domain.draft import (
+    ActorOrigin,
+    DraftCardInstance,
+    DraftConfiguration,
+    DraftStatus,
+    PickEvent,
+)
 from cubeai.lab.domain.draft_state import DraftState, DraftTransitionError
 from cubeai.lab.domain.validation import CubeValidationDiagnostic
 
@@ -100,10 +107,21 @@ class PickRequestDto(_Dto):
     card_instance_id: str = Field(min_length=1)
 
 
-class CardDto(_Dto):
+class CardDetailsDto(_Dto):
+    name: str
+    image_url: str | None
+    mana_cost: str | None
+    type_line: str | None
+    oracle_text: str | None
+    power: str | None
+    toughness: str | None
+    loyalty: str | None
+    colors: list[str]
+
+
+class CardDto(CardDetailsDto):
     instance_id: str
     cube_card_id: str
-    name: str
 
 
 class DraftViewDto(_Dto):
@@ -113,8 +131,36 @@ class DraftViewDto(_Dto):
     status: str
     pack_number: int
     pick_number: int
+    cube_name: str
+    configuration: DraftConfigurationDto
     current_pack: list[CardDto]
     pool: list[CardDto]
+
+
+class BotProvenanceDto(_Dto):
+    strategy_id: str
+    strategy_version: str
+    rating_artifact_id: str
+    rating_artifact_version: str
+    selected_rating: float
+    rating_lookup_outcome: str
+    tie_break_reason: str
+
+
+class DraftReviewPickDto(_Dto):
+    seat_number: int
+    pack_number: int
+    pick_number: int
+    card: CardDetailsDto
+    bot_provenance: BotProvenanceDto | None
+
+
+class DraftReviewDto(_Dto):
+    draft_id: str
+    cube_name: str
+    configuration: DraftConfigurationDto
+    human_picks: list[DraftReviewPickDto]
+    bot_picks: list[DraftReviewPickDto]
 
 
 @dataclass(frozen=True, slots=True)
@@ -123,6 +169,7 @@ class LocalApiServices:
     source: CubeSource
     resolver: MetadataResolver
     strategy: RawRankingStrategyV0
+    metadata_lookup: CardMetadataLookup | None = None
 
 
 def create_application(services: LocalApiServices) -> FastAPI:
@@ -219,12 +266,14 @@ def create_application(services: LocalApiServices) -> FastAPI:
             cube_version_id=request.cube_version_id,
             configuration=request.configuration.domain(),
         )
-        return _draft_view(services.repository, state)
+        return _draft_view(services.repository, state, services.metadata_lookup)
 
     @app.get("/v1/drafts/{draft_id}", response_model=DraftViewDto)
     def resume_draft(draft_id: str) -> DraftViewDto:
         return _draft_view(
-            services.repository, resume_local_draft(services.repository, draft_id)
+            services.repository,
+            resume_local_draft(services.repository, draft_id),
+            services.metadata_lookup,
         )
 
     @app.post("/v1/drafts/{draft_id}/picks", response_model=DraftViewDto)
@@ -241,7 +290,20 @@ def create_application(services: LocalApiServices) -> FastAPI:
             request.card_instance_id,
             strategies,
         )
-        return _draft_view(services.repository, updated)
+        return _draft_view(services.repository, updated, services.metadata_lookup)
+
+    @app.get("/v1/drafts/{draft_id}/review", response_model=DraftReviewDto)
+    def review_draft(draft_id: str) -> DraftReviewDto:
+        state = resume_local_draft(services.repository, draft_id)
+        if state.status is not DraftStatus.COMPLETED:
+            raise HTTPException(
+                status_code=409,
+                detail={
+                    "code": "DRAFT_REVIEW_UNAVAILABLE",
+                    "detail": "draft review is available after completion",
+                },
+            )
+        return _draft_review(services.repository, state, services.metadata_lookup)
 
     return app
 
@@ -249,14 +311,16 @@ def create_application(services: LocalApiServices) -> FastAPI:
 def create_default_application(state_directory: Path) -> FastAPI:
     """Wire caller-selected local paths to the accepted outer adapters."""
 
+    resolver = ScryfallMetadataResolver(
+        SQLiteScryfallCache(state_directory / "scryfall.sqlite3")
+    )
     return create_application(
         LocalApiServices(
             SQLiteDraftRepository(state_directory / "drafts.sqlite3"),
             CubeCobraSource(),
-            ScryfallMetadataResolver(
-                SQLiteScryfallCache(state_directory / "scryfall.sqlite3")
-            ),
+            resolver,
             RawRankingStrategyV0(load_raw_ranking_v0_artifact()),
+            resolver,
         )
     )
 
@@ -276,7 +340,11 @@ def _required_cube_version(
     return version
 
 
-def _draft_view(repository: DraftRepository, state: DraftState) -> DraftViewDto:
+def _draft_view(
+    repository: DraftRepository,
+    state: DraftState,
+    metadata_lookup: CardMetadataLookup | None,
+) -> DraftViewDto:
     version = _required_cube_version(repository, state.draft.cube_version_id)
     view = human_seat_view(state, version, 0)
     instances = {card.id: card for pack in state.allocation for card in pack.cards}
@@ -288,28 +356,150 @@ def _draft_view(repository: DraftRepository, state: DraftState) -> DraftViewDto:
         status=view.status.value,
         pack_number=view.pack_round + 1,
         pick_number=view.pick_number + 1,
+        cube_name=version.cube.name,
+        configuration=DraftConfigurationDto(
+            seats=state.draft.configuration.seats,
+            packs_per_seat=state.draft.configuration.packs_per_seat,
+            pack_size=state.draft.configuration.pack_size,
+            seed=state.draft.configuration.seed,
+        ),
         current_pack=[
-            _card_dto(instances[item], memberships)
+            _card_dto(instances[item], memberships, metadata_lookup)
             for item in view.current_card_instance_ids
         ],
         pool=[
-            _card_dto(instances[item], memberships)
+            _card_dto(instances[item], memberships, metadata_lookup)
             for item in view.pool_card_instance_ids
         ],
     )
 
 
 def _card_dto(
-    instance: DraftCardInstance, memberships: Mapping[str, CubeCard]
+    instance: DraftCardInstance,
+    memberships: Mapping[str, CubeCard],
+    metadata_lookup: CardMetadataLookup | None,
 ) -> CardDto:
-    membership = memberships[instance.cube_card_id]
-    name = (
-        membership.printing.card_identity.name
-        if membership.printing is not None
-        else "Unresolved card"
-    )
     return CardDto(
-        instance_id=instance.id, cube_card_id=instance.cube_card_id, name=name
+        instance_id=instance.id,
+        cube_card_id=instance.cube_card_id,
+        **_card_details_dto(
+            memberships[instance.cube_card_id], metadata_lookup
+        ).model_dump(),
+    )
+
+
+def _card_details_dto(
+    membership: CubeCard, metadata_lookup: CardMetadataLookup | None
+) -> CardDetailsDto:
+    if membership.printing is None:
+        return CardDetailsDto(
+            name="Unresolved card",
+            image_url=None,
+            mana_cost=None,
+            type_line=None,
+            oracle_text=None,
+            power=None,
+            toughness=None,
+            loyalty=None,
+            colors=[],
+        )
+    printing = (
+        metadata_lookup.lookup_printing(membership.printing.id)
+        if metadata_lookup is not None
+        else None
+    )
+    return CardDetailsDto(
+        name=membership.printing.card_identity.name,
+        image_url=None if printing is None else _image_url(printing),
+        mana_cost=None if printing is None else printing.mana_cost,
+        type_line=None if printing is None else printing.type_line,
+        oracle_text=None if printing is None else printing.oracle_text,
+        power=None if printing is None else printing.power,
+        toughness=None if printing is None else printing.toughness,
+        loyalty=None if printing is None else printing.loyalty,
+        colors=[]
+        if printing is None
+        else list(printing.colors or printing.color_identity),
+    )
+
+
+def _image_url(printing: ResolvedPrinting) -> str | None:
+    """Choose an existing printing image URL without changing printing identity."""
+
+    if (image_url := _preferred_image_url(printing.image_uris)) is not None:
+        return image_url
+    for face in printing.faces:
+        if (image_url := _preferred_image_url(face.image_uris)) is not None:
+            return image_url
+    return None
+
+
+def _preferred_image_url(image_uris: tuple[tuple[str, str], ...]) -> str | None:
+    image_by_size = dict(image_uris)
+    for size in ("normal", "grid", "large", "display", "small", "thumb"):
+        if (image_url := image_by_size.get(size)) is not None:
+            return image_url
+    return next(iter(image_by_size.values()), None)
+
+
+def _draft_review(
+    repository: DraftRepository,
+    state: DraftState,
+    metadata_lookup: CardMetadataLookup | None,
+) -> DraftReviewDto:
+    version = _required_cube_version(repository, state.draft.cube_version_id)
+    instances = {card.id: card for pack in state.allocation for card in pack.cards}
+    memberships = {card.id: card for card in version.cards}
+
+    def pick_dto(event: PickEvent) -> DraftReviewPickDto:
+        provenance = event.bot_provenance
+        return DraftReviewPickDto(
+            seat_number=event.seat_number,
+            pack_number=event.pack_number + 1,
+            pick_number=event.pick_number + 1,
+            card=_card_details_dto(
+                memberships[instances[event.card_instance_id].cube_card_id],
+                metadata_lookup,
+            ),
+            bot_provenance=(
+                None
+                if provenance is None
+                else BotProvenanceDto(
+                    strategy_id=provenance.strategy_id,
+                    strategy_version=provenance.strategy_version,
+                    rating_artifact_id=provenance.rating_artifact_id,
+                    rating_artifact_version=provenance.rating_artifact_version,
+                    selected_rating=provenance.selected_rating,
+                    rating_lookup_outcome=provenance.rating_lookup_outcome.value,
+                    tie_break_reason=(
+                        "deterministic_order"
+                        if provenance.tie_break_reason.value == "instance_id"
+                        else provenance.tie_break_reason.value
+                    ),
+                )
+            ),
+        )
+
+    configuration = DraftConfigurationDto(
+        seats=state.draft.configuration.seats,
+        packs_per_seat=state.draft.configuration.packs_per_seat,
+        pack_size=state.draft.configuration.pack_size,
+        seed=state.draft.configuration.seed,
+    )
+    return DraftReviewDto(
+        draft_id=state.draft.id,
+        cube_name=version.cube.name,
+        configuration=configuration,
+        human_picks=[
+            pick_dto(event)
+            for event in state.pick_events
+            if event.actor_origin is ActorOrigin.HUMAN
+        ],
+        bot_picks=[
+            pick_dto(event)
+            for event in state.pick_events
+            if event.actor_origin is ActorOrigin.BOT
+        ],
     )
 
 

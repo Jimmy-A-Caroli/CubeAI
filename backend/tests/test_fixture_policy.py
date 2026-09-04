@@ -79,6 +79,11 @@ def test_scryfall_contract_fixture_is_synthetic_licensed_and_parser_shaped() -> 
         "collector_number",
         "lang",
         "layout",
+        "mana_cost",
+        "type_line",
+        "oracle_text",
+        "colors",
+        "color_identity",
         "image_uris",
     }
 

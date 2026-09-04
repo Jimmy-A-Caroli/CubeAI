@@ -14,9 +14,9 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import sys
 from collections import Counter
 from pathlib import Path
-import sys
 from tempfile import TemporaryDirectory
 
 # ``scripts/cubeai.py`` otherwise shadows the installed ``cubeai`` package
@@ -25,9 +25,10 @@ BACKEND_SRC = Path(__file__).resolve().parents[1] / "backend" / "src"
 sys.path.insert(0, str(BACKEND_SRC))
 
 from cubeai.lab.adapters.cubecobra import CubeCobraSource
-from cubeai.lab.adapters.scryfall import SQLiteScryfallCache, ScryfallMetadataResolver
+from cubeai.lab.adapters.scryfall import ScryfallMetadataResolver, SQLiteScryfallCache
 from cubeai.lab.application import (
     ImportOutcome,
+    MetadataResolution,
     SourceRequest,
     assemble_cube_version,
 )
@@ -42,7 +43,6 @@ from cubeai.lab.domain import (
     start_draft,
     validate_cube_version,
 )
-
 
 _SUPPORTED_IMPORTS = {
     ImportOutcome.SUPPORTED,
@@ -72,6 +72,26 @@ def _event_fingerprint(state_events: object) -> str:
     return hashlib.sha256(encoded).hexdigest()
 
 
+def _image_summary(resolutions: tuple[MetadataResolution, ...]) -> dict[str, int]:
+    resolved_cards = 0
+    cards_with_usable_image_url = 0
+    for resolution in resolutions:
+        if resolution.printing is None:
+            continue
+        resolved_cards += 1
+        image_uris = resolution.printing.image_uris
+        face_image_uris = tuple(
+            image for face in resolution.printing.faces for image in face.image_uris
+        )
+        if image_uris or face_image_uris:
+            cards_with_usable_image_url += 1
+    return {
+        "resolved_cards": resolved_cards,
+        "cards_with_usable_image_url": cards_with_usable_image_url,
+        "cards_using_fallback": resolved_cards - cards_with_usable_image_url,
+    }
+
+
 def _complete_draft(
     *,
     imported: object,
@@ -91,7 +111,22 @@ def _complete_draft(
     version = assembled.cube_version
     validation = validate_cube_version(version, configuration)
     if not validation.is_draftable:
-        raise RuntimeError("CubeVersion is not draftable for the requested geometry")
+        raise RuntimeError(
+            "CubeVersion is not draftable for the requested geometry: "
+            + json.dumps(
+                {
+                    "usable_memberships": validation.usable_membership_count,
+                    "diagnostic_counts": _counts(
+                        [diagnostic.code.value for diagnostic in validation.diagnostics]
+                    ),
+                    "resolution_outcomes": _counts(
+                        [item.outcome.value for item in resolution.resolutions]
+                    ),
+                    "image_presentation": _image_summary(resolution.resolutions),
+                },
+                sort_keys=True,
+            )
+        )
     draft = Draft(
         id=f"checkpoint-e:{version.content_fingerprint}",
         cube_version_id=version.id,
@@ -114,7 +149,9 @@ def _complete_draft(
         "validation": {
             "draftable": validation.is_draftable,
             "usable_memberships": validation.usable_membership_count,
-            "diagnostics": [diagnostic.code.value for diagnostic in validation.diagnostics],
+            "diagnostics": [
+                diagnostic.code.value for diagnostic in validation.diagnostics
+            ],
         },
         "allocation": {
             "pack_count": len(state.allocation),
@@ -126,6 +163,7 @@ def _complete_draft(
             "pool_sizes": pools,
             "event_fingerprint": _event_fingerprint(state.pick_events),
         },
+        "image_presentation": _image_summary(resolution.resolutions),
     }
     outcomes = _counts([item.outcome.value for item in resolution.resolutions])
     return summary, outcomes
@@ -151,7 +189,9 @@ def main() -> int:
         SourceRequest("cubecobra", args.identifier)
     )
     if imported.outcome not in _SUPPORTED_IMPORTS or imported.snapshot is None:
-        raise RuntimeError(f"CubeCobra import did not produce a supported snapshot: {imported.outcome.value}")
+        raise RuntimeError(
+            f"CubeCobra import did not produce a supported snapshot: {imported.outcome.value}"
+        )
 
     temporary_directory: TemporaryDirectory[str] | None = None
     cache_directory = args.cache
@@ -185,7 +225,9 @@ def main() -> int:
                 "import": {
                     "outcome": imported.outcome.value,
                     "memberships": len(imported.candidates),
-                    "diagnostics": [diagnostic.code.value for diagnostic in imported.diagnostics],
+                    "diagnostics": [
+                        diagnostic.code.value for diagnostic in imported.diagnostics
+                    ],
                 },
                 "resolution_outcomes": {
                     "first": first_resolution_outcomes,

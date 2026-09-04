@@ -113,7 +113,7 @@ def test_assembly_is_structurally_immutable_and_detaches_input_collections() -> 
     with pytest.raises(AttributeError):
         result.cube_version.cards.append(result.cube_version.cards[0])  # type: ignore[attr-defined]
     with pytest.raises(AttributeError):
-        setattr(result.cube_version, "unexpected", "mutable state")
+        object.__setattr__(result.cube_version, "unexpected", "mutable state")
 
 
 def test_same_normalized_content_has_a_stable_fingerprint_and_changes_are_visible() -> (
@@ -170,7 +170,9 @@ def test_unresolved_and_custom_memberships_remain_visible_and_unusable() -> None
         (CubeVersionAssemblyDiagnosticCode.UNRESOLVED_MEMBERSHIP, "membership-1"),
         (CubeVersionAssemblyDiagnosticCode.CUSTOM_MEMBERSHIP, "membership-2"),
     ]
-    assert all(item.source_snapshot == _source_snapshot() for item in result.diagnostics)
+    assert all(
+        item.source_snapshot == _source_snapshot() for item in result.diagnostics
+    )
 
 
 def test_invalid_import_or_mismatched_resolution_cannot_create_a_partial_version() -> (
@@ -271,9 +273,7 @@ def test_resolved_printing_without_card_level_oracle_identity_is_not_usable() ->
 
     assert result.outcome is CubeVersionAssemblyOutcome.UNUSABLE
     assert result.cube_version is not None
-    assert (
-        result.cube_version.cards[0].resolution_status is ResolutionStatus.UNRESOLVED
-    )
+    assert result.cube_version.cards[0].resolution_status is ResolutionStatus.UNRESOLVED
     assert (
         result.diagnostics[0].code
         is CubeVersionAssemblyDiagnosticCode.INVALID_RESOLUTION

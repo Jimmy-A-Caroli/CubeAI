@@ -32,7 +32,9 @@ _BENCHMARK_CARD_COUNT = 12
 
 
 def _sorted_events(events: Sequence[PickEvent]) -> list[PickEvent]:
-    return sorted(events, key=lambda event: (event.pack_number, event.pick_number, event.seat))
+    return sorted(
+        events, key=lambda event: (event.pack_number, event.pick_number, event.seat)
+    )
 
 
 def _validate_inputs(
@@ -54,7 +56,10 @@ def _validate_inputs(
 
 
 def _card_rows(values: dict[int, float]) -> list[dict[str, float | int]]:
-    return [{"card_id": card_id, "value": float(value)} for card_id, value in sorted(values.items())]
+    return [
+        {"card_id": card_id, "value": float(value)}
+        for card_id, value in sorted(values.items())
+    ]
 
 
 def _result(
@@ -148,9 +153,18 @@ def aggregate_python(
     total_drafts = len(events)
     total_picks = sum(pick_counts.values())
     return _result(
-        {card_id: statistics.mean(values) for card_id, values in pick_positions.items()},
-        {card_id: statistics.median(values) for card_id, values in pick_positions.items()},
-        {card_id: statistics.mean(values) for card_id, values in first_seen_positions.items()},
+        {
+            card_id: statistics.mean(values)
+            for card_id, values in pick_positions.items()
+        },
+        {
+            card_id: statistics.median(values)
+            for card_id, values in pick_positions.items()
+        },
+        {
+            card_id: statistics.mean(values)
+            for card_id, values in first_seen_positions.items()
+        },
         {
             card_id: last_pick_counts[card_id] / count
             for card_id, count in pick_counts.items()
@@ -159,11 +173,10 @@ def aggregate_python(
             card_id: wheel_counts[card_id] / count
             for card_id, count in pick_counts.items()
         },
-        {color: count / total_picks for color, count in color_counts.items()} if total_picks else {},
-        {
-            card_id: count / total_drafts
-            for card_id, count in pick_counts.items()
-        }
+        {color: count / total_picks for color, count in color_counts.items()}
+        if total_picks
+        else {},
+        {card_id: count / total_drafts for card_id, count in pick_counts.items()}
         if total_drafts
         else {},
         dict(tag_counts),
@@ -206,7 +219,8 @@ def _aggregate_sqlite(
             """
         )
         connection.executemany(
-            "INSERT INTO cards VALUES (?, ?)", ((card.card_id, card.color) for card in cards)
+            "INSERT INTO cards VALUES (?, ?)",
+            ((card.card_id, card.color) for card in cards),
         )
         connection.executemany(
             "INSERT INTO card_tags VALUES (?, ?)",
@@ -239,7 +253,14 @@ def _aggregate_sqlite(
                 pool_order[event.seat] += 1
                 sequence = event.pack_number * 1_000 + event.pick_number
                 seen.extend(
-                    (draft_id, event.pack_number, event.pick_number, event.seat, card_id, sequence)
+                    (
+                        draft_id,
+                        event.pack_number,
+                        event.pick_number,
+                        event.seat,
+                        card_id,
+                        sequence,
+                    )
                     for card_id in event.seen_card_ids
                 )
         connection.executemany("INSERT INTO picks VALUES (?, ?, ?, ?, ?, ?)", picks)
@@ -259,7 +280,8 @@ def _aggregate_sqlite(
         ):
             pick_lists[card_id].append(pick_position)
         median_pick = {
-            card_id: statistics.median(positions) for card_id, positions in pick_lists.items()
+            card_id: statistics.median(positions)
+            for card_id, positions in pick_lists.items()
         }
         first_seen = dict(
             connection.execute(
@@ -302,23 +324,30 @@ def _aggregate_sqlite(
         )
         wheel_counts = Counter(card_id for _, card_id in wheel_instances)
         wheel_rate = {
-            card_id: wheel_counts[card_id] / count for card_id, count in pick_counts.items()
+            card_id: wheel_counts[card_id] / count
+            for card_id, count in pick_counts.items()
         }
         total_picks = len(picks)
-        color_utilization = {
-            color: count / total_picks
-            for color, count in connection.execute(
-                """
+        color_utilization = (
+            {
+                color: count / total_picks
+                for color, count in connection.execute(
+                    """
                 SELECT cards.color, COUNT(*)
                 FROM picks JOIN cards USING(card_id)
                 GROUP BY cards.color
                 """
-            )
-        } if total_picks else {}
+                )
+            }
+            if total_picks
+            else {}
+        )
         total_drafts = len(events)
-        card_utilization = {
-            card_id: count / total_drafts for card_id, count in pick_counts.items()
-        } if total_drafts else {}
+        card_utilization = (
+            {card_id: count / total_drafts for card_id, count in pick_counts.items()}
+            if total_drafts
+            else {}
+        )
         tag_frequency = dict(
             connection.execute(
                 """
@@ -359,7 +388,11 @@ def _aggregate_sqlite(
             card_utilization,
             tag_frequency,
             cooccurrence,
-        ), {"page_count": page_count, "page_size": page_size, "database_bytes": page_count * page_size}
+        ), {
+            "page_count": page_count,
+            "page_size": page_size,
+            "database_bytes": page_count * page_size,
+        }
     finally:
         connection.close()
 
@@ -435,7 +468,9 @@ def _measure(
             tracemalloc.stop()
         checksums.append(_checksum(result))
     if len(set(checksums)) != 1:
-        raise AssertionError(f"{backend} returned different checksums for identical input")
+        raise AssertionError(
+            f"{backend} returned different checksums for identical input"
+        )
     measurement: dict[str, Any] = {
         "mean_elapsed_seconds": sum(elapsed_samples) / len(elapsed_samples),
         "elapsed_seconds": elapsed_samples,
@@ -474,7 +509,10 @@ def benchmark_aggregation(
         events = _generate_drafts(draft_count, seed)
         python_measurement = _measure("python", events, cards, repetitions)
         sqlite_measurement = _measure("sqlite", events, cards, repetitions)
-        if python_measurement["result_checksum"] != sqlite_measurement["result_checksum"]:
+        if (
+            python_measurement["result_checksum"]
+            != sqlite_measurement["result_checksum"]
+        ):
             raise AssertionError("Python and SQLite aggregation results differ")
         cases.append(
             {
@@ -530,7 +568,9 @@ def main() -> None:
     parser.add_argument("--repetitions", type=int, default=3)
     parser.add_argument("--output", type=Path)
     arguments = parser.parse_args()
-    document = build_result_document(arguments.drafts, arguments.seed, arguments.repetitions)
+    document = build_result_document(
+        arguments.drafts, arguments.seed, arguments.repetitions
+    )
     command = (
         "python3 -m experiments.analytics"
         f" --drafts {' '.join(str(count) for count in arguments.drafts)}"

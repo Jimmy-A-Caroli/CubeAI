@@ -144,6 +144,7 @@ def validate_cube_version(
             )
         )
 
+    assert version.content_fingerprint is not None
     return CubeValidationResult(
         version.id,
         version.content_fingerprint,

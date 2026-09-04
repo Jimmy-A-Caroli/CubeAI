@@ -1,7 +1,7 @@
 import asyncio
 import json
 
-from cubeai.api.app import LocalApiServices, create_application
+from cubeai.api.app import LocalApiServices, _image_url, create_application
 from cubeai.lab.adapters.sqlite_drafts import SQLiteDraftRepository
 from cubeai.lab.application.imports import (
     CandidateResolution,
@@ -21,6 +21,7 @@ from cubeai.lab.application.metadata import (
     MetadataResolutionSnapshot,
     MetadataResolver,
     ResolvedPrinting,
+    ScryfallFace,
 )
 from cubeai.lab.application.ratings import load_raw_ranking_v0_artifact
 from cubeai.lab.domain import (
@@ -143,7 +144,33 @@ class _FixtureResolver(MetadataResolver):
         )
 
 
-def _application(tmp_path):
+class _DisplayLookup:
+    """Cache-shaped display data for API presentation tests only."""
+
+    def lookup_printing(self, printing_id: str) -> ResolvedPrinting | None:
+        return ResolvedPrinting(
+            "scryfall",
+            printing_id,
+            f"oracle-{printing_id}",
+            "Cached display record",
+            "syn",
+            "1",
+            "en",
+            "normal",
+            (),
+            (("normal", "https://images.example.invalid/card.jpg"),),
+            printing_id,
+            "2026-09-04T00:00:00+00:00",
+            mana_cost="{U}",
+            type_line="Creature — Wizard",
+            oracle_text="A cached rules line.",
+            power="1",
+            toughness="1",
+            colors=("U",),
+        )
+
+
+def _application(tmp_path, metadata_lookup=None):
     repository = SQLiteDraftRepository(tmp_path / "drafts.sqlite3")
     repository.save_cube_version(_version())
     return create_application(
@@ -152,6 +179,7 @@ def _application(tmp_path):
             _UnusedSource(),
             _UnusedResolver(),
             RawRankingStrategyV0(load_raw_ranking_v0_artifact()),
+            metadata_lookup,
         )
     )
 
@@ -256,6 +284,153 @@ def test_hidden_draft_state_is_absent_from_the_view_and_openapi_contract(
         assert forbidden not in rendered
         assert forbidden not in schema
     assert "/v1/drafts/{draft_id}/seats/{seat_number}" not in app.openapi()["paths"]
+
+
+def test_draft_view_uses_cached_display_data_without_exposing_hidden_state(
+    tmp_path,
+) -> None:
+    app = _application(tmp_path, _DisplayLookup())
+
+    status, started = _request(app, "POST", "/v1/drafts", _draft_request())
+
+    assert status == 201
+    card = started["current_pack"][0]
+    assert card["image_url"] == "https://images.example.invalid/card.jpg"
+    assert card["mana_cost"] == "{U}"
+    assert card["type_line"] == "Creature — Wizard"
+    assert card["oracle_text"] == "A cached rules line."
+    assert card["power"] == "1"
+    assert card["toughness"] == "1"
+    assert card["colors"] == ["U"]
+    rendered = json.dumps(started)
+    assert "allocation" not in rendered
+
+
+def test_card_image_selection_prefers_printing_and_uses_face_or_fallback() -> None:
+    base = dict(
+        provider="scryfall",
+        printing_id="printing-1",
+        oracle_id="oracle-1",
+        name="Split Card",
+        set_code="syn",
+        collector_number="1",
+        language="en",
+        layout="transform",
+        original_reference="printing-1",
+        fetched_at="2026-09-04T00:00:00+00:00",
+    )
+    face = ScryfallFace(
+        "Back Face",
+        "oracle-1",
+        (("normal", "https://images.example.invalid/face.jpg"),),
+    )
+
+    assert (
+        _image_url(
+            ResolvedPrinting(
+                **base,
+                faces=(face,),
+                image_uris=(("normal", "https://images.example.invalid/printing.jpg"),),
+            )
+        )
+        == "https://images.example.invalid/printing.jpg"
+    )
+    assert _image_url(ResolvedPrinting(**base, faces=(face,), image_uris=())) == (
+        "https://images.example.invalid/face.jpg"
+    )
+    assert _image_url(ResolvedPrinting(**base, faces=(), image_uris=())) is None
+    for key in ("grid", "display", "thumb"):
+        assert (
+            _image_url(
+                ResolvedPrinting(
+                    **base,
+                    faces=(),
+                    image_uris=((key, f"https://images.example.invalid/{key}.jpg"),),
+                )
+            )
+            == f"https://images.example.invalid/{key}.jpg"
+        )
+        assert (
+            _image_url(
+                ResolvedPrinting(
+                    **base,
+                    faces=(
+                        ScryfallFace(
+                            "Back Face",
+                            "oracle-1",
+                            ((key, f"https://images.example.invalid/face-{key}.jpg"),),
+                        ),
+                    ),
+                    image_uris=(),
+                )
+            )
+            == f"https://images.example.invalid/face-{key}.jpg"
+        )
+    assert (
+        _image_url(
+            ResolvedPrinting(
+                **base,
+                faces=(),
+                image_uris=(("art_crop", "https://images.example.invalid/art.jpg"),),
+            )
+        )
+        == "https://images.example.invalid/art.jpg"
+    )
+    assert (
+        _image_url(
+            ResolvedPrinting(
+                **base,
+                faces=(
+                    ScryfallFace(
+                        "Back Face",
+                        "oracle-1",
+                        (("border_crop", "https://images.example.invalid/border.jpg"),),
+                    ),
+                ),
+                image_uris=(),
+            )
+        )
+        == "https://images.example.invalid/border.jpg"
+    )
+
+
+def test_review_is_gated_until_completion_then_exposes_human_and_bot_history(
+    tmp_path,
+) -> None:
+    app = _application(tmp_path)
+    _, started = _request(app, "POST", "/v1/drafts", _draft_request())
+
+    active_status, active_error = _request(app, "GET", "/v1/drafts/draft-1/review")
+
+    assert (active_status, active_error) == (
+        409,
+        {
+            "code": "DRAFT_REVIEW_UNAVAILABLE",
+            "detail": "draft review is available after completion",
+        },
+    )
+
+    view = started
+    while view["status"] != "completed":
+        selected = view["current_pack"][0]["instance_id"]
+        _, view = _request(
+            app,
+            "POST",
+            "/v1/drafts/draft-1/picks",
+            {"card_instance_id": selected},
+        )
+    review_status, review = _request(app, "GET", "/v1/drafts/draft-1/review")
+
+    assert review_status == 200
+    assert len(review["human_picks"]) == 2
+    assert len(review["bot_picks"]) == 2
+    assert review["human_picks"][0]["bot_provenance"] is None
+    provenance = review["bot_picks"][0]["bot_provenance"]
+    assert provenance["strategy_id"] == "raw-ranking-v0"
+    assert provenance["selected_rating"] is not None
+    rendered = json.dumps(review)
+    for forbidden in ("instance_id", "cube_card_id", "allocation", "active_packs"):
+        assert forbidden not in rendered
 
 
 def test_stale_pick_maps_to_a_stable_error_without_mutating_the_persisted_draft(

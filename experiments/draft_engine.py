@@ -41,7 +41,9 @@ def run_draft(
         raise ValueError("seats, packs_per_seat, and pack_size must be positive")
     required_cards = seats * packs_per_seat * pack_size
     if len(cards) < required_cards:
-        raise ValueError(f"draft requires {required_cards} cards but received {len(cards)}")
+        raise ValueError(
+            f"draft requires {required_cards} cards but received {len(cards)}"
+        )
 
     cards_by_id = {card.card_id: card for card in cards}
     if len(cards_by_id) != len(cards):

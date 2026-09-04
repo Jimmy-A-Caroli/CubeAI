@@ -159,6 +159,30 @@ references, provider printing/Oracle identities, outcome taxonomy, and
 Oracle-mismatch diagnostics. A later CubeVersion service—not this adapter—will
 own whether any unresolved outcome prevents version creation.
 
+## Alpha-1 browser image presentation observation
+
+**Accessed:** 2026-09-04. This is a bounded technical/policy observation for
+the Alpha local-draft UI, not legal advice. The official [Card
+Imagery](https://scryfall.com/docs/api/images) documentation exposes canonical
+image URLs through each Card object's `image_uris`. The official [HTTP
+concerns](https://scryfall.com/docs/api/http-concerns) documentation explicitly
+addresses embedding Scryfall assets in a site, notes image-origin CORS headers,
+and gives `img-src *.scryfall.io` as CSP guidance. No concrete first-party
+prohibition on normal browser rendering of those returned URLs was found in
+this bounded review.
+
+Accordingly, Alpha may project the cached exact-printing URL to a normal
+browser `<img>` element. This does not permit the browser to resolve card
+identities, call Scryfall APIs, synthesize image URLs, or fetch/mirror/persist
+images locally. The UI chooses only a validated URL retained for the resolved
+printing, prefers documented card-view variants (`normal`/`grid`,
+`large`/`display`, then `small`/`thumb`), and otherwise uses the first retained
+validated URI. It tries a face only when the parent has none, and provides an
+accessible metadata fallback when no image is available or it fails to load.
+Offline image caching remains deferred. No first-party technical attribution
+requirement beyond this bounded observation was found; this is not a legal or
+licensing conclusion.
+
 ## Offline validation prepared by this research
 
 [`scryfall-metadata-examples.json`](../../fixtures/synthetic/scryfall-metadata-examples.json)

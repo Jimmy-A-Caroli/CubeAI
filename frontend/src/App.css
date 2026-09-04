@@ -50,21 +50,13 @@
   gap: 1.25rem;
 }
 
-.app-shell__draft-actions {
-  align-items: center;
-  display: flex;
-  gap: 1rem;
-  justify-content: space-between;
-}
-
-.app-shell__draft-actions p {
+.app-shell__draft-note {
   color: #b7bdcf;
   margin: 0;
 }
 
 @media (max-width: 42rem) {
-  .app-shell__header,
-  .app-shell__draft-actions {
+  .app-shell__header {
     align-items: start;
     flex-direction: column;
   }

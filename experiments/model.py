@@ -1,7 +1,7 @@
 """Synthetic structures used only by the non-production experiments."""
 
-from dataclasses import dataclass
 import random
+from dataclasses import dataclass
 
 
 @dataclass(frozen=True, slots=True)

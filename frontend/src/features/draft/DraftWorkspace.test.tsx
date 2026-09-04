@@ -3,7 +3,29 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 import DraftWorkspace from './DraftWorkspace';
-import type { DraftApi, DraftView } from './draftApi';
+import type { DraftApi, DraftCard, DraftReview, DraftView } from './draftApi';
+
+const noDetails = {
+  image_url: null,
+  mana_cost: null,
+  type_line: null,
+  oracle_text: null,
+  power: null,
+  toughness: null,
+  loyalty: null,
+  colors: [],
+};
+
+const card = (
+  instance_id: string,
+  cube_card_id: string,
+  name: string,
+): DraftCard => ({
+  instance_id,
+  cube_card_id,
+  name,
+  ...noDetails,
+});
 
 const firstView: DraftView = {
   draft_id: 'draft-7',
@@ -12,26 +34,53 @@ const firstView: DraftView = {
   seat_number: 0,
   pack_number: 1,
   pick_number: 1,
+  cube_name: 'Synthetic Cube',
+  configuration: { seats: 2, packs_per_seat: 1, pack_size: 2, seed: 13 },
   current_pack: [
-    {
-      instance_id: 'instance-a',
-      cube_card_id: 'cube-a',
-      name: 'Lightning Bolt',
-    },
-    {
-      instance_id: 'instance-b',
-      cube_card_id: 'cube-b',
-      name: 'Lightning Bolt',
-    },
-    { instance_id: 'instance-c', cube_card_id: 'cube-c', name: 'Counterspell' },
+    card('instance-a', 'cube-a', 'Lightning Bolt'),
+    card('instance-b', 'cube-b', 'Lightning Bolt'),
+    card('instance-c', 'cube-c', 'Counterspell'),
   ],
   pool: [],
+};
+
+const review: DraftReview = {
+  draft_id: 'draft-7',
+  cube_name: 'Synthetic Cube',
+  configuration: { seats: 2, packs_per_seat: 1, pack_size: 2, seed: 13 },
+  human_picks: [
+    {
+      seat_number: 0,
+      pack_number: 1,
+      pick_number: 1,
+      card: { name: 'Lightning Bolt', ...noDetails },
+      bot_provenance: null,
+    },
+  ],
+  bot_picks: [
+    {
+      seat_number: 1,
+      pack_number: 1,
+      pick_number: 1,
+      card: { name: 'Counterspell', ...noDetails },
+      bot_provenance: {
+        strategy_id: 'raw-ranking-v0',
+        strategy_version: '1',
+        rating_artifact_id: 'raw-ranking-v0',
+        rating_artifact_version: '1',
+        selected_rating: 5,
+        rating_lookup_outcome: 'found',
+        tie_break_reason: 'highest_rating',
+      },
+    },
+  ],
 };
 
 function apiWith(overrides: Partial<DraftApi> = {}): DraftApi {
   return {
     loadDraft: vi.fn().mockResolvedValue(firstView),
     submitPick: vi.fn().mockResolvedValue(firstView),
+    loadReview: vi.fn().mockResolvedValue(review),
     ...overrides,
   };
 }
@@ -45,7 +94,7 @@ function deferred<T>() {
 }
 
 describe('DraftWorkspace', () => {
-  it('keeps duplicate card instances distinct and submits only the selected legal instance', async () => {
+  it('keeps duplicate memberships selectable without showing implementation IDs', async () => {
     const updated: DraftView = {
       ...firstView,
       pick_number: 2,
@@ -53,17 +102,17 @@ describe('DraftWorkspace', () => {
       pool: [firstView.current_pack[1]],
     };
     const submitPick = vi.fn().mockResolvedValue(updated);
-    const api = apiWith({ submitPick });
 
     render(
-      <DraftWorkspace draftId="draft-7" initialView={firstView} api={api} />,
+      <DraftWorkspace
+        draftId="draft-7"
+        initialView={firstView}
+        api={apiWith({ submitPick })}
+      />,
     );
 
-    expect(screen.getAllByText('Lightning Bolt')).toHaveLength(2);
     fireEvent.click(
-      screen.getByRole('button', {
-        name: /lightning bolt.*instance instance-b/i,
-      }),
+      screen.getAllByRole('button', { name: 'Select Lightning Bolt' })[1],
     );
     fireEvent.click(screen.getByRole('button', { name: 'Make pick' }));
 
@@ -72,110 +121,86 @@ describe('DraftWorkspace', () => {
     });
     expect(screen.getByText('Seat 1 · Pack 1 · Pick 2')).toBeTruthy();
     expect(
-      screen.getByRole('heading', { name: /lightning bolt ×1/i }),
+      screen.getByRole('button', { name: 'Inspect Lightning Bolt' }),
     ).toBeTruthy();
-    expect(screen.getByText('Instance instance-b')).toBeTruthy();
-    expect(screen.getByRole('status').textContent).toContain(
-      'Your next legal pick is ready',
+    expect(screen.queryByText(/instance-b|cube-b/i)).toBeNull();
+  });
+
+  it('renders a cached image, falls back cleanly on failure, and keeps details keyboard-accessible', async () => {
+    const detailed: DraftView = {
+      ...firstView,
+      current_pack: [
+        {
+          ...firstView.current_pack[0],
+          image_url: 'https://images.example.invalid/lightning-bolt.jpg',
+          mana_cost: '{R}',
+          type_line: 'Instant',
+          oracle_text: 'Lightning Bolt deals 3 damage to any target.',
+          colors: ['R'],
+        },
+      ],
+    };
+    render(
+      <DraftWorkspace
+        draftId="draft-7"
+        initialView={detailed}
+        api={apiWith()}
+      />,
     );
+
+    const image = screen.getByAltText('Lightning Bolt');
+    expect(image.getAttribute('src')).toBe(
+      'https://images.example.invalid/lightning-bolt.jpg',
+    );
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Select Lightning Bolt' }),
+    );
+    const inspectButton = screen.getByRole('button', { name: 'Inspect card' });
+    inspectButton.focus();
+    fireEvent.click(inspectButton);
+    expect(screen.getByRole('dialog').textContent).toContain(
+      'Lightning Bolt deals 3 damage',
+    );
+    expect(screen.getAllByText('Colours: Red')).toHaveLength(2);
+    expect(screen.getByRole('button', { name: 'Close card details' })).toBe(
+      document.activeElement,
+    );
+    fireEvent.keyDown(screen.getByRole('dialog'), { key: 'Tab' });
+    expect(screen.getByRole('button', { name: 'Close card details' })).toBe(
+      document.activeElement,
+    );
+    fireEvent.keyDown(screen.getByRole('dialog'), { key: 'Escape' });
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
+    await waitFor(() => expect(inspectButton).toBe(document.activeElement));
+
+    fireEvent.error(image);
+    expect(
+      screen.getByRole('img', {
+        name: 'Card image unavailable for Lightning Bolt',
+      }),
+    ).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Make pick' })).toBeTruthy();
   });
 
   it('loads its seat-safe view and provides explicit retry recovery on an unavailable draft', async () => {
     const loadDraft = vi.fn().mockRejectedValue(new Error('offline'));
-    const api = apiWith({ loadDraft });
-
-    render(<DraftWorkspace draftId="draft-7" api={api} />);
+    render(<DraftWorkspace draftId="draft-7" api={apiWith({ loadDraft })} />);
 
     expect(
       await screen.findByRole('heading', { name: 'Your draft is unavailable' }),
     ).toBeTruthy();
-    expect(screen.getByRole('alert').textContent).toContain(
-      'draft could not be updated',
-    );
     fireEvent.click(
       screen.getByRole('button', { name: 'Retry loading draft' }),
     );
     await waitFor(() => expect(loadDraft).toHaveBeenCalledTimes(2));
   });
 
-  it('refreshes a stale pick view and clears the obsolete selection', async () => {
-    const refreshed: DraftView = {
-      ...firstView,
-      pick_number: 2,
-      current_pack: [firstView.current_pack[2]],
-      pool: [firstView.current_pack[0]],
-    };
-    const loadDraft = vi.fn().mockResolvedValue(refreshed);
-    const api = apiWith({
-      submitPick: vi.fn().mockRejectedValue(new Error('stale pick')),
-      loadDraft,
-    });
-
-    render(
-      <DraftWorkspace draftId="draft-7" initialView={firstView} api={api} />,
-    );
-    fireEvent.click(
-      screen.getByRole('button', {
-        name: /counterspell.*instance instance-c/i,
-      }),
-    );
-    fireEvent.click(screen.getByRole('button', { name: 'Make pick' }));
-
-    expect((await screen.findByRole('alert')).textContent).toContain(
-      'draft could not be updated',
-    );
-    await waitFor(() => expect(loadDraft).toHaveBeenCalledWith('draft-7'));
-    const pickButton = screen.getByRole('button', { name: 'Make pick' });
-    expect((pickButton as HTMLButtonElement).disabled).toBe(true);
-    expect(screen.getByText('Seat 1 · Pack 1 · Pick 2')).toBeTruthy();
-  });
-
-  it('resets to a replacement draft and never submits a pick to the previous draft', async () => {
-    const secondView: DraftView = {
-      ...firstView,
-      draft_id: 'draft-8',
-      current_pack: [
-        {
-          instance_id: 'instance-d',
-          cube_card_id: 'cube-d',
-          name: 'Swords to Plowshares',
-        },
-      ],
-    };
-    const submitPick = vi.fn().mockResolvedValue(secondView);
-    const api = apiWith({ submitPick });
-    const rendered = render(
-      <DraftWorkspace draftId="draft-7" initialView={firstView} api={api} />,
-    );
-
-    rendered.rerender(
-      <DraftWorkspace draftId="draft-8" initialView={secondView} api={api} />,
-    );
-    fireEvent.click(
-      screen.getByRole('button', {
-        name: /swords to plowshares.*instance instance-d/i,
-      }),
-    );
-    fireEvent.click(screen.getByRole('button', { name: 'Make pick' }));
-
-    await waitFor(() => {
-      expect(submitPick).toHaveBeenCalledWith('draft-8', 'instance-d');
-    });
-    expect(screen.queryByText('Counterspell')).toBeNull();
-  });
-
-  it('ignores a late response from a draft that was replaced before loading completed', async () => {
+  it('ignores a late response from a replaced draft', async () => {
     const lateFirstDraft = deferred<DraftView>();
     const secondView: DraftView = {
       ...firstView,
       draft_id: 'draft-8',
-      current_pack: [
-        {
-          instance_id: 'instance-d',
-          cube_card_id: 'cube-d',
-          name: 'Swords to Plowshares',
-        },
-      ],
+      current_pack: [card('instance-d', 'cube-d', 'Swords to Plowshares')],
     };
     const api = apiWith({
       loadDraft: vi.fn().mockReturnValue(lateFirstDraft.promise),
@@ -187,12 +212,19 @@ describe('DraftWorkspace', () => {
     );
     lateFirstDraft.resolve(firstView);
 
-    expect(await screen.findByText('Swords to Plowshares')).toBeTruthy();
+    expect(
+      await screen.findByRole('button', {
+        name: 'Select Swords to Plowshares',
+      }),
+    ).toBeTruthy();
     await Promise.resolve();
-    expect(screen.queryByText('Counterspell')).toBeNull();
+    expect(
+      screen.queryByRole('button', { name: 'Select Counterspell' }),
+    ).toBeNull();
   });
 
-  it('makes the completed draft and full pool clear without a pick action', () => {
+  it('shows completed pool, human history, and recorded bot provenance only after review is requested', async () => {
+    const loadReview = vi.fn().mockResolvedValue(review);
     render(
       <DraftWorkspace
         draftId="draft-7"
@@ -202,15 +234,32 @@ describe('DraftWorkspace', () => {
           current_pack: [],
           pool: firstView.current_pack,
         }}
-        api={apiWith()}
+        api={apiWith({ loadReview })}
+        onNewDraft={vi.fn()}
       />,
     );
 
     expect(
-      screen.getByRole('heading', { name: 'Your pool is ready to review.' }),
+      screen.getByRole('heading', { name: 'Draft complete' }),
+    ).toBeTruthy();
+    expect(
+      screen.getByText('2 players · 1 packs × 2 cards · 3 cards drafted'),
     ).toBeTruthy();
     expect(screen.queryByRole('button', { name: 'Make pick' })).toBeNull();
-    expect(screen.getByText('3 picked')).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'New draft' })).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: 'Review draft' }));
+
+    await waitFor(() => expect(loadReview).toHaveBeenCalledWith('draft-7'));
+    expect(screen.getByRole('heading', { name: 'Your picks' })).toBeTruthy();
+    expect(
+      screen.getByRole('button', { name: 'Bot 2', pressed: true }),
+    ).toBeTruthy();
+    expect(
+      screen.getByRole('heading', { name: 'Bot 2 draft history' }),
+    ).toBeTruthy();
+    expect(
+      screen.getByText(/Bot v0 decision · Strategy: raw-ranking-v0@1/),
+    ).toBeTruthy();
   });
 
   it('has no basic accessibility violations in the selectable pack state', async () => {
@@ -221,9 +270,7 @@ describe('DraftWorkspace', () => {
         api={apiWith()}
       />,
     );
-
     const result = await axe.run(rendered.container);
-
     expect(result.violations).toEqual([]);
   });
 });

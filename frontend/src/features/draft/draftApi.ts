@@ -2,6 +2,21 @@ export type DraftCard = {
   instance_id: string;
   cube_card_id: string;
   name: string;
+  image_url: string | null;
+  mana_cost: string | null;
+  type_line: string | null;
+  oracle_text: string | null;
+  power: string | null;
+  toughness: string | null;
+  loyalty: string | null;
+  colors: string[];
+};
+
+export type DraftConfiguration = {
+  seats: number;
+  packs_per_seat: number;
+  pack_size: number;
+  seed: number;
 };
 
 export type DraftView = {
@@ -11,8 +26,34 @@ export type DraftView = {
   seat_number: number;
   pack_number: number;
   pick_number: number;
+  cube_name: string;
+  configuration: DraftConfiguration;
   current_pack: DraftCard[];
   pool: DraftCard[];
+};
+
+export type DraftReviewPick = {
+  seat_number: number;
+  pack_number: number;
+  pick_number: number;
+  card: Omit<DraftCard, 'instance_id' | 'cube_card_id'>;
+  bot_provenance: {
+    strategy_id: string;
+    strategy_version: string;
+    rating_artifact_id: string;
+    rating_artifact_version: string;
+    selected_rating: number;
+    rating_lookup_outcome: string;
+    tie_break_reason: string;
+  } | null;
+};
+
+export type DraftReview = {
+  draft_id: string;
+  cube_name: string;
+  configuration: DraftConfiguration;
+  human_picks: DraftReviewPick[];
+  bot_picks: DraftReviewPick[];
 };
 
 type ErrorPayload = {
@@ -33,6 +74,7 @@ export class DraftApiError extends Error {
 export type DraftApi = {
   loadDraft(draftId: string): Promise<DraftView>;
   submitPick(draftId: string, cardInstanceId: string): Promise<DraftView>;
+  loadReview(draftId: string): Promise<DraftReview>;
 };
 
 async function responseJson(response: Response): Promise<unknown> {
@@ -56,10 +98,7 @@ function errorFromPayload(payload: unknown): DraftApiError {
   return new DraftApiError(detail, code);
 }
 
-async function requestDraft(
-  path: string,
-  init?: RequestInit,
-): Promise<DraftView> {
+async function requestDraft<T>(path: string, init?: RequestInit): Promise<T> {
   let response: Response;
   try {
     response = await fetch(path, init);
@@ -73,18 +112,26 @@ async function requestDraft(
   if (!response.ok) {
     throw errorFromPayload(payload);
   }
-  return payload as DraftView;
+  return payload as T;
 }
 
 export const localDraftApi: DraftApi = {
   loadDraft(draftId) {
-    return requestDraft(`/v1/drafts/${encodeURIComponent(draftId)}`);
+    return requestDraft<DraftView>(`/v1/drafts/${encodeURIComponent(draftId)}`);
   },
   submitPick(draftId, cardInstanceId) {
-    return requestDraft(`/v1/drafts/${encodeURIComponent(draftId)}/picks`, {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ card_instance_id: cardInstanceId }),
-    });
+    return requestDraft<DraftView>(
+      `/v1/drafts/${encodeURIComponent(draftId)}/picks`,
+      {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ card_instance_id: cardInstanceId }),
+      },
+    );
+  },
+  loadReview(draftId) {
+    return requestDraft<DraftReview>(
+      `/v1/drafts/${encodeURIComponent(draftId)}/review`,
+    );
   },
 };

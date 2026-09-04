@@ -7,7 +7,7 @@ versions or decide whether an unresolved membership is acceptable.
 
 from dataclasses import dataclass
 from enum import StrEnum
-from typing import Protocol
+from typing import Protocol, runtime_checkable
 
 from cubeai.lab.application.imports import ImportCandidate
 
@@ -90,6 +90,14 @@ class ResolvedPrinting:
     original_reference: str
     fetched_at: str
     response_schema_version: int = 1
+    mana_cost: str | None = None
+    type_line: str | None = None
+    oracle_text: str | None = None
+    power: str | None = None
+    toughness: str | None = None
+    loyalty: str | None = None
+    colors: tuple[str, ...] = ()
+    color_identity: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
         for field, value in (
@@ -106,6 +114,24 @@ class ResolvedPrinting:
             _require_text(value, field)
         if self.oracle_id is not None:
             _require_text(self.oracle_id, "oracle_id")
+        for field in (
+            "mana_cost",
+            "type_line",
+            "oracle_text",
+            "power",
+            "toughness",
+            "loyalty",
+        ):
+            value = getattr(self, field)
+            if value is not None:
+                _require_text(value, field)
+        for field in ("colors", "color_identity"):
+            values = tuple(getattr(self, field))
+            if any(value not in {"W", "U", "B", "R", "G"} for value in values) or len(
+                values
+            ) != len(set(values)):
+                raise ValueError(f"{field} must contain distinct WUBRG colour codes")
+            object.__setattr__(self, field, values)
         faces = tuple(self.faces)
         images = tuple(self.image_uris)
         if any(not isinstance(face, ScryfallFace) for face in faces):
@@ -196,3 +222,10 @@ class MetadataResolver(Protocol):
         offline: bool = False,
     ) -> MetadataResolutionSnapshot:
         """Return one deterministic structured result for every candidate."""
+
+
+@runtime_checkable
+class CardMetadataLookup(Protocol):
+    """Read the approved display subset for one already-resolved printing."""
+
+    def lookup_printing(self, printing_id: str) -> ResolvedPrinting | None: ...

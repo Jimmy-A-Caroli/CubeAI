@@ -287,7 +287,9 @@ def test_populated_supplementary_board_is_nonblocking_and_not_imported(
         for diagnostic in result.diagnostics
         if diagnostic.code is DiagnosticCode.UNSUPPORTED_NON_MAINBOARD
     ]
-    assert [(diagnostic.severity, diagnostic.message) for diagnostic in diagnostics] == [
+    assert [
+        (diagnostic.severity, diagnostic.message) for diagnostic in diagnostics
+    ] == [
         (
             DiagnosticSeverity.WARNING,
             f"non-mainboard array is nonempty: {board} (1)",

@@ -7,11 +7,11 @@ import importlib.metadata
 import json
 import re
 import sys
-import tomllib
 from collections.abc import Iterable, Mapping
-from datetime import date
+from datetime import UTC, date, datetime
 from pathlib import Path
 
+import tomllib
 
 UNKNOWN_LICENSE = "UNKNOWN"
 
@@ -24,10 +24,12 @@ def read_policy(path: Path) -> tuple[set[str], Mapping[str, object]]:
     document = json.loads(path.read_text(encoding="utf-8"))
     allowed = document.get("allowed_license_expressions")
     allowlist = document.get("allowlist")
-    if not isinstance(allowed, list) or not all(isinstance(item, str) for item in allowed):
+    if not isinstance(allowed, list) or not all(
+        isinstance(item, str) for item in allowed
+    ):
         raise ValueError("policy allowed_license_expressions must be a list of strings")
     if not isinstance(allowlist, dict):
-        raise ValueError("policy allowlist must be an object")
+        raise TypeError("policy allowlist must be an object")
     return set(allowed), allowlist
 
 
@@ -35,7 +37,7 @@ def registry_packages(lock_path: Path) -> list[tuple[str, str]]:
     lock = tomllib.loads(lock_path.read_text(encoding="utf-8"))
     packages = lock.get("package")
     if not isinstance(packages, list):
-        raise ValueError("uv lockfile has no package list")
+        raise TypeError("uv lockfile has no package list")
 
     resolved: list[tuple[str, str]] = []
     for package in packages:
@@ -44,9 +46,16 @@ def registry_packages(lock_path: Path) -> list[tuple[str, str]]:
         source = package.get("source")
         name = package.get("name")
         version = package.get("version")
-        if isinstance(source, dict) and "registry" in source and isinstance(name, str) and isinstance(version, str):
+        if (
+            isinstance(source, dict)
+            and "registry" in source
+            and isinstance(name, str)
+            and isinstance(version, str)
+        ):
             resolved.append((name, version))
-    return sorted(resolved, key=lambda package: (normalized_name(package[0]), package[1]))
+    return sorted(
+        resolved, key=lambda package: (normalized_name(package[0]), package[1])
+    )
 
 
 def license_from_metadata(
@@ -81,7 +90,10 @@ def review_status(
     if not isinstance(exception, dict):
         return "REVIEW_REQUIRED"
     required = ("license", "reason", "reviewed_by", "expires_on")
-    if not all(isinstance(exception.get(field), str) and exception[field].strip() for field in required):
+    if not all(
+        isinstance(exception.get(field), str) and exception[field].strip()
+        for field in required
+    ):
         return "REVIEW_REQUIRED"
     if exception["license"] != license_expression:
         return "REVIEW_REQUIRED"
@@ -89,10 +101,14 @@ def review_status(
         expires_on = date.fromisoformat(exception["expires_on"])
     except ValueError:
         return "REVIEW_REQUIRED"
-    return "ALLOWLISTED" if expires_on >= date.today() else "REVIEW_REQUIRED"
+    return (
+        "ALLOWLISTED" if expires_on >= datetime.now(UTC).date() else "REVIEW_REQUIRED"
+    )
 
 
-def report(lock_path: Path, policy_path: Path, metadata_paths: Iterable[Path] | None = None) -> int:
+def report(
+    lock_path: Path, policy_path: Path, metadata_paths: Iterable[Path] | None = None
+) -> int:
     allowed, allowlist = read_policy(policy_path)
     rows: list[tuple[str, str, str, str]] = []
     for name, version in registry_packages(lock_path):

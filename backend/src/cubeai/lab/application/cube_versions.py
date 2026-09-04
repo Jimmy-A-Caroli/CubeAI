@@ -63,7 +63,9 @@ class CubeVersionAssemblyDiagnostic:
         if self.source_snapshot is not None and not isinstance(
             self.source_snapshot, SourceSnapshotReference
         ):
-            raise ValueError("source_snapshot must be a SourceSnapshotReference or None")
+            raise ValueError(
+                "source_snapshot must be a SourceSnapshotReference or None"
+            )
         if self.membership_key is not None and (
             not isinstance(self.membership_key, str) or not self.membership_key.strip()
         ):
