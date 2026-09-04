@@ -6,9 +6,8 @@ The project is focused on the Cube loop: import a Cube, validate it, draft it, u
 
 ## Status
 
-CubeAI has completed the Alpha-0 CubeLab draft-core boundary and Alpha-1
-through M1-017. In addition to the repository foundations, M1-001 through
-M1-017 now provide a supported
+CubeAI has completed the Alpha-0 CubeLab draft-core boundary and the Alpha-1
+M1 local-draft MVP. M1-001 through M1-018 provide a supported
 CubeCobra read adapter, exact printing-ID Scryfall resolution with a local
 cache, immutable Cube versions, capacity validation, deterministic allocation,
 deterministic local draft state machine, raw-ranking Bot v0, local SQLite
@@ -16,8 +15,8 @@ restart persistence, a versioned local FastAPI contract, and a keyboard-ready
 Cube import, validation, and human-seat drafting flow. The local draft UI now
 uses existing resolved-metadata cache data to show canonical card images when
 available, accessible card fallbacks/details when they are not, a result-first
-pool, and completion-only human/Bot pick review. M1-018 remains the supervised
-end-to-end exit package.
+pool, and completion-only human/Bot pick review. M1-018 has verified the
+deterministic local end-to-end workflow and closes M1.
 
 The `backend/` workspace keeps source candidates, card/printing identities,
 Cube memberships, immutable versions, validation, allocation, and transitions
@@ -65,19 +64,17 @@ Development will be issue-driven. M0 and M1 are decomposed in the [initial backl
 
 ## Current limitations
 
-CubeCobra import and exact-ID metadata resolution are implemented as bounded
-adapters. Deterministic local allocation/transitions, raw-ranking Bot v0,
-local SQLite save/resume, and a focused import-to-human-draft UI are available
-through framework-independent CubeLab boundaries. The metadata cache retains
-canonical exact-printing image URLs but does not hold image bytes; the browser
-may render that final remote image resource directly and uses an accessible
-metadata fallback on absence or load failure. The browser never calls provider
-APIs to resolve cards, and it receives no raw provider or persistence payloads.
-The opt-in public-provider smoke has completed successfully; M1 still needs
-its final image-enabled rendered wide/narrow browser acceptance before the
-supervised exit review can close. Analytics, simulation, gameplay, Forge
-feasibility, and all hosted-service concerns remain future work or require
-further validation.
+CubeCobra import and exact-ID metadata resolution are bounded adapters.
+Deterministic local allocation/transitions, raw-ranking Bot v0, local SQLite
+save/resume, and a focused import-to-human-draft UI are available through
+framework-independent CubeLab boundaries. The metadata cache retains canonical
+exact-printing image URLs but not image bytes: the browser renders the final
+remote resource directly and falls back accessibly on absence or load failure.
+Offline image caching is not implemented, and the browser never calls provider
+APIs to resolve cards or receives raw provider/persistence payloads. Bot v0 is
+a static raw-ranking baseline, not human-like drafting; archetype inference is
+not implemented. Analytics, simulation batches, gameplay, multiplayer, cloud
+hosting, and authentication are future work or require further validation.
 
 ## Available local validation
 

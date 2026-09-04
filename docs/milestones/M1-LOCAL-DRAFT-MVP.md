@@ -1,5 +1,8 @@
 # M1 — Cube Import and Local Draft MVP
 
+**State: COMPLETE.** M1-018 acceptance evidence is recorded in
+[`docs/M1-018-ACCEPTANCE-EVIDENCE.md`](../M1-018-ACCEPTANCE-EVIDENCE.md).
+
 ## Goal
 
 A user supplies a supported CubeCobra URL or identifier, receives actionable validation, and completes a deterministic local eight-seat draft against seven raw-ranking bots.
@@ -56,7 +59,7 @@ The M1 draft UI is a functional, clean, intentionally simple visual foundation t
 | M1-015 | Expose import, validation, draft command, and view APIs | M1-008, M1-013, M1-014 | COMPLETE — `ae64900`; reviewed local API with stable errors and human-seat-safe views |
 | M1-016 | Build Cube import and validation UI | M1-015, M0-005 | COMPLETE |
 | M1-017 | Build pack, pick, and drafted-pool UI | M1-015, M0-005 | COMPLETE |
-| M1-018 | Verify end-to-end deterministic local draft | M1-016, M1-017 | READY |
+| M1-018 | Verify end-to-end deterministic local draft | M1-016, M1-017 | COMPLETE — acceptance evidence recorded in `docs/M1-018-ACCEPTANCE-EVIDENCE.md` |
 
 Full issue definitions are in [the initial backlog](../issues/INITIAL_BACKLOG.md).
 
