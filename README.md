@@ -6,7 +6,7 @@ The project is focused on the Cube loop: import a Cube, validate it, draft it, u
 
 ## Status
 
-CubeAI has completed the Alpha-0 CubeLab draft-core boundary and the Alpha-1
+CubeAI has formally completed and accepted the M0 Repository Foundation. The Alpha-0 CubeLab draft-core boundary and the Alpha-1
 M1 local-draft MVP. M1-001 through M1-018 provide a supported
 CubeCobra read adapter, exact printing-ID Scryfall resolution with a local
 cache, immutable Cube versions, capacity validation, deterministic allocation,
