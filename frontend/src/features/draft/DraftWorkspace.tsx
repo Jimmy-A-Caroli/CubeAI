@@ -107,10 +107,16 @@ export default function DraftWorkspace({
     if (selectedDecisionSequence === null || inspector === null) return;
     setPickReview(null);
     if (!api.loadPickReview) return;
-    void api.loadPickReview(draftId, selectedDecisionSequence).then((loaded) => {
-      setPickReview(loaded);
-      if (loaded) { setReviewAssessment(loaded.assessment); setReviewNote(loaded.note ?? ''); setReviewRating(loaded.suggested_rating?.toString() ?? ''); }
-    });
+    void api
+      .loadPickReview(draftId, selectedDecisionSequence)
+      .then((loaded) => {
+        setPickReview(loaded);
+        if (loaded) {
+          setReviewAssessment(loaded.assessment);
+          setReviewNote(loaded.note ?? '');
+          setReviewRating(loaded.suggested_rating?.toString() ?? '');
+        }
+      });
   }, [api, draftId, inspector, selectedDecisionSequence]);
 
   useEffect(() => {
@@ -776,14 +782,85 @@ export default function DraftWorkspace({
             </div>
           ) : null}
           {selectedDecision !== null ? (
-            <><InspectorDecision decision={selectedDecision} onInspect={setInspectedCard} />
-            <section aria-labelledby="human-review-heading"><h3 id="human-review-heading">Human review</h3>
-              <fieldset><legend>Assessment</legend>{['reasonable','debatable','bad'].map((value) => <label key={value}><input type="radio" name="assessment" checked={reviewAssessment === value} onChange={() => setReviewAssessment(value)} /> {value}</label>)}</fieldset>
-              <label>Notes<textarea value={reviewNote} onChange={(e) => setReviewNote(e.target.value)} /></label>
-              <label>Suggested rating<input type="number" value={reviewRating} onChange={(e) => setReviewRating(e.target.value)} /></label>
-              <button type="button" onClick={() => selectedDecisionSequence !== null && api.savePickReview && void api.savePickReview(draftId, { id: pickReview?.id ?? crypto.randomUUID(), author: 'local-human', sequence: selectedDecisionSequence, seat_number: selectedDecision.seat_number, pack_number: selectedDecision.physical_pack_number - 1, pick_number: selectedDecision.pick_number - 1, card_instance_id: selectedDecision.chosen_card.instance_id, assessment: reviewAssessment, reasons: [], note: reviewNote || null, suggested_rating: reviewRating ? Number(reviewRating) : null }).then(setPickReview)}>Save review</button>
-              {pickReview ? <button type="button" onClick={() => selectedDecisionSequence !== null && api.deletePickReview && void api.deletePickReview(draftId, selectedDecisionSequence).then(() => setPickReview(null))}>Delete review</button> : null}
-            </section></>
+            <>
+              <InspectorDecision
+                decision={selectedDecision}
+                onInspect={setInspectedCard}
+              />
+              <section aria-labelledby="human-review-heading">
+                <h3 id="human-review-heading">Human review</h3>
+                <fieldset>
+                  <legend>Assessment</legend>
+                  {['reasonable', 'debatable', 'bad'].map((value) => (
+                    <label key={value}>
+                      <input
+                        type="radio"
+                        name="assessment"
+                        checked={reviewAssessment === value}
+                        onChange={() => setReviewAssessment(value)}
+                      />{' '}
+                      {value}
+                    </label>
+                  ))}
+                </fieldset>
+                <label>
+                  Notes
+                  <textarea
+                    value={reviewNote}
+                    onChange={(e) => setReviewNote(e.target.value)}
+                  />
+                </label>
+                <label>
+                  Suggested rating
+                  <input
+                    type="number"
+                    value={reviewRating}
+                    onChange={(e) => setReviewRating(e.target.value)}
+                  />
+                </label>
+                <button
+                  type="button"
+                  onClick={() =>
+                    selectedDecisionSequence !== null &&
+                    api.savePickReview &&
+                    void api
+                      .savePickReview(draftId, {
+                        id: pickReview?.id ?? crypto.randomUUID(),
+                        author: 'local-human',
+                        sequence: selectedDecisionSequence,
+                        seat_number: selectedDecision.seat_number,
+                        pack_number: selectedDecision.physical_pack_number - 1,
+                        pick_number: selectedDecision.pick_number - 1,
+                        card_instance_id:
+                          selectedDecision.chosen_card.instance_id,
+                        assessment: reviewAssessment,
+                        reasons: [],
+                        note: reviewNote || null,
+                        suggested_rating: reviewRating
+                          ? Number(reviewRating)
+                          : null,
+                      })
+                      .then(setPickReview)
+                  }
+                >
+                  Save review
+                </button>
+                {pickReview ? (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      selectedDecisionSequence !== null &&
+                      api.deletePickReview &&
+                      void api
+                        .deletePickReview(draftId, selectedDecisionSequence)
+                        .then(() => setPickReview(null))
+                    }
+                  >
+                    Delete review
+                  </button>
+                ) : null}
+              </section>
+            </>
           ) : (
             <p>No decision is available.</p>
           )}
