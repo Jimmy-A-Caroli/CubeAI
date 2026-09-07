@@ -537,7 +537,7 @@ stated dependencies and further refinement.
 
 ### M2-011 — Add lightweight human pick-review annotations
 
-- **Labels/state:** `component::lab`, `component::ui`, `type::feature`, `priority::medium`, `agent::supervised`, `BLOCKED`
+- **Labels/state:** `component::lab`, `component::ui`, `type::feature`, `priority::medium`, `agent::supervised`, `COMPLETE`
 - **Dependencies:** M2-012 (factual Inspector Foundation; explicitly approved refinement).
 - **Goal/context:** Let an inspecting user record a lightweight, provenance-aware review without rewriting immutable draft truth.
 - **Scope/out of scope:** Reasonable/Debatable/Bad labels, optional reason categories (power, color commitment, curve, synergy, archetype fit, fixing, narrow payoff, other), optional note, and author/source plus Cube version, draft, seat, pick, strategy/version, and configuration references; no objective-quality claim, training-data pipeline, ML, or event mutation.
