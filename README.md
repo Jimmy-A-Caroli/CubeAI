@@ -35,16 +35,20 @@ v0 evidence. It does not score alternatives, infer reasoning, offer advice,
 or create review annotations. M2-013 adds an optional **Fast draft** action:
 one deterministic, immediately completed eight-Bot v0 draft for factual human
 inspection. It retains normal Bot provenance and is not a batch simulator,
-benchmark, or claim that the Bot choices are strategically sound. M2-010 metrics views, the fuller archetype-aware
-Inspector, and all advice and analytics interfaces remain future work.
+benchmark, or claim that the Bot choices are strategically sound. M2-010
+metrics views, the fuller archetype-aware Inspector, and all advice and
+analytics interfaces remain future work.
 
 The `backend/` workspace keeps source candidates, card/printing identities,
 Cube memberships, immutable versions, validation, allocation, and transitions
 framework-independent. The `frontend/` workspace supplies the React/TypeScript
 foundation and independent formatting, lint, typecheck, unit-test, and
-production-build commands. The HTTP API and UI expose only a local,
-one-human-seat draft view; import and validation diagnostics do not become
-hidden client state.
+production-build commands. The normal in-progress API/UI view is local and
+one-human-seat-safe: it exposes only that seat's legal pack and pool. Once a
+draft is complete, the read-only Inspector reconstructs factual context for
+every recorded decision. An all-Bot Fast draft is explicitly labelled as such,
+rather than presented as a human draft. Import and validation diagnostics do
+not become hidden client state.
 
 The accepted Scryfall policy is exact printing-ID resolution, a durable local
 cache, network calls only for required misses, and explicit
@@ -86,17 +90,19 @@ Development will be issue-driven. M0 and M1 are decomposed in the [initial backl
 
 CubeCobra import and exact-ID metadata resolution are bounded adapters.
 Deterministic local allocation/transitions, raw-ranking Bot v0, local SQLite
-save/resume, and a focused import-to-human-draft UI are available through
-framework-independent CubeLab boundaries. The metadata cache retains canonical
-exact-printing image URLs but not image bytes: the browser renders the final
-remote resource directly and falls back accessibly on absence or load failure.
-Offline image caching is not implemented, and the browser never calls provider
-APIs to resolve cards or receives raw provider/persistence payloads. Bot v0 is
-a static raw-ranking baseline, not human-like drafting; archetype inference is
-not implemented. Analytics beyond the pure, completion-only factual metric
-calculation and completed-draft observation foundation,
-simulation batches, gameplay, multiplayer, cloud hosting, and authentication
-are future work or require further validation.
+save/resume, a focused import-to-human-draft UI, and an optional eight-Bot Fast
+draft are available through framework-independent CubeLab boundaries. Completed
+drafts can be reviewed through factual human/Bot histories and the Inspector;
+the latter shows recorded decision context and Bot evidence, not strategic
+judgment. The metadata cache retains canonical exact-printing image URLs but
+not image bytes: the browser renders the final remote resource directly and
+falls back accessibly on absence or load failure. Offline image caching is not
+implemented, and the browser never calls provider APIs to resolve cards or
+receives raw provider/persistence payloads. Bot v0 is a static raw-ranking
+baseline, not human-like drafting; archetype inference is not implemented.
+Analytics beyond the pure, completion-only factual metric calculation and
+completed-draft observations, simulation batches, gameplay, multiplayer, cloud
+hosting, and authentication are future work or require further validation.
 
 ## Available local validation
 
@@ -137,10 +143,11 @@ uv --directory backend run --locked python ../scripts/cubeai.py dev
 The runner starts the backend health server at
 `http://127.0.0.1:8000/health` and Vite on its reported local URL (normally
 `http://127.0.0.1:5173/`). Vite proxies `/health` and `/v1` to the local
-backend; open the Vite URL to import a CubeCobra identifier, validate it, and
-start or resume the one-human-seat draft. Use `Ctrl+C` to stop the two local
-processes. This command is intentionally minimal and does not add Docker,
-deployment configuration, or durable local-service management.
+backend; open the Vite URL to import a CubeCobra identifier, validate it, then
+start/resume a one-human-seat draft or start an eight-Bot Fast draft for
+post-draft inspection. Use `Ctrl+C` to stop the two local processes. This
+command is intentionally minimal and does not add Docker, deployment
+configuration, or durable local-service management.
 
 The existing Make targets are optional shortcuts on hosts where Make is
 available; the Python root-runner commands above are the supported
