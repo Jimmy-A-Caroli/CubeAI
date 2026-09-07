@@ -70,6 +70,7 @@ export default function DraftWorkspace({
   const [notice, setNotice] = useState<string | null>(null);
   const operationRef = useRef(0);
   const currentDraftIdRef = useRef(draftId);
+  const inspectorRef = useRef<HTMLElement | null>(null);
   currentDraftIdRef.current = draftId;
 
   const refresh = useCallback(async () => {
@@ -135,6 +136,15 @@ export default function DraftWorkspace({
       active = false;
     };
   }, [api, draftId]);
+
+  useEffect(() => {
+    if (inspector === null || inspectorRef.current === null) return;
+    inspectorRef.current.scrollIntoView?.({
+      behavior: 'smooth',
+      block: 'start',
+    });
+    inspectorRef.current.focus({ preventScroll: true });
+  }, [inspector]);
 
   const currentView = view?.draft_id === draftId ? view : null;
   const selectedCard = currentView?.current_pack.find(
@@ -595,6 +605,8 @@ export default function DraftWorkspace({
         <section
           className="draft-workspace__inspector"
           aria-labelledby="draft-inspector-heading"
+          ref={inspectorRef}
+          tabIndex={-1}
         >
           <div className="draft-workspace__section-heading">
             <div>

@@ -486,6 +486,11 @@ describe('DraftWorkspace', () => {
         /does not score alternatives, infer a human reason, or provide draft advice/i,
       ),
     ).toBeTruthy();
+    await waitFor(() =>
+      expect(screen.getByRole('region', { name: 'Decision context' })).toBe(
+        document.activeElement,
+      ),
+    );
   });
 
   it('has no basic accessibility violations in the selectable pack state', async () => {
