@@ -159,7 +159,7 @@ Completion evidence: root runner starts backend and Vite with explicit local por
 
 ### M0-012 — Verify clean-clone onboarding and accept M0
 
-- **Labels/state:** `component::infra`, `component::docs`, `type::test`, `priority::high`, `agent::supervised`, `BLOCKED`
+- **Labels/state:** `component::infra`, `component::docs`, `type::test`, `priority::high`, `agent::supervised`, `COMPLETE`
 - **Dependencies:** M0-007, M0-008, M0-009, M0-010, M0-011.
 - **Goal/context:** Prove the repository foundation works outside an existing developer environment.
 - **Scope:** Follow documentation from a clean clone/environment; record duration, prerequisites, commands, failures, and CI result; correct only M0 documentation/setup defects.
@@ -167,6 +167,8 @@ Completion evidence: root runner starts backend and Vite with explicit local por
 - **Acceptance criteria:** Setup and aggregate validation succeed exactly as documented; local status slice runs; CI is green; M0 exit criteria have evidence; remaining limitations are recorded.
 - **Required tests:** Full clean-clone setup, validation, and runtime smoke test.
 - **Expected artifacts/areas:** onboarding report, README corrections, M0 status update.
+
+Completion evidence: clean clone `/private/tmp/cubeai-m0-accept-L7eWrf` completed locked setup, aggregate check, and aggregate tests; CI run [34161321434](https://github.com/Jimmy-A-Caroli/CubeAI/actions/runs/34161321434) completed successfully on 2026-09-07.
 
 ## M1 — Cube Import and Local Draft MVP
 
@@ -625,4 +627,4 @@ stated dependencies and further refinement.
 
 ## Recommended first issue
 
-M0-001 through M0-011, plus M1-001 through M1-003 and M1-009, are complete. M0-012 remains blocked pending clean-clone acceptance and successful remote CI evidence. **M1-005 — Define the Scryfall metadata and cache policy** has a reviewed proposal, but its adoption remains a human decision. M1-004 remains blocked pending explicitly authorized supervised repair.
+M0-001 through M0-012, plus M1-001 through M1-003 and M1-009, are complete. The Repository Foundation milestone is formally accepted. **M1-005 — Define the Scryfall metadata and cache policy** has a reviewed proposal, but its adoption remains a human decision. M1-004 remains blocked pending explicitly authorized supervised repair.
