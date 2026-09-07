@@ -148,7 +148,7 @@ def test_migrates_an_existing_v1_database_to_local_tracking(tmp_path) -> None:
     with sqlite3.connect(database_path) as connection:
         assert connection.execute(
             "SELECT version FROM schema_migrations ORDER BY version"
-        ).fetchall() == [(1,), (2,)]
+        ).fetchall() == [(1,), (2,), (3,)]
         assert connection.execute(
             "SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'draft_tracking'"
         ).fetchone() == ("draft_tracking",)

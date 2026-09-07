@@ -56,7 +56,11 @@ from cubeai.lab.domain.draft import (
     PickEvent,
 )
 from cubeai.lab.domain.draft_state import DraftState, DraftTransitionError
-from cubeai.lab.domain.review import PickReviewAnnotation, ReviewAssessment, ReviewReason
+from cubeai.lab.domain.review import (
+    PickReviewAnnotation,
+    ReviewAssessment,
+    ReviewReason,
+)
 from cubeai.lab.domain.validation import CubeValidationDiagnostic
 
 
@@ -179,6 +183,7 @@ class DraftReviewDto(_Dto):
     human_picks: list[DraftReviewPickDto]
     bot_picks: list[DraftReviewPickDto]
 
+
 class PickReviewDto(_Dto):
     id: str
     author: str
@@ -194,6 +199,7 @@ class PickReviewDto(_Dto):
     reasons: list[str]
     note: str | None
     suggested_rating: float | None
+
 
 class PickReviewRequestDto(_Dto):
     id: str = Field(min_length=1)
@@ -495,35 +501,88 @@ def create_application(services: LocalApiServices) -> FastAPI:
             )
         return _draft_inspector(services.repository, state, services.metadata_lookup)
 
-    @app.get("/v1/drafts/{draft_id}/inspector/annotations/{sequence}", response_model=PickReviewDto)
+    @app.get(
+        "/v1/drafts/{draft_id}/inspector/annotations/{sequence}",
+        response_model=PickReviewDto,
+    )
     def read_pick_review(draft_id: str, sequence: int) -> PickReviewDto:
         annotation = services.repository.load_review(draft_id, sequence)
         if annotation is None:
-            raise HTTPException(status_code=404, detail={"code": "REVIEW_NOT_FOUND", "detail": "review not found"})
+            raise HTTPException(
+                status_code=404,
+                detail={"code": "REVIEW_NOT_FOUND", "detail": "review not found"},
+            )
         return _pick_review_dto(annotation)
 
-    @app.put("/v1/drafts/{draft_id}/inspector/annotations", response_model=PickReviewDto)
+    @app.put(
+        "/v1/drafts/{draft_id}/inspector/annotations", response_model=PickReviewDto
+    )
     def save_pick_review(draft_id: str, request: PickReviewRequestDto) -> PickReviewDto:
         state = resume_local_draft(services.repository, draft_id)
-        if state.status is not DraftStatus.COMPLETED or request.sequence >= len(state.pick_events):
-            raise HTTPException(status_code=409, detail={"code": "REVIEW_TARGET_INVALID", "detail": "review target is not a completed decision"})
+        if state.status is not DraftStatus.COMPLETED or request.sequence >= len(
+            state.pick_events
+        ):
+            raise HTTPException(
+                status_code=409,
+                detail={
+                    "code": "REVIEW_TARGET_INVALID",
+                    "detail": "review target is not a completed decision",
+                },
+            )
         event = state.pick_events[request.sequence]
-        version = _required_cube_version(services.repository, state.draft.cube_version_id)
+        version = _required_cube_version(
+            services.repository, state.draft.cube_version_id
+        )
         try:
-            annotation = PickReviewAnnotation(id=request.id, author=request.author, cube_version_id=version.id, draft_id=draft_id, sequence=request.sequence, seat_number=request.seat_number, pack_number=request.pack_number, pick_number=request.pick_number, card_instance_id=request.card_instance_id, strategy_ref=event.strategy_ref, assessment=ReviewAssessment(request.assessment), reasons=tuple(ReviewReason(reason) for reason in request.reasons), note=request.note, suggested_rating=request.suggested_rating)
+            annotation = PickReviewAnnotation(
+                id=request.id,
+                author=request.author,
+                cube_version_id=version.id,
+                draft_id=draft_id,
+                sequence=request.sequence,
+                seat_number=request.seat_number,
+                pack_number=request.pack_number,
+                pick_number=request.pick_number,
+                card_instance_id=request.card_instance_id,
+                strategy_ref=event.strategy_ref,
+                assessment=ReviewAssessment(request.assessment),
+                reasons=tuple(ReviewReason(reason) for reason in request.reasons),
+                note=request.note,
+                suggested_rating=request.suggested_rating,
+            )
             services.repository.save_review(annotation)
         except (ValueError, PersistenceError) as error:
-            raise HTTPException(status_code=409, detail={"code": "REVIEW_INVALID", "detail": str(error)}) from error
+            raise HTTPException(
+                status_code=409, detail={"code": "REVIEW_INVALID", "detail": str(error)}
+            ) from error
         return _pick_review_dto(annotation)
 
-    @app.delete("/v1/drafts/{draft_id}/inspector/annotations/{sequence}", status_code=204)
+    @app.delete(
+        "/v1/drafts/{draft_id}/inspector/annotations/{sequence}", status_code=204
+    )
     def delete_pick_review(draft_id: str, sequence: int) -> None:
         services.repository.delete_review(draft_id, sequence)
 
     return app
 
+
 def _pick_review_dto(annotation: PickReviewAnnotation) -> PickReviewDto:
-    return PickReviewDto(id=annotation.id, author=annotation.author, cube_version_id=annotation.cube_version_id, draft_id=annotation.draft_id, sequence=annotation.sequence, seat_number=annotation.seat_number, pack_number=annotation.pack_number, pick_number=annotation.pick_number, card_instance_id=annotation.card_instance_id, strategy_ref=annotation.strategy_ref, assessment=annotation.assessment.value, reasons=[reason.value for reason in annotation.reasons], note=annotation.note, suggested_rating=annotation.suggested_rating)
+    return PickReviewDto(
+        id=annotation.id,
+        author=annotation.author,
+        cube_version_id=annotation.cube_version_id,
+        draft_id=annotation.draft_id,
+        sequence=annotation.sequence,
+        seat_number=annotation.seat_number,
+        pack_number=annotation.pack_number,
+        pick_number=annotation.pick_number,
+        card_instance_id=annotation.card_instance_id,
+        strategy_ref=annotation.strategy_ref,
+        assessment=annotation.assessment.value,
+        reasons=[reason.value for reason in annotation.reasons],
+        note=annotation.note,
+        suggested_rating=annotation.suggested_rating,
+    )
 
 
 def create_default_application(state_directory: Path) -> FastAPI:

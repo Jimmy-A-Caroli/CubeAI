@@ -123,9 +123,9 @@ export type DraftApi = {
   loadTracking(draftId: string): Promise<DraftTracking>;
   trackCard(draftId: string, cardInstanceId: string): Promise<DraftTracking>;
   untrackCard(draftId: string, cardInstanceId: string): Promise<DraftTracking>;
-  loadPickReview(draftId: string, sequence: number): Promise<PickReview | null>;
-  savePickReview(draftId: string, review: Omit<PickReview, 'cube_version_id' | 'draft_id' | 'strategy_ref'>): Promise<PickReview>;
-  deletePickReview(draftId: string, sequence: number): Promise<void>;
+  loadPickReview?: (draftId: string, sequence: number) => Promise<PickReview | null>;
+  savePickReview?: (draftId: string, review: Omit<PickReview, 'cube_version_id' | 'draft_id' | 'strategy_ref'>) => Promise<PickReview>;
+  deletePickReview?: (draftId: string, sequence: number) => Promise<void>;
 };
 
 async function responseJson(response: Response): Promise<unknown> {
