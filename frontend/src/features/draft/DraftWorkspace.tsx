@@ -8,6 +8,7 @@ import {
   type DraftReview,
   type DraftReviewPick,
   type DraftView,
+  type PickReview,
   DraftApiError,
   localDraftApi,
 } from './draftApi';
@@ -60,6 +61,10 @@ export default function DraftWorkspace({
   const [selectedDecisionSequence, setSelectedDecisionSequence] = useState<
     number | null
   >(null);
+  const [pickReview, setPickReview] = useState<PickReview | null>(null);
+  const [reviewAssessment, setReviewAssessment] = useState('reasonable');
+  const [reviewNote, setReviewNote] = useState('');
+  const [reviewRating, setReviewRating] = useState('');
   const [botSeat, setBotSeat] = useState<number | null>(null);
   const [trackedCardIds, setTrackedCardIds] = useState<string[]>([]);
   const [trackingCardId, setTrackingCardId] = useState<string | null>(null);
@@ -97,6 +102,15 @@ export default function DraftWorkspace({
       if (isCurrent()) setLoading(false);
     }
   }, [api, draftId]);
+
+  useEffect(() => {
+    if (selectedDecisionSequence === null || inspector === null) return;
+    setPickReview(null);
+    void api.loadPickReview(draftId, selectedDecisionSequence).then((loaded) => {
+      setPickReview(loaded);
+      if (loaded) { setReviewAssessment(loaded.assessment); setReviewNote(loaded.note ?? ''); setReviewRating(loaded.suggested_rating?.toString() ?? ''); }
+    });
+  }, [api, draftId, inspector, selectedDecisionSequence]);
 
   useEffect(() => {
     operationRef.current += 1;
@@ -761,10 +775,14 @@ export default function DraftWorkspace({
             </div>
           ) : null}
           {selectedDecision !== null ? (
-            <InspectorDecision
-              decision={selectedDecision}
-              onInspect={setInspectedCard}
-            />
+            <><InspectorDecision decision={selectedDecision} onInspect={setInspectedCard} />
+            <section aria-labelledby="human-review-heading"><h3 id="human-review-heading">Human review</h3>
+              <fieldset><legend>Assessment</legend>{['reasonable','debatable','bad'].map((value) => <label key={value}><input type="radio" name="assessment" checked={reviewAssessment === value} onChange={() => setReviewAssessment(value)} /> {value}</label>)}</fieldset>
+              <label>Notes<textarea value={reviewNote} onChange={(e) => setReviewNote(e.target.value)} /></label>
+              <label>Suggested rating<input type="number" value={reviewRating} onChange={(e) => setReviewRating(e.target.value)} /></label>
+              <button type="button" onClick={() => selectedDecisionSequence !== null && void api.savePickReview(draftId, { id: pickReview?.id ?? crypto.randomUUID(), author: 'local-human', sequence: selectedDecisionSequence, seat_number: selectedDecision.seat_number, pack_number: selectedDecision.physical_pack_number - 1, pick_number: selectedDecision.pick_number - 1, card_instance_id: selectedDecision.chosen_card.instance_id, assessment: reviewAssessment, reasons: [], note: reviewNote || null, suggested_rating: reviewRating ? Number(reviewRating) : null }).then(setPickReview)}>Save review</button>
+              {pickReview ? <button type="button" onClick={() => selectedDecisionSequence !== null && void api.deletePickReview(draftId, selectedDecisionSequence).then(() => setPickReview(null))}>Delete review</button> : null}
+            </section></>
           ) : (
             <p>No decision is available.</p>
           )}
