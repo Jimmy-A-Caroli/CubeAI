@@ -2,11 +2,13 @@
 
 ## Status and problem statement
 
-**Status: FROZEN — READY FOR A FUTURE METRIC IMPLEMENTATION.** The human
-approved the five M2 draft-metrics decisions on 2026-09-04. This is the
-binding contract for that future work. It defines factual draft-position
-vocabulary; it does not add analytics, a metric store, a dashboard, strategy
-interpretation, or Bot behavior.
+**Status: FROZEN AND IMPLEMENTED — M2-009 COMPLETE.** The human approved the
+five M2 draft-metrics decisions on 2026-09-04. The smallest pure calculation
+implementation is recorded in
+[`M2-009 Metrics Evidence`](M2-009-METRICS-EVIDENCE.md). This remains the
+binding contract for its factual draft-position vocabulary; it does not add
+analytics, a metric store, a dashboard, strategy interpretation, or Bot
+behavior.
 
 The completed-draft review currently can show a label such as `Pack 24 · Pick
 1` to a drafter in an eight-seat, three-round draft. That is misleading. A
@@ -185,10 +187,10 @@ silently blended with completed drafts.
 
 ## Candidate metric contracts
 
-These are proposed schemas, not calculated values or an implementation
-authorization. Unless a row says otherwise, its population is completed
-drafts in one CubeVersion/configuration/actor scope, and duplicate memberships
-remain distinct.
+These are the implemented schemas. Unless a row says otherwise, their
+population is completed drafts in one CubeVersion/configuration/actor scope,
+and duplicate memberships remain distinct. The implementation remains a pure
+application calculation, not a persisted metric store or an analytics surface.
 
 | Metric | Numerator / value | Denominator or sample | Identity scope | Recommendation / decision |
 |---|---|---|---|---|
@@ -235,9 +237,10 @@ equally to mean and median position when `sample_n == 0`.
 | Default actor population | Separate human and each Bot strategy/version. | Explicitly labelled combined population. | Mixing Bot v0 and human history makes the result falsely look like human evidence. |
 | Initial inclusion of incomplete drafts | Completed drafts only. | A separately labelled partial-history population. | Mixing abandoned histories changes opportunity and position denominators. |
 
-These binding choices complete the M2 metrics contract. They do not authorize
-metric calculation, storage, analytics views, or an Oracle-level roll-up. The
-semantic facts in the vocabulary table require no further decision.
+These binding choices complete the M2 metrics contract. M2-009 implements the
+approved factual calculation only; storage, analytics views, and an
+Oracle-level roll-up remain separate work. The semantic facts in the vocabulary
+table require no further decision.
 
 ## UI correction required
 
@@ -287,6 +290,6 @@ signals, gameplay performance, or training data.
 
 The Pack/Pick review correction is implemented with this closeout: review DTOs
 expose `round_number`, and normal review UI labels it as `Pack`. Physical-pack
-identity remains intact in domain events and allocations. A future, separately
-authorized M2-009 implementation may add pure metric calculations and their
-synthetic hand-calculated reference tests using the frozen scopes above.
+identity remains intact in domain events and allocations. M2-009 now also
+provides the pure factual calculation and synthetic hand-calculated reference
+tests described in [`M2-009 Metrics Evidence`](M2-009-METRICS-EVIDENCE.md).

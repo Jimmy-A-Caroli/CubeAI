@@ -24,9 +24,12 @@ actor and recorded Bot provenance. M2-002 derives first-return wheel facts for
 specific draft instances from those observations, without strategic
 interpretation. M2-003 adds a local-human, exact-instance tracking preference
 that persists in the local SQLite state without changing draft events or
-derived facts. The observation context is exposed through a completion-only
-API view; the Draft Inspector and all advice, metrics, and analytics interfaces
-remain future work.
+derived facts. M2-009 adds a pure, completion-only CubeLab metric calculation
+for the frozen membership-scoped pick-position, seen-before-pick, and wheel
+facts, preserving exact actor, CubeVersion, configuration, and source
+provenance. The observation context is exposed through a completion-only API
+view; M2-009 deliberately adds no metrics API or analytics UI. The Draft
+Inspector and all advice and analytics interfaces remain future work.
 
 The `backend/` workspace keeps source candidates, card/printing identities,
 Cube memberships, immutable versions, validation, allocation, and transitions
@@ -83,7 +86,8 @@ remote resource directly and falls back accessibly on absence or load failure.
 Offline image caching is not implemented, and the browser never calls provider
 APIs to resolve cards or receives raw provider/persistence payloads. Bot v0 is
 a static raw-ranking baseline, not human-like drafting; archetype inference is
-not implemented. Analytics beyond the completed-draft observation foundation,
+not implemented. Analytics beyond the pure, completion-only factual metric
+calculation and completed-draft observation foundation,
 simulation batches, gameplay, multiplayer, cloud hosting, and authentication
 are future work or require further validation.
 

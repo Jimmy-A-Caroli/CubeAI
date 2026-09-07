@@ -508,18 +508,18 @@ stated dependencies and further refinement.
 
 ### M2-009 — Define provenance-aware pick metrics
 
-- **Labels/state:** `component::lab`, `type::proposal`, `priority::high`, `READY`
+- **Labels/state:** `component::lab`, `type::proposal`, `priority::high`, `COMPLETE`
 - **Dependencies:** M2-001.
 - **Goal/context:** Specify denominators and dimensions for average/median pick, last pick, seen-to-pick, and wheel rates.
 - **Scope/out of scope:** Metric contracts and reference calculations; no performance or gameplay metrics.
 - **Acceptance criteria:** Every metric defines population, denominator, duplicates, incomplete drafts, Cube version, and origin filters.
 - **Required tests:** Hand-calculated miniature event datasets.
 - **Expected artifacts/areas:** metric specification/ADR and reference tests.
-- **Contract:** [`M2 Draft Position & Metrics Contract`](../M2-DRAFT-POSITION-METRICS-CONTRACT.md) is frozen with approved Cube-membership aggregation, seen-before-pick, completed-pass-opportunity wheel, actor, and completed-draft population decisions. Metric calculation remains unimplemented.
+- **Completion evidence:** [`M2-009 Metrics Evidence`](../M2-009-METRICS-EVIDENCE.md) records the pure deterministic calculation and reference tests. The frozen [`M2 Draft Position & Metrics Contract`](../M2-DRAFT-POSITION-METRICS-CONTRACT.md) remains binding for Cube-membership aggregation, seen-before-pick, completed-pass-opportunity wheel, actor, and completed-draft population decisions.
 
 ### M2-010 — Build initial analytics views
 
-- **Labels/state:** `component::lab`, `component::ui`, `type::feature`, `priority::medium`, `agent::supervised`, `BLOCKED`
+- **Labels/state:** `component::lab`, `component::ui`, `type::feature`, `priority::medium`, `agent::supervised`, `READY`
 - **Dependencies:** M2-009.
 - **Goal/context:** Query and visualize initial pick metrics without blending origins.
 - **Scope/out of scope:** Filtered tables/charts for defined metrics; no predictive conclusions.
