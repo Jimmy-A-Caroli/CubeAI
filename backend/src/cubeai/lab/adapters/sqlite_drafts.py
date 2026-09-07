@@ -33,6 +33,7 @@ from cubeai.lab.domain.draft_state import (
     pick_card,
     start_draft,
 )
+from cubeai.lab.domain.review import PickReviewAnnotation, ReviewAssessment, ReviewReason
 
 
 class PersistenceError(ValueError):
@@ -76,6 +77,16 @@ _MIGRATIONS: tuple[tuple[int, str], ...] = (
         ) STRICT;
         """,
     ),
+    (3, """
+        CREATE TABLE IF NOT EXISTS pick_review_annotations (
+            id TEXT PRIMARY KEY,
+            draft_id TEXT NOT NULL,
+            sequence INTEGER NOT NULL,
+            payload TEXT NOT NULL,
+            UNIQUE(draft_id, sequence),
+            FOREIGN KEY(draft_id) REFERENCES drafts(id)
+        ) STRICT;
+        """),
 )
 
 
@@ -194,6 +205,28 @@ class SQLiteDraftRepository:
                 (draft_id, observer_seat),
             ).fetchall()
         return tuple(row["card_instance_id"] for row in rows)
+
+    def save_review(self, annotation: PickReviewAnnotation) -> None:
+        if not isinstance(annotation, PickReviewAnnotation):
+            raise ValueError("annotation must be a PickReviewAnnotation")
+        with self._connect() as connection:
+            state = self._load_draft(connection, annotation.draft_id)
+            if state is None or annotation.sequence >= len(state.pick_events):
+                raise PersistenceError("review target does not exist")
+            event = state.pick_events[annotation.sequence]
+            if (event.seat_number, event.pack_number, event.pick_number, event.card_instance_id) != (annotation.seat_number, annotation.pack_number, annotation.pick_number, annotation.card_instance_id):
+                raise PersistenceConflict("review target does not match draft decision")
+            payload = _encode(_review_payload(annotation))
+            connection.execute("INSERT INTO pick_review_annotations(id,draft_id,sequence,payload) VALUES (?,?,?,?) ON CONFLICT(draft_id,sequence) DO UPDATE SET id=excluded.id,payload=excluded.payload", (annotation.id, annotation.draft_id, annotation.sequence, payload))
+
+    def load_review(self, draft_id: str, sequence: int) -> PickReviewAnnotation | None:
+        with self._connect() as connection:
+            row = connection.execute("SELECT payload FROM pick_review_annotations WHERE draft_id=? AND sequence=?", (draft_id, sequence)).fetchone()
+            return None if row is None else _review_from_payload(_decode(row["payload"]))
+
+    def delete_review(self, draft_id: str, sequence: int) -> None:
+        with self._connect() as connection:
+            connection.execute("DELETE FROM pick_review_annotations WHERE draft_id=? AND sequence=?", (draft_id, sequence))
 
     @staticmethod
     def _load_cube_version(
@@ -327,6 +360,20 @@ class SQLiteDraftRepository:
 
 def _encode(value: object) -> str:
     return json.dumps(value, sort_keys=True, separators=(",", ":"))
+
+def _review_payload(annotation: PickReviewAnnotation) -> dict[str, object]:
+    return {"id": annotation.id, "author": annotation.author, "cube_version_id": annotation.cube_version_id, "draft_id": annotation.draft_id, "sequence": annotation.sequence, "seat_number": annotation.seat_number, "pack_number": annotation.pack_number, "pick_number": annotation.pick_number, "card_instance_id": annotation.card_instance_id, "strategy_ref": annotation.strategy_ref, "assessment": annotation.assessment.value, "reasons": [reason.value for reason in annotation.reasons], "note": annotation.note, "suggested_rating": annotation.suggested_rating}
+
+def _review_from_payload(value: dict[str, object] | list[object]) -> PickReviewAnnotation:
+    if not isinstance(value, dict):
+        raise PersistenceError("review payload has invalid shape")
+    try:
+        reasons = value.get("reasons", [])
+        if not isinstance(reasons, list):
+            raise TypeError
+        return PickReviewAnnotation(id=_text(value, "id"), author=_text(value, "author"), cube_version_id=_text(value, "cube_version_id"), draft_id=_text(value, "draft_id"), sequence=int(value["sequence"]), seat_number=int(value["seat_number"]), pack_number=int(value["pack_number"]), pick_number=int(value["pick_number"]), card_instance_id=_text(value, "card_instance_id"), strategy_ref=_optional_text(value.get("strategy_ref")), assessment=ReviewAssessment(_text(value, "assessment")), reasons=tuple(ReviewReason(str(reason)) for reason in reasons), note=_optional_text(value.get("note")), suggested_rating=value.get("suggested_rating") if isinstance(value.get("suggested_rating"), (int, float)) else None)
+    except (KeyError, TypeError, ValueError) as error:
+        raise PersistenceError("review payload cannot be rehydrated") from error
 
 
 def _decode(value: str) -> dict[str, object] | list[object]:
