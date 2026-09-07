@@ -39,6 +39,9 @@ benchmark, or claim that the Bot choices are strategically sound. M2-010
 metrics views, the fuller archetype-aware Inspector, and all advice and
 analytics interfaces remain future work.
 
+M2-012 and M2-013 are formally reviewed complete. The Inspector provides
+focused seat, pack, and pick selectors with previous/next keyboard navigation.
+
 The `backend/` workspace keeps source candidates, card/printing identities,
 Cube memberships, immutable versions, validation, allocation, and transitions
 framework-independent. The `frontend/` workspace supplies the React/TypeScript
