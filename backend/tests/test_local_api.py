@@ -25,13 +25,24 @@ from cubeai.lab.application.metadata import (
 )
 from cubeai.lab.application.ratings import load_raw_ranking_v0_artifact
 from cubeai.lab.domain import (
+    ActorOrigin,
+    AllocatedPack,
+    BotDecisionProvenance,
+    BotTieBreakReason,
     CardIdentity,
     CardPrinting,
     Cube,
     CubeCard,
     CubeVersion,
+    Draft,
+    DraftCardInstance,
+    DraftConfiguration,
+    DraftPack,
     RawRankingStrategyV0,
+    RatingLookupOutcome,
     ResolutionStatus,
+    pick_card,
+    start_draft,
 )
 
 
@@ -54,6 +65,29 @@ def _version() -> CubeVersion:
                 ),
             )
             for index in range(4)
+        ),
+    )
+
+
+def _eight_card_version() -> CubeVersion:
+    return CubeVersion(
+        "fast-version",
+        Cube("fast-cube", "Fast Draft Cube"),
+        tuple(
+            CubeCard(
+                f"fast-membership-{index}",
+                ResolutionStatus.RESOLVED,
+                CardPrinting(
+                    f"fast-printing-{index}",
+                    CardIdentity(
+                        f"fast-identity-{index}",
+                        f"Fast Synthetic {index}",
+                        ResolutionStatus.RESOLVED,
+                        f"fast-oracle-{index}",
+                    ),
+                ),
+            )
+            for index in range(8)
         ),
     )
 
@@ -221,9 +255,9 @@ class _DisplayLookup:
         )
 
 
-def _application(tmp_path, metadata_lookup=None):
+def _application(tmp_path, metadata_lookup=None, version=None):
     repository = SQLiteDraftRepository(tmp_path / "drafts.sqlite3")
-    repository.save_cube_version(_version())
+    repository.save_cube_version(_version() if version is None else version)
     return create_application(
         LocalApiServices(
             repository,
@@ -314,6 +348,54 @@ def test_local_api_starts_resumes_and_advances_a_human_pick_with_bot_turns(
     assert [card["instance_id"] for card in updated["pool"]] == [selected]
     assert len(updated["current_pack"]) == 1
     assert _request(app, "GET", "/v1/drafts/draft-1") == (200, updated)
+
+
+def test_fast_draft_completes_eight_bot_seats_and_survives_restart(tmp_path) -> None:
+    version = _eight_card_version()
+    request = {
+        "draft_id": "fast-draft-1",
+        "cube_version_id": version.id,
+        "configuration": {"seats": 8, "packs_per_seat": 1, "pack_size": 1, "seed": 23},
+    }
+    app = _application(tmp_path, version=version)
+
+    status, completed = _request(app, "POST", "/v1/drafts/fast", request)
+
+    assert status == 201
+    assert completed["status"] == "completed"
+    assert completed["mode"] == "all_bot"
+    assert len(completed["pool"]) == 1
+    inspector_status, inspector = _request(
+        app, "GET", "/v1/drafts/fast-draft-1/inspector"
+    )
+    assert inspector_status == 200
+    assert len(inspector["decisions"]) == 8
+    assert {item["actor_origin"] for item in inspector["decisions"]} == {"bot"}
+    assert {
+        item["bot_provenance"]["strategy_id"] for item in inspector["decisions"]
+    } == {"raw-ranking-v0"}
+
+    restarted = _application(tmp_path, version=version)
+    assert _request(restarted, "GET", "/v1/drafts/fast-draft-1") == (200, completed)
+    assert _request(restarted, "GET", "/v1/drafts/fast-draft-1/inspector") == (
+        200,
+        inspector,
+    )
+
+
+def test_fast_draft_rejects_a_non_eight_seat_configuration(tmp_path) -> None:
+    app = _application(tmp_path)
+    request = _draft_request()
+
+    status, payload = _request(app, "POST", "/v1/drafts/fast", request)
+
+    assert (status, payload) == (
+        422,
+        {
+            "code": "FAST_DRAFT_REQUIRES_EIGHT_SEATS",
+            "detail": "fast draft requires exactly eight seats",
+        },
+    )
 
 
 def test_hidden_draft_state_is_absent_from_the_view_and_openapi_contract(
@@ -558,6 +640,161 @@ def test_observations_are_completion_gated_and_replay_decision_context(
     chosen = observations[0]["chosen_card"]
     assert chosen["printing_id"] is not None
     assert chosen["oracle_id"] is not None
+
+
+def test_inspector_is_completion_gated_and_projects_factual_bot_evidence(
+    tmp_path,
+) -> None:
+    app = _application(tmp_path)
+    _, started = _request(app, "POST", "/v1/drafts", _draft_request())
+
+    active_status, active_error = _request(app, "GET", "/v1/drafts/draft-1/inspector")
+
+    assert (active_status, active_error) == (
+        409,
+        {
+            "code": "DRAFT_INSPECTOR_UNAVAILABLE",
+            "detail": "draft inspection is available after completion",
+        },
+    )
+
+    view = started
+    while view["status"] != "completed":
+        _, view = _request(
+            app,
+            "POST",
+            "/v1/drafts/draft-1/picks",
+            {"card_instance_id": view["current_pack"][0]["instance_id"]},
+        )
+    status, inspector = _request(app, "GET", "/v1/drafts/draft-1/inspector")
+
+    assert status == 200
+    assert inspector["cube_version_id"] == "version-1"
+    decisions = inspector["decisions"]
+    assert [item["sequence"] for item in decisions] == [0, 1, 2, 3]
+    first = decisions[0]
+    assert first["actor_origin"] == "human"
+    assert first["round_number"] == 1
+    assert first["pick_number"] == 1
+    assert first["physical_pack_number"] == 1
+    assert first["pool_before"] == []
+    assert first["seen_before_pick_count"] == 0
+    assert first["chosen_card"]["instance_id"] in {
+        card["instance_id"] for card in first["cards_seen"]
+    }
+    bot = decisions[1]
+    assert bot["actor_origin"] == "bot"
+    assert bot["bot_provenance"]["strategy_id"] == "raw-ranking-v0"
+    assert bot["bot_provenance"]["selected_rating"] is not None
+    assert "alternative_score" not in json.dumps(inspector)
+    assert "annotation" not in json.dumps(inspector)
+
+
+def test_inspector_consumes_exact_instance_wheel_and_seen_before_pick_facts(
+    tmp_path,
+) -> None:
+    version = CubeVersion(
+        "inspector-version",
+        Cube("inspector-cube", "Inspector Cube"),
+        tuple(
+            CubeCard(
+                f"membership-{index}",
+                ResolutionStatus.RESOLVED,
+                CardPrinting(
+                    f"printing-{index}",
+                    CardIdentity(
+                        f"identity-{index}",
+                        f"Inspector {index}",
+                        ResolutionStatus.RESOLVED,
+                        f"oracle-{index}",
+                    ),
+                ),
+            )
+            for index in range(6)
+        ),
+    )
+    draft = Draft("wheel-inspector", version.id, DraftConfiguration(2, 1, 3, 5))
+    allocation = tuple(
+        AllocatedPack(
+            DraftPack(draft.id, pack_number, pack_number),
+            tuple(
+                DraftCardInstance(
+                    f"wheel:{pack_number}:{card_number}",
+                    draft.id,
+                    f"membership-{pack_number * 3 + card_number}",
+                )
+                for card_number in range(3)
+            ),
+        )
+        for pack_number in range(2)
+    )
+    bot_provenance = BotDecisionProvenance(
+        "raw-ranking-v0",
+        "test",
+        "test-artifact",
+        "test",
+        1.0,
+        RatingLookupOutcome.RATED,
+        BotTieBreakReason.HIGHEST_RATING,
+    )
+    state = start_draft(draft, allocation)
+    state = pick_card(state, 0, "wheel:0:1")
+    state = pick_card(
+        state,
+        1,
+        "wheel:1:0",
+        actor_origin=ActorOrigin.BOT,
+        actor_id="bot-seat-1",
+        strategy_ref="raw-ranking-v0@test",
+        bot_provenance=bot_provenance,
+    )
+    state = pick_card(state, 0, "wheel:1:1")
+    state = pick_card(
+        state,
+        1,
+        "wheel:0:2",
+        actor_origin=ActorOrigin.BOT,
+        actor_id="bot-seat-1",
+        strategy_ref="raw-ranking-v0@test",
+        bot_provenance=bot_provenance,
+    )
+    state = pick_card(state, 0, "wheel:0:0")
+    state = pick_card(
+        state,
+        1,
+        "wheel:1:2",
+        actor_origin=ActorOrigin.BOT,
+        actor_id="bot-seat-1",
+        strategy_ref="raw-ranking-v0@test",
+        bot_provenance=bot_provenance,
+    )
+
+    repository = SQLiteDraftRepository(tmp_path / "drafts.sqlite3")
+    repository.save_draft(version, state)
+    app = create_application(
+        LocalApiServices(
+            repository,
+            _UnusedSource(),
+            _UnusedResolver(),
+            RawRankingStrategyV0(load_raw_ranking_v0_artifact()),
+        )
+    )
+    status, inspector = _request(app, "GET", "/v1/drafts/wheel-inspector/inspector")
+
+    assert status == 200
+    first_seen = inspector["decisions"][0]
+    returned = inspector["decisions"][4]
+    assert first_seen["wheel_facts"] == [
+        {
+            "role": "first_seen",
+            "card": first_seen["cards_seen"][0],
+            "first_seen_sequence": 0,
+            "returned_sequence": 4,
+        }
+    ]
+    assert returned["wheel_facts"][0]["role"] == "returned"
+    assert returned["wheel_facts"][0]["card"]["instance_id"] == "wheel:0:0"
+    assert returned["seen_before_pick_count"] == 1
 
 
 def test_observations_preserve_duplicate_memberships_with_shared_identity(

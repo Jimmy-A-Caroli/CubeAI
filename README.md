@@ -28,8 +28,15 @@ derived facts. M2-009 adds a pure, completion-only CubeLab metric calculation
 for the frozen membership-scoped pick-position, seen-before-pick, and wheel
 facts, preserving exact actor, CubeVersion, configuration, and source
 provenance. The observation context is exposed through a completion-only API
-view; M2-009 deliberately adds no metrics API or analytics UI. The Draft
-Inspector and all advice and analytics interfaces remain future work.
+view; M2-009 deliberately adds no metrics API or analytics UI. M2-012 adds a
+completion-only Draft Inspector Foundation: factual decision replay, legal
+alternatives, prior pools, exact-instance wheel/seen facts, and recorded Bot
+v0 evidence. It does not score alternatives, infer reasoning, offer advice,
+or create review annotations. M2-013 adds an optional **Fast draft** action:
+one deterministic, immediately completed eight-Bot v0 draft for factual human
+inspection. It retains normal Bot provenance and is not a batch simulator,
+benchmark, or claim that the Bot choices are strategically sound. M2-010 metrics views, the fuller archetype-aware
+Inspector, and all advice and analytics interfaces remain future work.
 
 The `backend/` workspace keeps source candidates, card/printing identities,
 Cube memberships, immutable versions, validation, allocation, and transitions

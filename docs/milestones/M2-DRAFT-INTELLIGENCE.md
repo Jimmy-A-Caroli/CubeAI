@@ -1,7 +1,8 @@
 # M2 — Draft Intelligence and Analytics
 
-**Current checkpoint: observation, local tracking, and factual metric
-calculation foundation.** M2-001, M2-002, M2-003, and M2-009 are complete; their
+**Current checkpoint: observation, local tracking, factual metric calculation,
+and Inspector-foundation implementation.** M2-001, M2-002, M2-003, and M2-009
+are complete; M2-012 and M2-013 are implemented and awaiting human review. Their
 event-derived decision-observation, wheel, and local tracking contracts are recorded in
 [`docs/M2-001-OBSERVATION-EVIDENCE.md`](../M2-001-OBSERVATION-EVIDENCE.md)
 and [`docs/M2-002-WHEEL-EVIDENCE.md`](../M2-002-WHEEL-EVIDENCE.md), and
@@ -9,8 +10,12 @@ and [`docs/M2-002-WHEEL-EVIDENCE.md`](../M2-002-WHEEL-EVIDENCE.md), and
 implemented factual metrics contract and evidence are recorded in
 [`docs/M2-DRAFT-POSITION-METRICS-CONTRACT.md`](../M2-DRAFT-POSITION-METRICS-CONTRACT.md)
 and [`docs/M2-009-METRICS-EVIDENCE.md`](../M2-009-METRICS-EVIDENCE.md).
-M2-010 is now ready to define a separate analytics consumer. Other later M2
-candidate issues remain blocked until their declared dependencies and
+The Inspector Foundation contract is recorded in
+[`docs/M2-012-DRAFT-INSPECTOR-FOUNDATION.md`](../M2-012-DRAFT-INSPECTOR-FOUNDATION.md).
+The bounded all-Bot fast-draft contract is recorded in
+[`docs/M2-013-FAST-DRAFT-EVIDENCE.md`](../M2-013-FAST-DRAFT-EVIDENCE.md).
+M2-010 remains ready as a separate metrics-only analytics consumer. Other later
+M2 candidate issues remain blocked until their declared dependencies and
 refinement are complete.
 
 ## Goal
@@ -41,8 +46,9 @@ Make a draft understandable during and after play while preserving the distincti
 
 ### Review and aggregates
 
-- The first full **Draft Inspector**: a usable post-draft replay/inspection view of alternatives and signals available at each pick.
-- For a selected draft, seat, and pick, reconstruct pack contents, selected card, prior picks/current pool, pack/pick/seat context, derivable cards-seen history, active strategy contributions, alternative scores, and derived color/curve/archetype context from immutable events plus versioned strategy/configuration data.
+- M2-012 **Draft Inspector Foundation**: a usable post-draft factual replay of cards seen, chosen card, prior pool, legal alternatives, exact-instance wheel/seen facts, and recorded Bot v0 evidence.
+- M2-013 **Fast Draft**: one manually initiated eight-Bot v0 draft completed locally for factual Inspector review, not a batch simulation or quality claim.
+- The later full **Draft Inspector** (M2-008): adds active strategy contributions, alternative scores, and derived color/curve/archetype context only after M2-007.
 - Lightweight human review annotations remain a separate provenance-aware layer and never mutate draft truth.
 - Initial average/median pick, last-pick, seen-to-pick, and wheel metrics.
 - Filters for Cube version, human/bot origin, bot strategy/version, and time/run range.
@@ -63,6 +69,8 @@ Make a draft understandable during and after play while preserving the distincti
 | M2-009 | Define provenance-aware pick metric schemas | M2-001 | COMPLETE |
 | M2-010 | Build initial analytics views and filters | M2-009 | READY |
 | M2-011 | Add lightweight human pick-review annotations | M2-008 | BLOCKED |
+| M2-012 | Build factual Draft Inspector Foundation | M2-001, M2-002, M2-009 | IMPLEMENTED — AWAITING HUMAN REVIEW |
+| M2-013 | Add an inspectable eight-Bot fast draft | M1-013, M1-014, M1-015 | IMPLEMENTED — AWAITING HUMAN REVIEW |
 
 These issues require refinement after M1 establishes actual event and API schemas.
 

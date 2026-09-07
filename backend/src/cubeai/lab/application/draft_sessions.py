@@ -2,8 +2,10 @@
 
 from dataclasses import dataclass
 
+from cubeai.lab.application.bot_turns import advance_bot_turns
 from cubeai.lab.application.repositories import DraftRepository
 from cubeai.lab.domain.allocation import allocate_packs
+from cubeai.lab.domain.bot import BotStrategy
 from cubeai.lab.domain.cube import CubeVersion
 from cubeai.lab.domain.draft import Draft, DraftConfiguration, DraftStatus
 from cubeai.lab.domain.draft_state import DraftState, available_cards, start_draft
@@ -48,6 +50,39 @@ def start_local_draft(
     state = start_draft(draft, allocate_packs(draft.id, version, validation))
     repository.save_draft(version, state)
     return state
+
+
+def start_local_fast_draft(
+    repository: DraftRepository,
+    *,
+    draft_id: str,
+    cube_version_id: str,
+    configuration: DraftConfiguration,
+    strategy: BotStrategy,
+) -> DraftState:
+    """Create and complete one deterministic eight-Bot local draft.
+
+    The completed state is saved only after every Bot turn has succeeded, so a
+    failed fast-draft command cannot leave an incomplete draft behind.
+    """
+
+    if configuration.seats != 8:
+        raise DraftSessionError("fast draft requires exactly eight seats")
+    version = repository.load_cube_version(cube_version_id)
+    if version is None:
+        raise DraftSessionError("CubeVersion does not exist")
+    validation = validate_cube_version(version, configuration)
+    if not validation.is_draftable:
+        raise DraftSessionError("CubeVersion is not draftable for this configuration")
+    draft = Draft(draft_id, version.id, configuration)
+    initial = start_draft(draft, allocate_packs(draft.id, version, validation))
+    completed = advance_bot_turns(
+        initial,
+        version,
+        {seat: strategy for seat in range(configuration.seats)},
+    )
+    repository.save_draft(version, completed)
+    return completed
 
 
 def resume_local_draft(repository: DraftRepository, draft_id: str) -> DraftState:

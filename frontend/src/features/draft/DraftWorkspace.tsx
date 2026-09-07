@@ -2,6 +2,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import {
   type DraftApi,
+  type DraftInspector,
+  type DraftInspectorDecision,
+  type DraftCard,
   type DraftReview,
   type DraftReviewPick,
   type DraftView,
@@ -35,6 +38,10 @@ function pickLabel(pick: DraftReviewPick): string {
   return `Pack ${pick.round_number} · Pick ${pick.pick_number}`;
 }
 
+function inspectorLabel(decision: DraftInspectorDecision): string {
+  return `Seat ${decision.seat_number + 1} · Pack ${decision.round_number} · Pick ${decision.pick_number}`;
+}
+
 export default function DraftWorkspace({
   draftId,
   initialView,
@@ -47,6 +54,12 @@ export default function DraftWorkspace({
   const [review, setReview] = useState<DraftReview | null>(null);
   const [reviewLoading, setReviewLoading] = useState(false);
   const [reviewError, setReviewError] = useState<string | null>(null);
+  const [inspector, setInspector] = useState<DraftInspector | null>(null);
+  const [inspectorLoading, setInspectorLoading] = useState(false);
+  const [inspectorError, setInspectorError] = useState<string | null>(null);
+  const [selectedDecisionSequence, setSelectedDecisionSequence] = useState<
+    number | null
+  >(null);
   const [botSeat, setBotSeat] = useState<number | null>(null);
   const [trackedCardIds, setTrackedCardIds] = useState<string[]>([]);
   const [trackingCardId, setTrackingCardId] = useState<string | null>(null);
@@ -90,6 +103,9 @@ export default function DraftWorkspace({
     setInspectedCard(null);
     setReview(null);
     setReviewError(null);
+    setInspector(null);
+    setInspectorError(null);
+    setSelectedDecisionSequence(null);
     setBotSeat(null);
     setError(null);
     setNotice(null);
@@ -125,6 +141,7 @@ export default function DraftWorkspace({
     (card) => card.instance_id === selectedId,
   );
   const completed = currentView?.status === 'completed';
+  const allBotDraft = currentView?.mode === 'all_bot';
   const botSeats = useMemo(
     () =>
       review === null
@@ -140,6 +157,15 @@ export default function DraftWorkspace({
         ? []
         : review.bot_picks.filter((pick) => pick.seat_number === botSeat),
     [review, botSeat],
+  );
+  const selectedDecision = useMemo(
+    () =>
+      inspector === null || selectedDecisionSequence === null
+        ? null
+        : (inspector.decisions.find(
+            (decision) => decision.sequence === selectedDecisionSequence,
+          ) ?? null),
+    [inspector, selectedDecisionSequence],
   );
 
   const toggleTracking = async (cardInstanceId: string, cardName: string) => {
@@ -222,6 +248,26 @@ export default function DraftWorkspace({
     }
   };
 
+  const openInspector = async () => {
+    if (currentView === null || inspectorLoading) return;
+    setInspectorLoading(true);
+    setInspectorError(null);
+    try {
+      const loaded = await api.loadInspector(currentView.draft_id);
+      setInspector(loaded);
+      setSelectedDecisionSequence(
+        loaded.decisions.find((decision) => decision.actor_origin === 'bot')
+          ?.sequence ??
+          loaded.decisions[0]?.sequence ??
+          null,
+      );
+    } catch (requestError) {
+      setInspectorError(readableError(requestError));
+    } finally {
+      setInspectorLoading(false);
+    }
+  };
+
   if (loading && currentView === null) {
     return (
       <main className="draft-workspace" aria-busy="true">
@@ -256,7 +302,13 @@ export default function DraftWorkspace({
         <p className="draft-workspace__eyebrow">
           {completed ? 'Draft result' : 'Local draft'}
         </p>
-        <h1>{completed ? 'Draft complete' : 'Make your pick'}</h1>
+        <h1>
+          {completed
+            ? allBotDraft
+              ? 'Fast draft complete'
+              : 'Draft complete'
+            : 'Make your pick'}
+        </h1>
         <p className="draft-workspace__progress" aria-label="Draft progress">
           {completed
             ? currentView.cube_name
@@ -301,6 +353,12 @@ export default function DraftWorkspace({
             {currentView.configuration.pack_size} cards ·{' '}
             {currentView.pool.length} cards drafted
           </p>
+          {allBotDraft ? (
+            <p>
+              Eight Bot v0 seats drafted this cube deterministically. Use the
+              Inspector for factual decision context and recorded Bot evidence.
+            </p>
+          ) : null}
           <p>Seed: {currentView.configuration.seed}</p>
           <div className="draft-workspace__result-actions">
             <button
@@ -309,6 +367,14 @@ export default function DraftWorkspace({
               disabled={reviewLoading}
             >
               {reviewLoading ? 'Opening review…' : 'Review draft'}
+            </button>
+            <button
+              className="draft-workspace__secondary-action"
+              type="button"
+              onClick={() => void openInspector()}
+              disabled={inspectorLoading}
+            >
+              {inspectorLoading ? 'Opening inspector…' : 'Inspect decisions'}
             </button>
             {onNewDraft !== undefined ? (
               <button
@@ -321,6 +387,9 @@ export default function DraftWorkspace({
             ) : null}
           </div>
           {reviewError !== null ? <p role="alert">{reviewError}</p> : null}
+          {inspectorError !== null ? (
+            <p role="alert">{inspectorError}</p>
+          ) : null}
         </section>
       ) : (
         <section
@@ -413,19 +482,29 @@ export default function DraftWorkspace({
       >
         <div className="draft-workspace__section-heading">
           <div>
-            <p className="draft-workspace__eyebrow">My pool</p>
-            <h2 id="my-pool-heading">Drafted cards</h2>
+            <p className="draft-workspace__eyebrow">
+              {allBotDraft ? 'Seat 1 pool' : 'My pool'}
+            </p>
+            <h2 id="my-pool-heading">
+              {allBotDraft ? 'First Bot seat cards' : 'Drafted cards'}
+            </h2>
           </div>
           <p>{currentView.pool.length} picked</p>
         </div>
         {currentView.pool.length === 0 ? (
           <p className="draft-workspace__empty-pool">
-            Your picks will appear here.
+            {allBotDraft
+              ? 'The first Bot seat has no picks.'
+              : 'Your picks will appear here.'}
           </p>
         ) : (
           <ul
             className="draft-workspace__pool-grid"
-            aria-label="Your drafted cards"
+            aria-label={
+              allBotDraft
+                ? 'First Bot seat drafted cards'
+                : 'Your drafted cards'
+            }
           >
             {currentView.pool.map((card) => (
               <li key={card.instance_id}>
@@ -512,6 +591,61 @@ export default function DraftWorkspace({
         </section>
       ) : null}
 
+      {inspector !== null ? (
+        <section
+          className="draft-workspace__inspector"
+          aria-labelledby="draft-inspector-heading"
+        >
+          <div className="draft-workspace__section-heading">
+            <div>
+              <p className="draft-workspace__eyebrow">Draft Inspector</p>
+              <h2 id="draft-inspector-heading">Decision context</h2>
+            </div>
+            <button
+              className="draft-workspace__text-action"
+              onClick={() => setInspector(null)}
+              type="button"
+            >
+              Close inspector
+            </button>
+          </div>
+          <p className="draft-workspace__inspector-note">
+            This view replays only recorded facts. It does not score
+            alternatives, infer a human reason, or provide draft advice.
+          </p>
+          <ol
+            className="draft-workspace__decision-list"
+            aria-label="Draft decisions"
+          >
+            {inspector.decisions.map((decision) => (
+              <li key={decision.sequence}>
+                <button
+                  aria-pressed={
+                    selectedDecision?.sequence === decision.sequence
+                  }
+                  onClick={() => setSelectedDecisionSequence(decision.sequence)}
+                  type="button"
+                >
+                  <strong>{inspectorLabel(decision)}</strong>
+                  <span>
+                    {decision.actor_origin === 'bot' ? 'Bot v0' : 'Human'}
+                  </span>
+                  <span>{decision.chosen_card.name}</span>
+                </button>
+              </li>
+            ))}
+          </ol>
+          {selectedDecision !== null ? (
+            <InspectorDecision
+              decision={selectedDecision}
+              onInspect={setInspectedCard}
+            />
+          ) : (
+            <p>No decision is available.</p>
+          )}
+        </section>
+      ) : null}
+
       <CardDetailDialog
         card={inspectedCard}
         onClose={() => setInspectedCard(null)}
@@ -552,5 +686,131 @@ function ReviewPickList({
         </li>
       ))}
     </ol>
+  );
+}
+
+function InspectorDecision({
+  decision,
+  onInspect,
+}: {
+  decision: DraftInspectorDecision;
+  onInspect: (card: CardDetails) => void;
+}) {
+  const alternatives = decision.cards_seen.filter(
+    (card) => card.instance_id !== decision.chosen_card.instance_id,
+  );
+  return (
+    <article className="draft-workspace__decision-detail">
+      <h3>{inspectorLabel(decision)}</h3>
+      <p>
+        Sequence {decision.sequence + 1} · Physical pack{' '}
+        {decision.physical_pack_number} (provenance)
+      </p>
+      <section>
+        <h4>Chosen card</h4>
+        <InspectorCardList
+          cards={[decision.chosen_card]}
+          onInspect={onInspect}
+        />
+        <p>
+          This exact instance was seen {decision.seen_before_pick_count} time
+          {decision.seen_before_pick_count === 1 ? '' : 's'} before selection.
+        </p>
+      </section>
+      <section>
+        <h4>Cards seen</h4>
+        <InspectorCardList cards={decision.cards_seen} onInspect={onInspect} />
+      </section>
+      <section>
+        <h4>Available alternatives</h4>
+        {alternatives.length === 0 ? (
+          <p>No alternative was available.</p>
+        ) : (
+          <InspectorCardList cards={alternatives} onInspect={onInspect} />
+        )}
+        <p>
+          No alternative scores or rankings were recorded for this decision.
+        </p>
+      </section>
+      <section>
+        <h4>Pool before this pick</h4>
+        {decision.pool_before.length === 0 ? (
+          <p>This seat had not drafted a card yet.</p>
+        ) : (
+          <InspectorCardList
+            cards={decision.pool_before}
+            onInspect={onInspect}
+          />
+        )}
+      </section>
+      {decision.bot_provenance !== null ? (
+        <section>
+          <h4>Recorded Bot v0 evidence</h4>
+          <dl className="draft-workspace__inspector-facts">
+            <div>
+              <dt>Strategy</dt>
+              <dd>
+                {decision.bot_provenance.strategy_id}@
+                {decision.bot_provenance.strategy_version}
+              </dd>
+            </div>
+            <div>
+              <dt>Selected rating</dt>
+              <dd>{decision.bot_provenance.selected_rating}</dd>
+            </div>
+            <div>
+              <dt>Rating artifact</dt>
+              <dd>
+                {decision.bot_provenance.rating_artifact_id}@
+                {decision.bot_provenance.rating_artifact_version}
+              </dd>
+            </div>
+            <div>
+              <dt>Lookup / tie-break</dt>
+              <dd>
+                {decision.bot_provenance.rating_lookup_outcome} /{' '}
+                {decision.bot_provenance.tie_break_reason}
+              </dd>
+            </div>
+          </dl>
+        </section>
+      ) : null}
+      {decision.wheel_facts.length > 0 ? (
+        <section>
+          <h4>Wheel evidence</h4>
+          <ul>
+            {decision.wheel_facts.map((fact) => (
+              <li key={`${fact.card.instance_id}-${fact.role}`}>
+                {fact.card.name}:{' '}
+                {fact.role === 'first_seen'
+                  ? `first seen at this decision; returned at sequence ${fact.returned_sequence + 1}`
+                  : `returned after first appearing at sequence ${fact.first_seen_sequence + 1}`}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+    </article>
+  );
+}
+
+function InspectorCardList({
+  cards,
+  onInspect,
+}: {
+  cards: DraftCard[];
+  onInspect: (card: CardDetails) => void;
+}) {
+  return (
+    <ul className="draft-workspace__inspector-card-list">
+      {cards.map((card) => (
+        <li key={card.instance_id}>
+          <button onClick={() => onInspect(card)} type="button">
+            <CardArt card={card} compact />
+            <span>{card.name}</span>
+          </button>
+        </li>
+      ))}
+    </ul>
   );
 }

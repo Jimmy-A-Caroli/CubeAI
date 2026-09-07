@@ -537,6 +537,28 @@ stated dependencies and further refinement.
 - **Required tests:** Schema validation, provenance/target identity, event immutability, update/delete policy, and UI empty/normal states.
 - **Expected artifacts/areas:** annotation schema/application port, persistence/API/UI/tests.
 
+### M2-012 — Draft Inspector Foundation
+
+- **Labels/state:** `component::lab`, `component::api`, `component::ui`, `type::feature`, `priority::high`, `agent::supervised`, `IMPLEMENTED — AWAITING HUMAN REVIEW`
+- **Dependencies:** M2-001, M2-002, M2-009.
+- **Goal/context:** Make one completed draft inspectable decision by decision, especially recorded Bot v0 choices, without interpreting strategic quality.
+- **Scope/out of scope:** Chronological factual replay; cards seen, selected card, prior pool, legal alternatives, exact-instance seen-before-pick/wheel facts, and recorded Bot provenance. No draft-fit explanation, archetypes, alternative scores, advice, metrics dashboard, annotation creation/storage, or training data.
+- **Acceptance criteria:** The UI selects a completed decision and displays only evidence reconstructible from immutable events and existing M2 projections; active drafts remain gated; Bot evidence is recorded provenance rather than inferred reasoning; physical-pack identity is explicitly labelled as provenance.
+- **Required tests:** Completion gating, ordered decision context, selected-card/candidate relationship, Bot-provenance display, absence of speculative scores/annotations, and browser navigation.
+- **Expected artifacts/areas:** Read-only Inspector API projection, completed-draft UI, API/browser tests, and evidence document.
+- **Rationale:** This is the authorized factual pre-archetype Inspector foundation. It does not change M2-010 or satisfy/advance M2-008 or M2-011.
+
+### M2-013 — Add an inspectable eight-Bot fast draft
+
+- **Labels/state:** `component::lab`, `component::api`, `component::ui`, `type::feature`, `priority::medium`, `agent::safe`, `IMPLEMENTED — AWAITING HUMAN REVIEW`
+- **Dependencies:** M1-013, M1-014, M1-015.
+- **Goal/context:** Let a local user generate one immediately completed eight-Bot draft to create deterministic factual decisions for human inspection without first drafting a human seat.
+- **Scope/out of scope:** One manual, all-Bot local draft using recorded Bot v0 evidence and existing completion-only Inspector/review views; no batch runs, simulation-run identity, scheduler, aggregation, benchmarking, draft-fit explanation, or objective quality conclusion.
+- **Acceptance criteria:** Fast draft requires exactly eight seats, atomically persists only after all Bot picks succeed, preserves normal Bot origin/provenance per event, survives restart, and opens as an explicitly labelled autonomous completed draft whose decisions are available in the factual Inspector.
+- **Required tests:** Eight-Bot event/provenance and restart equivalence; non-eight rejection; browser action/hand-off to the completed-draft view.
+- **Expected artifacts/areas:** Existing Bot-turn application service, local API, import/start UI, DraftWorkspace label, API/UI tests, and evidence document.
+- **Completion evidence:** [`M2-013 Fast Draft Evidence`](../M2-013-FAST-DRAFT-EVIDENCE.md) records the bounded contract and verification. This does not advance M4 or alter M2-010 metrics scope.
+
 ## Later milestone capability backlog
 
 ### M3 — Improved bots

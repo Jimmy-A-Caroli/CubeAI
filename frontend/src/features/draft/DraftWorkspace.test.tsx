@@ -3,7 +3,13 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 import DraftWorkspace from './DraftWorkspace';
-import type { DraftApi, DraftCard, DraftReview, DraftView } from './draftApi';
+import type {
+  DraftApi,
+  DraftCard,
+  DraftInspector,
+  DraftReview,
+  DraftView,
+} from './draftApi';
 
 const noDetails = {
   image_url: null,
@@ -76,11 +82,92 @@ const review: DraftReview = {
   ],
 };
 
+const inspector: DraftInspector = {
+  draft_id: 'draft-7',
+  cube_version_id: 'version-1',
+  cube_name: 'Synthetic Cube',
+  configuration: { seats: 2, packs_per_seat: 1, pack_size: 2, seed: 13 },
+  decisions: [
+    {
+      sequence: 0,
+      seat_number: 0,
+      actor_origin: 'human',
+      actor_id: 'local-human',
+      round_number: 1,
+      pick_number: 1,
+      physical_pack_number: 1,
+      chosen_card: {
+        ...firstView.current_pack[0],
+        printing_id: 'print-a',
+        oracle_id: 'oracle-a',
+      },
+      cards_seen: [
+        {
+          ...firstView.current_pack[0],
+          printing_id: 'print-a',
+          oracle_id: 'oracle-a',
+        },
+        {
+          ...firstView.current_pack[2],
+          printing_id: 'print-c',
+          oracle_id: 'oracle-c',
+        },
+      ],
+      pool_before: [],
+      seen_before_pick_count: 0,
+      bot_provenance: null,
+      wheel_facts: [],
+    },
+    {
+      sequence: 1,
+      seat_number: 1,
+      actor_origin: 'bot',
+      actor_id: 'bot-seat-1',
+      round_number: 1,
+      pick_number: 1,
+      physical_pack_number: 2,
+      chosen_card: {
+        ...firstView.current_pack[2],
+        printing_id: 'print-c',
+        oracle_id: 'oracle-c',
+      },
+      cards_seen: [
+        {
+          ...firstView.current_pack[2],
+          printing_id: 'print-c',
+          oracle_id: 'oracle-c',
+        },
+        {
+          ...firstView.current_pack[1],
+          printing_id: 'print-b',
+          oracle_id: 'oracle-b',
+        },
+      ],
+      pool_before: [],
+      seen_before_pick_count: 0,
+      bot_provenance: review.bot_picks[0].bot_provenance,
+      wheel_facts: [
+        {
+          role: 'returned',
+          card: {
+            ...firstView.current_pack[1],
+            printing_id: 'print-b',
+            oracle_id: 'oracle-b',
+          },
+          first_seen_sequence: 0,
+          returned_sequence: 1,
+        },
+      ],
+    },
+  ],
+};
+
 function apiWith(overrides: Partial<DraftApi> = {}): DraftApi {
   return {
     loadDraft: vi.fn().mockResolvedValue(firstView),
     submitPick: vi.fn().mockResolvedValue(firstView),
     loadReview: vi.fn().mockResolvedValue(review),
+    loadInspector: vi.fn().mockResolvedValue(inspector),
     loadTracking: vi.fn().mockResolvedValue({
       draft_id: 'draft-7',
       observer_seat: 0,
@@ -335,6 +422,70 @@ describe('DraftWorkspace', () => {
 
     expect(await screen.findAllByText('Pack 2 · Pick 1')).toHaveLength(2);
     expect(screen.queryByText('Pack 3 · Pick 1')).toBeNull();
+  });
+
+  it('labels a completed all-Bot draft as an inspectable fast draft', () => {
+    render(
+      <DraftWorkspace
+        draftId="draft-7"
+        initialView={{
+          ...firstView,
+          status: 'completed',
+          mode: 'all_bot',
+          current_pack: [],
+          pool: [firstView.current_pack[0]],
+        }}
+        api={apiWith()}
+      />,
+    );
+
+    expect(
+      screen.getByRole('heading', { name: 'Fast draft complete' }),
+    ).toBeTruthy();
+    expect(screen.getByText('First Bot seat cards')).toBeTruthy();
+    expect(
+      screen.getByText(
+        /Eight Bot v0 seats drafted this cube deterministically/,
+      ),
+    ).toBeTruthy();
+    expect(
+      screen.getByRole('button', { name: 'Inspect decisions' }),
+    ).toBeTruthy();
+  });
+
+  it('opens factual decision context and recorded Bot v0 evidence without scoring alternatives', async () => {
+    const loadInspector = vi.fn().mockResolvedValue(inspector);
+    render(
+      <DraftWorkspace
+        draftId="draft-7"
+        initialView={{ ...firstView, status: 'completed', current_pack: [] }}
+        api={apiWith({ loadInspector })}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Inspect decisions' }));
+
+    await waitFor(() => expect(loadInspector).toHaveBeenCalledWith('draft-7'));
+    expect(
+      screen.getByRole('heading', { name: 'Decision context' }),
+    ).toBeTruthy();
+    expect(screen.getByText('Recorded Bot v0 evidence')).toBeTruthy();
+    expect(screen.getByText('Selected rating')).toBeTruthy();
+    expect(screen.getByText('Available alternatives')).toBeTruthy();
+    expect(
+      screen.getByText(
+        'No alternative scores or rankings were recorded for this decision.',
+      ),
+    ).toBeTruthy();
+    expect(screen.getByText(/Physical pack 2 \(provenance\)/)).toBeTruthy();
+    expect(
+      screen.getByText(/returned after first appearing at sequence 1/),
+    ).toBeTruthy();
+    expect(
+      screen.getByText(
+        /does not score alternatives, infer a human reason, or provide draft advice/i,
+      ),
+    ).toBeTruthy();
   });
 
   it('has no basic accessibility violations in the selectable pack state', async () => {

@@ -77,6 +77,7 @@ from cubeai.lab.application.draft_sessions import (
     DraftSessionError,
     human_seat_view,
     resume_local_draft,
+    start_local_fast_draft,
     start_local_draft,
     validate_local_cube,
 )
@@ -146,6 +147,7 @@ __all__ = (
     "DraftSessionError",
     "human_seat_view",
     "resume_local_draft",
+    "start_local_fast_draft",
     "start_local_draft",
     "validate_local_cube",
     "LocalCubeImport",

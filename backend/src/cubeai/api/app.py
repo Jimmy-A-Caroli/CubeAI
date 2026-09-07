@@ -17,17 +17,23 @@ from cubeai.lab.adapters.sqlite_drafts import (
     SQLiteDraftRepository,
 )
 from cubeai.lab.application import (
+    BotActorScope,
     CardMetadataLookup,
+    CombinedActorScope,
     DraftDecisionObservation,
     DraftSessionError,
     DraftTracking,
     DraftTrackingError,
     LOCAL_HUMAN_SEAT,
     TrackingPersistenceError,
+    HumanActorScope,
+    derive_draft_metrics,
     derive_draft_observations,
+    derive_wheel_observations,
     human_seat_view,
     import_local_cube,
     resume_local_draft,
+    start_local_fast_draft,
     start_local_draft,
     submit_human_pick_and_advance_bots,
     track_card,
@@ -142,6 +148,7 @@ class DraftViewDto(_Dto):
     pick_number: int
     cube_name: str
     configuration: DraftConfigurationDto
+    mode: str
     current_pack: list[CardDto]
     pool: list[CardDto]
 
@@ -198,6 +205,37 @@ class DraftObservationsDto(_Dto):
     cube_name: str
     configuration: DraftConfigurationDto
     observations: list[DraftDecisionObservationDto]
+
+
+class InspectorWheelFactDto(_Dto):
+    role: str
+    card: ObservationCardDto
+    first_seen_sequence: int
+    returned_sequence: int
+
+
+class DraftInspectorDecisionDto(_Dto):
+    sequence: int
+    seat_number: int
+    actor_origin: str
+    actor_id: str
+    round_number: int
+    pick_number: int
+    physical_pack_number: int
+    chosen_card: ObservationCardDto
+    cards_seen: list[ObservationCardDto]
+    pool_before: list[ObservationCardDto]
+    seen_before_pick_count: int
+    bot_provenance: BotProvenanceDto | None
+    wheel_facts: list[InspectorWheelFactDto]
+
+
+class DraftInspectorDto(_Dto):
+    draft_id: str
+    cube_version_id: str
+    cube_name: str
+    configuration: DraftConfigurationDto
+    decisions: list[DraftInspectorDecisionDto]
 
 
 class DraftTrackingDto(_Dto):
@@ -321,6 +359,25 @@ def create_application(services: LocalApiServices) -> FastAPI:
         )
         return _draft_view(services.repository, state, services.metadata_lookup)
 
+    @app.post("/v1/drafts/fast", response_model=DraftViewDto, status_code=201)
+    def start_fast_draft(request: StartDraftRequestDto) -> DraftViewDto:
+        if request.configuration.seats != 8:
+            raise HTTPException(
+                status_code=422,
+                detail={
+                    "code": "FAST_DRAFT_REQUIRES_EIGHT_SEATS",
+                    "detail": "fast draft requires exactly eight seats",
+                },
+            )
+        state = start_local_fast_draft(
+            services.repository,
+            draft_id=request.draft_id,
+            cube_version_id=request.cube_version_id,
+            configuration=request.configuration.domain(),
+            strategy=services.strategy,
+        )
+        return _draft_view(services.repository, state, services.metadata_lookup)
+
     @app.get("/v1/drafts/{draft_id}", response_model=DraftViewDto)
     def resume_draft(draft_id: str) -> DraftViewDto:
         return _draft_view(
@@ -395,6 +452,19 @@ def create_application(services: LocalApiServices) -> FastAPI:
             )
         return _draft_observations(services.repository, state, services.metadata_lookup)
 
+    @app.get("/v1/drafts/{draft_id}/inspector", response_model=DraftInspectorDto)
+    def inspect_draft(draft_id: str) -> DraftInspectorDto:
+        state = resume_local_draft(services.repository, draft_id)
+        if state.status is not DraftStatus.COMPLETED:
+            raise HTTPException(
+                status_code=409,
+                detail={
+                    "code": "DRAFT_INSPECTOR_UNAVAILABLE",
+                    "detail": "draft inspection is available after completion",
+                },
+            )
+        return _draft_inspector(services.repository, state, services.metadata_lookup)
+
     return app
 
 
@@ -462,6 +532,14 @@ def _draft_view(
             packs_per_seat=state.draft.configuration.packs_per_seat,
             pack_size=state.draft.configuration.pack_size,
             seed=state.draft.configuration.seed,
+        ),
+        mode=(
+            "all_bot"
+            if state.pick_events
+            and all(
+                event.actor_origin is ActorOrigin.BOT for event in state.pick_events
+            )
+            else "human_seat"
         ),
         current_pack=[
             _card_dto(instances[item], memberships, metadata_lookup)
@@ -674,6 +752,108 @@ def _draft_observations(
             for observation in derive_draft_observations(state)
         ],
     )
+
+
+def _draft_inspector(
+    repository: DraftRepository,
+    state: DraftState,
+    metadata_lookup: CardMetadataLookup | None,
+) -> DraftInspectorDto:
+    """Project completed factual decision evidence without inferring advice."""
+
+    version = _required_cube_version(repository, state.draft.cube_version_id)
+    memberships = {card.id: card for card in version.cards}
+    instances = {card.id: card for pack in state.allocation for card in pack.cards}
+    observations = derive_draft_observations(state)
+    metric_results = derive_draft_metrics((state,), _inspector_actor_scope(state))
+    seen_before_pick = {
+        (sample.seat_number, sample.card_instance_id): sample.prior_appearances
+        for sample in metric_results.seen_before_pick.samples
+    }
+
+    wheel_facts: dict[int, list[InspectorWheelFactDto]] = {}
+    for wheel in derive_wheel_observations(observations):
+        card = _observation_card_dto(
+            instances[wheel.card_instance_id], memberships, metadata_lookup
+        )
+        for sequence, role in (
+            (wheel.first_seen_sequence, "first_seen"),
+            (wheel.returned_sequence, "returned"),
+        ):
+            wheel_facts.setdefault(sequence, []).append(
+                InspectorWheelFactDto(
+                    role=role,
+                    card=card,
+                    first_seen_sequence=wheel.first_seen_sequence,
+                    returned_sequence=wheel.returned_sequence,
+                )
+            )
+
+    configuration = state.draft.configuration
+    return DraftInspectorDto(
+        draft_id=state.draft.id,
+        cube_version_id=version.id,
+        cube_name=version.cube.name,
+        configuration=DraftConfigurationDto(
+            seats=configuration.seats,
+            packs_per_seat=configuration.packs_per_seat,
+            pack_size=configuration.pack_size,
+            seed=configuration.seed,
+        ),
+        decisions=[
+            DraftInspectorDecisionDto(
+                sequence=observation.event.sequence,
+                seat_number=observation.event.seat_number,
+                actor_origin=observation.event.actor_origin.value,
+                actor_id=observation.event.actor_id,
+                round_number=(
+                    observation.event.sequence
+                    // (configuration.seats * configuration.pack_size)
+                    + 1
+                ),
+                pick_number=observation.event.pick_number + 1,
+                physical_pack_number=observation.event.pack_number + 1,
+                chosen_card=_observation_card_dto(
+                    observation.chosen_card, memberships, metadata_lookup
+                ),
+                cards_seen=[
+                    _observation_card_dto(card, memberships, metadata_lookup)
+                    for card in observation.cards_seen
+                ],
+                pool_before=[
+                    _observation_card_dto(card, memberships, metadata_lookup)
+                    for card in observation.pool_before
+                ],
+                seen_before_pick_count=seen_before_pick[
+                    (observation.event.seat_number, observation.chosen_card.id)
+                ],
+                bot_provenance=_bot_provenance_dto(observation.event),
+                wheel_facts=wheel_facts.get(observation.event.sequence, []),
+            )
+            for observation in observations
+        ],
+    )
+
+
+def _inspector_actor_scope(state: DraftState) -> HumanActorScope | CombinedActorScope:
+    """Include only the local product's explicit human and Bot populations."""
+
+    bot_scopes = tuple(
+        sorted(
+            {
+                BotActorScope(
+                    event.bot_provenance.strategy_id,
+                    event.bot_provenance.strategy_version,
+                )
+                for event in state.pick_events
+                if event.bot_provenance is not None
+            },
+            key=lambda scope: (scope.strategy_id, scope.strategy_version),
+        )
+    )
+    if not bot_scopes:
+        return HumanActorScope()
+    return CombinedActorScope((HumanActorScope(), *bot_scopes))
 
 
 def _bot_provenance_dto(event: PickEvent) -> BotProvenanceDto | None:

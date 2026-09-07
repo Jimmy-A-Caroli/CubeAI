@@ -142,6 +142,51 @@ describe('ImportValidationPanel', () => {
     );
   });
 
+  it('starts an immediately completed eight-Bot fast draft for Inspector review', async () => {
+    const onDraftStarted = vi.fn();
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse(successfulImport))
+      .mockResolvedValueOnce(jsonResponse(draftableValidation))
+      .mockResolvedValueOnce(
+        jsonResponse(
+          {
+            draft_id: 'fast-draft-1',
+            cube_version_id: 'cube-version-1',
+            status: 'completed',
+            mode: 'all_bot',
+            pack_number: 1,
+            pick_number: 1,
+            current_pack: [],
+            pool: [],
+          },
+          true,
+          201,
+        ),
+      );
+    vi.stubGlobal('fetch', fetchMock);
+    render(<ImportValidationPanel onDraftStarted={onDraftStarted} />);
+
+    fireEvent.change(screen.getByLabelText('CubeCobra ID'), {
+      target: { value: 'modovintage' },
+    });
+    fireEvent.change(screen.getByLabelText('Local cube name'), {
+      target: { value: 'Vintage Cube' },
+    });
+    fireEvent.submit(
+      screen.getByRole('button', { name: 'Import Cube' }).closest('form')!,
+    );
+    await screen.findByRole('heading', { name: 'Draft validation' });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Start fast draft' }));
+
+    await screen.findByText(/Fast draft fast-draft-1 completed/);
+    expect(fetchMock.mock.calls[2][0]).toBe('/v1/drafts/fast');
+    expect(onDraftStarted).toHaveBeenCalledWith(
+      expect.objectContaining({ mode: 'all_bot', status: 'completed' }),
+    );
+  });
+
   it('requires a fresh validation when draft configuration changes', async () => {
     vi.stubGlobal(
       'fetch',

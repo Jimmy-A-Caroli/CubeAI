@@ -68,6 +68,11 @@ UI maturity at M1 is functional, clean draft UI: current pack, chosen card, draf
 
 Capabilities include cards-seen history, wheel detection, tracking/wish cards, color and mana views, explicit archetype tags, review timelines, and provenance-aware initial aggregates. Advice must distinguish power, openness, synergy, and deck fit rather than present a single unexplained score.
 
+M2 also includes a bounded, manual fast-draft entry point: eight existing Bot v0
+seats complete one deterministic local draft so a human can inspect recorded
+decision facts. This is not a simulation framework, an aggregate metric, or a
+claim about draft quality; batch runs and run identity remain M4 work.
+
 **Success:** The UI derives analysis reproducibly from immutable draft events; a user can inspect why each metric exists and filter human versus bot data.
 
 Detailed scope: [M2 milestone](milestones/M2-DRAFT-INTELLIGENCE.md).

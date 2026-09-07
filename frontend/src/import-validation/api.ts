@@ -50,6 +50,7 @@ export interface DraftView {
   pick_number: number;
   cube_name: string;
   configuration: DraftConfiguration;
+  mode?: 'human_seat' | 'all_bot';
   current_pack: DraftCard[];
   pool: DraftCard[];
 }
@@ -138,6 +139,18 @@ export function startDraft(
   configuration: DraftConfiguration,
 ): Promise<DraftView> {
   return request<DraftView>('/v1/drafts', {
+    draft_id: draftId,
+    cube_version_id: cubeVersionId,
+    configuration,
+  });
+}
+
+export function startFastDraft(
+  draftId: string,
+  cubeVersionId: string,
+  configuration: DraftConfiguration,
+): Promise<DraftView> {
+  return request<DraftView>('/v1/drafts/fast', {
     draft_id: draftId,
     cube_version_id: cubeVersionId,
     configuration,

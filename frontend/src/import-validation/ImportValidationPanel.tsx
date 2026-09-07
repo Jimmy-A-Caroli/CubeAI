@@ -9,6 +9,7 @@ import {
   type DraftConfiguration,
   type DraftView,
   importCube,
+  startFastDraft,
   startDraft,
   validateCube,
 } from './api';
@@ -25,7 +26,7 @@ const defaultConfiguration: DraftConfiguration = {
   seed: 20260903,
 };
 
-type PendingAction = 'importing' | 'starting' | null;
+type PendingAction = 'importing' | 'starting' | 'fast-drafting' | null;
 type RetryAction = Exclude<PendingAction, null>;
 
 export default function ImportValidationPanel({
@@ -118,12 +119,13 @@ export default function ImportValidationPanel({
     void importAndValidate();
   }
 
-  async function handleStart() {
+  async function handleStart(fast = false) {
     if (!canStart || importResult?.cube_version_id === null) return;
-    setPendingAction('starting');
+    setPendingAction(fast ? 'fast-drafting' : 'starting');
     setError(null);
     try {
-      const started = await startDraft(
+      const start = fast ? startFastDraft : startDraft;
+      const started = await start(
         createDraftId(),
         importResult.cube_version_id,
         configuration,
@@ -132,7 +134,7 @@ export default function ImportValidationPanel({
       onDraftStarted?.(started);
     } catch (reason) {
       setError(toApiError(reason));
-      setRetryAction('starting');
+      setRetryAction(fast ? 'fast-drafting' : 'starting');
     } finally {
       setPendingAction(null);
     }
@@ -226,7 +228,9 @@ export default function ImportValidationPanel({
           onRetry={() =>
             retryAction === 'starting'
               ? void handleStart()
-              : void importAndValidate()
+              : retryAction === 'fast-drafting'
+                ? void handleStart(true)
+                : void importAndValidate()
           }
         />
       ) : null}
@@ -253,12 +257,33 @@ export default function ImportValidationPanel({
           >
             {pendingAction === 'starting' ? 'Starting draft…' : 'Start draft'}
           </button>
+          <button
+            disabled={!canStart || configuration.seats !== 8}
+            onClick={() => void handleStart(true)}
+            type="button"
+          >
+            {pendingAction === 'fast-drafting'
+              ? 'Drafting with Bots…'
+              : 'Start fast draft'}
+          </button>
+          <p className="import-validation__hint">
+            Fast draft completes one deterministic eight-Bot v0 draft now. It
+            creates factual decisions to inspect; it does not claim the picks
+            are strategically correct.
+          </p>
+          {configuration.seats !== 8 ? (
+            <p className="import-validation__hint">
+              Fast draft requires exactly eight seats.
+            </p>
+          ) : null}
         </section>
       ) : null}
 
       {draft !== null ? (
         <p className="import-validation__success" role="status">
-          Draft {draft.draft_id} started. Your first pack is ready.
+          {draft.mode === 'all_bot'
+            ? `Fast draft ${draft.draft_id} completed. Inspect the Bot decisions.`
+            : `Draft ${draft.draft_id} started. Your first pack is ready.`}
         </p>
       ) : null}
     </section>
@@ -303,7 +328,9 @@ function WorkflowStatus({ pendingAction }: { pendingAction: PendingAction }) {
     <p className="import-validation__progress" role="status">
       {pendingAction === 'importing'
         ? 'Importing the CubeCobra source, resolving cards, and validating the draft.'
-        : 'Creating and saving the local draft.'}
+        : pendingAction === 'fast-drafting'
+          ? 'Creating, drafting, and saving one eight-Bot local draft.'
+          : 'Creating and saving the local draft.'}
     </p>
   );
 }
