@@ -177,6 +177,63 @@ export default function DraftWorkspace({
           ) ?? null),
     [inspector, selectedDecisionSequence],
   );
+  const inspectorSeats = useMemo(
+    () =>
+      [...new Set(inspector?.decisions.map((d) => d.seat_number) ?? [])].sort(
+        (a, b) => a - b,
+      ),
+    [inspector],
+  );
+  const seatDecisions = useMemo(
+    () =>
+      inspector?.decisions.filter(
+        (d) =>
+          d.seat_number ===
+          (selectedDecision?.seat_number ?? inspectorSeats[0]),
+      ) ?? [],
+    [inspector, inspectorSeats, selectedDecision],
+  );
+  const inspectorPacks = useMemo(
+    () =>
+      [...new Set(seatDecisions.map((d) => d.round_number))].sort(
+        (a, b) => a - b,
+      ),
+    [seatDecisions],
+  );
+  const packDecisions = useMemo(
+    () =>
+      seatDecisions.filter(
+        (d) =>
+          d.round_number ===
+          (selectedDecision?.round_number ?? inspectorPacks[0]),
+      ),
+    [inspectorPacks, seatDecisions, selectedDecision],
+  );
+  const moveDecision = (offset: number) => {
+    if (inspector === null || selectedDecision === null) return;
+    const index = inspector.decisions.findIndex(
+      (d) => d.sequence === selectedDecision.sequence,
+    );
+    const next = inspector.decisions[index + offset];
+    if (next !== undefined) setSelectedDecisionSequence(next.sequence);
+  };
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (target?.matches('input, textarea, select, [contenteditable="true"]'))
+        return;
+      if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        moveDecision(-1);
+      }
+      if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        moveDecision(1);
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  });
 
   const toggleTracking = async (cardInstanceId: string, cardName: string) => {
     if (trackingCardId !== null) return;
@@ -625,28 +682,84 @@ export default function DraftWorkspace({
             This view replays only recorded facts. It does not score
             alternatives, infer a human reason, or provide draft advice.
           </p>
-          <ol
-            className="draft-workspace__decision-list"
-            aria-label="Draft decisions"
-          >
-            {inspector.decisions.map((decision) => (
-              <li key={decision.sequence}>
-                <button
-                  aria-pressed={
-                    selectedDecision?.sequence === decision.sequence
-                  }
-                  onClick={() => setSelectedDecisionSequence(decision.sequence)}
-                  type="button"
+          {selectedDecision !== null ? (
+            <div
+              className="draft-workspace__inspector-controls"
+              aria-label="Inspector navigation"
+            >
+              <label>
+                Seat / Bot
+                <select
+                  value={selectedDecision.seat_number}
+                  onChange={(event) => {
+                    const seat = Number(event.target.value);
+                    const next = inspector.decisions.find(
+                      (d) => d.seat_number === seat,
+                    );
+                    if (next) setSelectedDecisionSequence(next.sequence);
+                  }}
                 >
-                  <strong>{inspectorLabel(decision)}</strong>
-                  <span>
-                    {decision.actor_origin === 'bot' ? 'Bot v0' : 'Human'}
-                  </span>
-                  <span>{decision.chosen_card.name}</span>
-                </button>
-              </li>
-            ))}
-          </ol>
+                  {inspectorSeats.map((seat) => (
+                    <option key={seat} value={seat}>
+                      Seat {seat + 1}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                Pack
+                <select
+                  value={selectedDecision.round_number}
+                  onChange={(event) => {
+                    const next = seatDecisions.find(
+                      (d) => d.round_number === Number(event.target.value),
+                    );
+                    if (next) setSelectedDecisionSequence(next.sequence);
+                  }}
+                >
+                  {inspectorPacks.map((pack) => (
+                    <option key={pack} value={pack}>
+                      Pack {pack}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                Pick
+                <select
+                  value={selectedDecision.sequence}
+                  onChange={(event) =>
+                    setSelectedDecisionSequence(Number(event.target.value))
+                  }
+                >
+                  {packDecisions.map((decision) => (
+                    <option key={decision.sequence} value={decision.sequence}>
+                      Pick {decision.pick_number}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <button
+                type="button"
+                onClick={() => moveDecision(-1)}
+                disabled={
+                  inspector.decisions[0]?.sequence === selectedDecision.sequence
+                }
+              >
+                Previous pick
+              </button>
+              <button
+                type="button"
+                onClick={() => moveDecision(1)}
+                disabled={
+                  inspector.decisions.at(-1)?.sequence ===
+                  selectedDecision.sequence
+                }
+              >
+                Next pick
+              </button>
+            </div>
+          ) : null}
           {selectedDecision !== null ? (
             <InspectorDecision
               decision={selectedDecision}
