@@ -2,7 +2,7 @@
 
 **Current checkpoint: observation, local tracking, factual metric calculation,
 and Inspector-foundation implementation.** M2-001, M2-002, M2-003, and M2-009
-are complete; M2-012 and M2-013 are implemented and awaiting human review. Their
+are complete; M2-012 and M2-013 are complete and human-reviewed. Their
 event-derived decision-observation, wheel, and local tracking contracts are recorded in
 [`docs/M2-001-OBSERVATION-EVIDENCE.md`](../M2-001-OBSERVATION-EVIDENCE.md)
 and [`docs/M2-002-WHEEL-EVIDENCE.md`](../M2-002-WHEEL-EVIDENCE.md), and
@@ -68,9 +68,9 @@ Make a draft understandable during and after play while preserving the distincti
 | M2-008 | Build post-draft Draft Inspector and timeline review | M2-001, M2-007 | BLOCKED |
 | M2-009 | Define provenance-aware pick metric schemas | M2-001 | COMPLETE |
 | M2-010 | Build initial analytics views and filters | M2-009 | READY |
-| M2-011 | Add lightweight human pick-review annotations | M2-008 | BLOCKED |
-| M2-012 | Build factual Draft Inspector Foundation | M2-001, M2-002, M2-009 | IMPLEMENTED — AWAITING HUMAN REVIEW |
-| M2-013 | Add an inspectable eight-Bot fast draft | M1-013, M1-014, M1-015 | IMPLEMENTED — AWAITING HUMAN REVIEW |
+| M2-011 | Add lightweight human pick-review annotations | M2-012 | COMPLETE |
+| M2-012 | Build factual Draft Inspector Foundation | M2-001, M2-002, M2-009 | COMPLETE |
+| M2-013 | Add an inspectable eight-Bot fast draft | M1-013, M1-014, M1-015 | COMPLETE |
 
 These issues require refinement after M1 establishes actual event and API schemas.
 

@@ -98,6 +98,7 @@ export type DraftTracking = {
   observer_seat: number;
   tracked_card_instance_ids: string[];
 };
+export type PickReview = { id: string; author: string; cube_version_id: string; draft_id: string; sequence: number; seat_number: number; pack_number: number; pick_number: number; card_instance_id: string; strategy_ref: string | null; assessment: string; reasons: string[]; note: string | null; suggested_rating: number | null };
 
 type ErrorPayload = {
   code?: unknown;
@@ -122,6 +123,9 @@ export type DraftApi = {
   loadTracking(draftId: string): Promise<DraftTracking>;
   trackCard(draftId: string, cardInstanceId: string): Promise<DraftTracking>;
   untrackCard(draftId: string, cardInstanceId: string): Promise<DraftTracking>;
+  loadPickReview(draftId: string, sequence: number): Promise<PickReview | null>;
+  savePickReview(draftId: string, review: Omit<PickReview, 'cube_version_id' | 'draft_id' | 'strategy_ref'>): Promise<PickReview>;
+  deletePickReview(draftId: string, sequence: number): Promise<void>;
 };
 
 async function responseJson(response: Response): Promise<unknown> {
@@ -203,4 +207,10 @@ export const localDraftApi: DraftApi = {
       { method: 'DELETE' },
     );
   },
+  async loadPickReview(draftId, sequence) {
+    try { return await requestDraft<PickReview>(`/v1/drafts/${encodeURIComponent(draftId)}/inspector/annotations/${sequence}`); }
+    catch (error) { if (error instanceof DraftApiError && error.code === 'REVIEW_NOT_FOUND') return null; throw error; }
+  },
+  savePickReview(draftId, review) { return requestDraft<PickReview>(`/v1/drafts/${encodeURIComponent(draftId)}/inspector/annotations`, { method: 'PUT', headers: { 'content-type': 'application/json' }, body: JSON.stringify(review) }); },
+  async deletePickReview(draftId, sequence) { await requestDraft<unknown>(`/v1/drafts/${encodeURIComponent(draftId)}/inspector/annotations/${sequence}`, { method: 'DELETE' }); },
 };

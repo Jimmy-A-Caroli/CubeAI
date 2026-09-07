@@ -537,8 +537,8 @@ stated dependencies and further refinement.
 
 ### M2-011 — Add lightweight human pick-review annotations
 
-- **Labels/state:** `component::lab`, `component::ui`, `type::feature`, `priority::medium`, `agent::supervised`, `BLOCKED`
-- **Dependencies:** M2-008.
+- **Labels/state:** `component::lab`, `component::ui`, `type::feature`, `priority::medium`, `agent::supervised`, `COMPLETE`
+- **Dependencies:** M2-012 (factual Inspector Foundation; explicitly approved refinement).
 - **Goal/context:** Let an inspecting user record a lightweight, provenance-aware review without rewriting immutable draft truth.
 - **Scope/out of scope:** Reasonable/Debatable/Bad labels, optional reason categories (power, color commitment, curve, synergy, archetype fit, fixing, narrow payoff, other), optional note, and author/source plus Cube version, draft, seat, pick, strategy/version, and configuration references; no objective-quality claim, training-data pipeline, ML, or event mutation.
 - **Acceptance criteria:** An annotation is a separate layer, can be queried alongside but not merged into events, preserves its author/source and target identity, and remains usable without ML.
@@ -547,18 +547,19 @@ stated dependencies and further refinement.
 
 ### M2-012 — Draft Inspector Foundation
 
-- **Labels/state:** `component::lab`, `component::api`, `component::ui`, `type::feature`, `priority::high`, `agent::supervised`, `IMPLEMENTED — AWAITING HUMAN REVIEW`
+- **Labels/state:** `component::lab`, `component::api`, `component::ui`, `type::feature`, `priority::high`, `agent::supervised`, `COMPLETE`
 - **Dependencies:** M2-001, M2-002, M2-009.
 - **Goal/context:** Make one completed draft inspectable decision by decision, especially recorded Bot v0 choices, without interpreting strategic quality.
 - **Scope/out of scope:** Chronological factual replay; cards seen, selected card, prior pool, legal alternatives, exact-instance seen-before-pick/wheel facts, and recorded Bot provenance. No draft-fit explanation, archetypes, alternative scores, advice, metrics dashboard, annotation creation/storage, or training data.
 - **Acceptance criteria:** The UI selects a completed decision and displays only evidence reconstructible from immutable events and existing M2 projections; active drafts remain gated; Bot evidence is recorded provenance rather than inferred reasoning; physical-pack identity is explicitly labelled as provenance.
 - **Required tests:** Completion gating, ordered decision context, selected-card/candidate relationship, Bot-provenance display, absence of speculative scores/annotations, and browser navigation.
 - **Expected artifacts/areas:** Read-only Inspector API projection, completed-draft UI, API/browser tests, and evidence document.
+- **Completion evidence:** B1 Inspector acceptance and focused navigation validation passed on commit `5132fd4`.
 - **Rationale:** This is the authorized factual pre-archetype Inspector foundation. It does not change M2-010 or satisfy/advance M2-008 or M2-011.
 
 ### M2-013 — Add an inspectable eight-Bot fast draft
 
-- **Labels/state:** `component::lab`, `component::api`, `component::ui`, `type::feature`, `priority::medium`, `agent::safe`, `IMPLEMENTED — AWAITING HUMAN REVIEW`
+- **Labels/state:** `component::lab`, `component::api`, `component::ui`, `type::feature`, `priority::medium`, `agent::safe`, `COMPLETE`
 - **Dependencies:** M1-013, M1-014, M1-015.
 - **Goal/context:** Let a local user generate one immediately completed eight-Bot draft to create deterministic factual decisions for human inspection without first drafting a human seat.
 - **Scope/out of scope:** One manual, all-Bot local draft using recorded Bot v0 evidence and existing completion-only Inspector/review views; no batch runs, simulation-run identity, scheduler, aggregation, benchmarking, draft-fit explanation, or objective quality conclusion.

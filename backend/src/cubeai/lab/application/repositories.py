@@ -5,6 +5,7 @@ from typing import Protocol
 
 from cubeai.lab.domain.cube import CubeVersion
 from cubeai.lab.domain.draft_state import DraftState
+from cubeai.lab.domain.review import PickReviewAnnotation
 
 
 DraftTransaction = Callable[[DraftState, CubeVersion], DraftState]
@@ -32,3 +33,7 @@ class DraftRepository(Protocol):
     def load_tracked_card_instance_ids(
         self, draft_id: str, observer_seat: int
     ) -> tuple[str, ...]: ...
+
+    def save_review(self, annotation: PickReviewAnnotation) -> None: ...
+    def load_review(self, draft_id: str, sequence: int) -> PickReviewAnnotation | None: ...
+    def delete_review(self, draft_id: str, sequence: int) -> None: ...

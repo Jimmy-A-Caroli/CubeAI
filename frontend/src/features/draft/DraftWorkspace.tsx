@@ -8,6 +8,7 @@ import {
   type DraftReview,
   type DraftReviewPick,
   type DraftView,
+  type PickReview,
   DraftApiError,
   localDraftApi,
 } from './draftApi';
@@ -60,6 +61,10 @@ export default function DraftWorkspace({
   const [selectedDecisionSequence, setSelectedDecisionSequence] = useState<
     number | null
   >(null);
+  const [pickReview, setPickReview] = useState<PickReview | null>(null);
+  const [reviewAssessment, setReviewAssessment] = useState('reasonable');
+  const [reviewNote, setReviewNote] = useState('');
+  const [reviewRating, setReviewRating] = useState('');
   const [botSeat, setBotSeat] = useState<number | null>(null);
   const [trackedCardIds, setTrackedCardIds] = useState<string[]>([]);
   const [trackingCardId, setTrackingCardId] = useState<string | null>(null);
@@ -97,6 +102,15 @@ export default function DraftWorkspace({
       if (isCurrent()) setLoading(false);
     }
   }, [api, draftId]);
+
+  useEffect(() => {
+    if (selectedDecisionSequence === null || inspector === null) return;
+    setPickReview(null);
+    void api.loadPickReview(draftId, selectedDecisionSequence).then((loaded) => {
+      setPickReview(loaded);
+      if (loaded) { setReviewAssessment(loaded.assessment); setReviewNote(loaded.note ?? ''); setReviewRating(loaded.suggested_rating?.toString() ?? ''); }
+    });
+  }, [api, draftId, inspector, selectedDecisionSequence]);
 
   useEffect(() => {
     operationRef.current += 1;
@@ -177,6 +191,63 @@ export default function DraftWorkspace({
           ) ?? null),
     [inspector, selectedDecisionSequence],
   );
+  const inspectorSeats = useMemo(
+    () =>
+      [...new Set(inspector?.decisions.map((d) => d.seat_number) ?? [])].sort(
+        (a, b) => a - b,
+      ),
+    [inspector],
+  );
+  const seatDecisions = useMemo(
+    () =>
+      inspector?.decisions.filter(
+        (d) =>
+          d.seat_number ===
+          (selectedDecision?.seat_number ?? inspectorSeats[0]),
+      ) ?? [],
+    [inspector, inspectorSeats, selectedDecision],
+  );
+  const inspectorPacks = useMemo(
+    () =>
+      [...new Set(seatDecisions.map((d) => d.round_number))].sort(
+        (a, b) => a - b,
+      ),
+    [seatDecisions],
+  );
+  const packDecisions = useMemo(
+    () =>
+      seatDecisions.filter(
+        (d) =>
+          d.round_number ===
+          (selectedDecision?.round_number ?? inspectorPacks[0]),
+      ),
+    [inspectorPacks, seatDecisions, selectedDecision],
+  );
+  const moveDecision = (offset: number) => {
+    if (inspector === null || selectedDecision === null) return;
+    const index = inspector.decisions.findIndex(
+      (d) => d.sequence === selectedDecision.sequence,
+    );
+    const next = inspector.decisions[index + offset];
+    if (next !== undefined) setSelectedDecisionSequence(next.sequence);
+  };
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (target?.matches('input, textarea, select, [contenteditable="true"]'))
+        return;
+      if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        moveDecision(-1);
+      }
+      if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        moveDecision(1);
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  });
 
   const toggleTracking = async (cardInstanceId: string, cardName: string) => {
     if (trackingCardId !== null) return;
@@ -625,33 +696,93 @@ export default function DraftWorkspace({
             This view replays only recorded facts. It does not score
             alternatives, infer a human reason, or provide draft advice.
           </p>
-          <ol
-            className="draft-workspace__decision-list"
-            aria-label="Draft decisions"
-          >
-            {inspector.decisions.map((decision) => (
-              <li key={decision.sequence}>
-                <button
-                  aria-pressed={
-                    selectedDecision?.sequence === decision.sequence
-                  }
-                  onClick={() => setSelectedDecisionSequence(decision.sequence)}
-                  type="button"
-                >
-                  <strong>{inspectorLabel(decision)}</strong>
-                  <span>
-                    {decision.actor_origin === 'bot' ? 'Bot v0' : 'Human'}
-                  </span>
-                  <span>{decision.chosen_card.name}</span>
-                </button>
-              </li>
-            ))}
-          </ol>
           {selectedDecision !== null ? (
-            <InspectorDecision
-              decision={selectedDecision}
-              onInspect={setInspectedCard}
-            />
+            <div
+              className="draft-workspace__inspector-controls"
+              aria-label="Inspector navigation"
+            >
+              <label>
+                Seat / Bot
+                <select
+                  value={selectedDecision.seat_number}
+                  onChange={(event) => {
+                    const seat = Number(event.target.value);
+                    const next = inspector.decisions.find(
+                      (d) => d.seat_number === seat,
+                    );
+                    if (next) setSelectedDecisionSequence(next.sequence);
+                  }}
+                >
+                  {inspectorSeats.map((seat) => (
+                    <option key={seat} value={seat}>
+                      Seat {seat + 1}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                Pack
+                <select
+                  value={selectedDecision.round_number}
+                  onChange={(event) => {
+                    const next = seatDecisions.find(
+                      (d) => d.round_number === Number(event.target.value),
+                    );
+                    if (next) setSelectedDecisionSequence(next.sequence);
+                  }}
+                >
+                  {inspectorPacks.map((pack) => (
+                    <option key={pack} value={pack}>
+                      Pack {pack}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                Pick
+                <select
+                  value={selectedDecision.sequence}
+                  onChange={(event) =>
+                    setSelectedDecisionSequence(Number(event.target.value))
+                  }
+                >
+                  {packDecisions.map((decision) => (
+                    <option key={decision.sequence} value={decision.sequence}>
+                      Pick {decision.pick_number}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <button
+                type="button"
+                onClick={() => moveDecision(-1)}
+                disabled={
+                  inspector.decisions[0]?.sequence === selectedDecision.sequence
+                }
+              >
+                Previous pick
+              </button>
+              <button
+                type="button"
+                onClick={() => moveDecision(1)}
+                disabled={
+                  inspector.decisions.at(-1)?.sequence ===
+                  selectedDecision.sequence
+                }
+              >
+                Next pick
+              </button>
+            </div>
+          ) : null}
+          {selectedDecision !== null ? (
+            <><InspectorDecision decision={selectedDecision} onInspect={setInspectedCard} />
+            <section aria-labelledby="human-review-heading"><h3 id="human-review-heading">Human review</h3>
+              <fieldset><legend>Assessment</legend>{['reasonable','debatable','bad'].map((value) => <label key={value}><input type="radio" name="assessment" checked={reviewAssessment === value} onChange={() => setReviewAssessment(value)} /> {value}</label>)}</fieldset>
+              <label>Notes<textarea value={reviewNote} onChange={(e) => setReviewNote(e.target.value)} /></label>
+              <label>Suggested rating<input type="number" value={reviewRating} onChange={(e) => setReviewRating(e.target.value)} /></label>
+              <button type="button" onClick={() => selectedDecisionSequence !== null && void api.savePickReview(draftId, { id: pickReview?.id ?? crypto.randomUUID(), author: 'local-human', sequence: selectedDecisionSequence, seat_number: selectedDecision.seat_number, pack_number: selectedDecision.physical_pack_number - 1, pick_number: selectedDecision.pick_number - 1, card_instance_id: selectedDecision.chosen_card.instance_id, assessment: reviewAssessment, reasons: [], note: reviewNote || null, suggested_rating: reviewRating ? Number(reviewRating) : null }).then(setPickReview)}>Save review</button>
+              {pickReview ? <button type="button" onClick={() => selectedDecisionSequence !== null && void api.deletePickReview(draftId, selectedDecisionSequence).then(() => setPickReview(null))}>Delete review</button> : null}
+            </section></>
           ) : (
             <p>No decision is available.</p>
           )}
