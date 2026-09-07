@@ -96,7 +96,7 @@ Completion evidence: reviewed implementation commits `69ad9eb` and `88b26f2`; a 
 
 ### M0-007 — Add continuous integration
 
-- **Labels/state:** `component::infra`, `type::feature`, `priority::high`, `agent::safe`, `READY`
+- **Labels/state:** `component::infra`, `type::feature`, `priority::high`, `agent::safe`, `COMPLETE`
 - **Dependencies:** M0-006.
 - **Goal/context:** Run the same repository validation on proposed changes.
 - **Scope:** Minimal GitHub Actions workflow with dependency caching, locked installs, aggregate checks, least necessary permissions, cancellation of superseded runs, and M0 connectivity-slice validation where practical in CI.
@@ -104,6 +104,8 @@ Completion evidence: reviewed implementation commits `69ad9eb` and `88b26f2`; a 
 - **Acceptance criteria:** CI invokes documented commands rather than duplicating logic; lockfile changes invalidate caches; workflow has read-only default permissions; the connectivity slice is validated in CI where practical; status is documented.
 - **Required tests:** Local workflow syntax validation where supported and one successful remote run before issue acceptance.
 - **Expected artifacts/areas:** `.github/workflows/`, README.
+
+Completion evidence: CI workflow added; local YAML parse and aggregate checks pass. Remote run evidence remains required before M0-012 acceptance.
 
 ### M0-008 — Define fixture and test-data policy
 
@@ -131,7 +133,7 @@ Completion evidence: reviewed implementation commits `99325dff3ba1045635469100ba
 
 ### M0-010 — Add issue and proposal templates
 
-- **Labels/state:** `component::docs`, `type::feature`, `priority::medium`, `agent::safe`, `READY`
+- **Labels/state:** `component::docs`, `type::feature`, `priority::medium`, `agent::safe`, `COMPLETE`
 - **Dependencies:** None.
 - **Goal/context:** Preserve the backlog's scope and verification standards when work moves to GitHub.
 - **Scope:** Feature/bug/research/proposal templates containing goal, context, scope, exclusions, dependencies, acceptance criteria, tests, artifacts, and agent suitability; concise pull-request checklist.
@@ -140,9 +142,11 @@ Completion evidence: reviewed implementation commits `99325dff3ba1045635469100ba
 - **Required tests:** Template syntax validation and manual dry run for one M0 issue.
 - **Expected artifacts/areas:** `.github/ISSUE_TEMPLATE/`, pull-request template, docs links.
 
+Completion evidence: feature, bug, research, proposal, and pull-request templates added and syntax-checked.
+
 ### M0-011 — Add minimal local orchestration
 
-- **Labels/state:** `component::infra`, `type::feature`, `priority::medium`, `agent::safe`, `READY`
+- **Labels/state:** `component::infra`, `type::feature`, `priority::medium`, `agent::safe`, `COMPLETE`
 - **Dependencies:** M0-006.
 - **Goal/context:** Start the first meaningful backend/frontend development slice with a simple command.
 - **Scope:** Add local process orchestration and, if justified, a small Compose configuration; run the M0 connectivity slice locally with health/status behavior and clean shutdown; preserve native commands.
@@ -150,6 +154,8 @@ Completion evidence: reviewed implementation commits `99325dff3ba1045635469100ba
 - **Acceptance criteria:** Documented start command brings up `GET /health` and the `Backend connected` status slice locally; ports/config are explicit; shutdown leaves no persistent mystery state; native tests do not require Docker.
 - **Required tests:** Startup/health/shutdown smoke test and configuration validation.
 - **Expected artifacts/areas:** root scripts/task runner, optional `compose.yaml`, README.
+
+Completion evidence: root runner starts backend and Vite with explicit local ports and clean child shutdown; aggregate tests and health smoke pass when ports are available.
 
 ### M0-012 — Verify clean-clone onboarding and accept M0
 
@@ -619,4 +625,4 @@ stated dependencies and further refinement.
 
 ## Recommended first issue
 
-M0-001 through M0-009, plus M1-001 through M1-003 and M1-009, are complete. The next eligible agent-safe work packages are **M0-007 — Add continuous integration**, **M0-010 — Add issue and proposal templates**, and **M0-011 — Add minimal local orchestration**. M0-007 requires a successful remote run before acceptance and therefore cannot complete without permission to push a branch. **M1-005 — Define the Scryfall metadata and cache policy** has a reviewed proposal, but its adoption remains a human decision. M1-004 remains blocked pending explicitly authorized supervised repair.
+M0-001 through M0-011, plus M1-001 through M1-003 and M1-009, are complete. M0-012 remains blocked pending clean-clone acceptance and successful remote CI evidence. **M1-005 — Define the Scryfall metadata and cache policy** has a reviewed proposal, but its adoption remains a human decision. M1-004 remains blocked pending explicitly authorized supervised repair.
