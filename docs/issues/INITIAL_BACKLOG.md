@@ -525,6 +525,21 @@ stated dependencies and further refinement.
   non-negative, and numerical category-to-weight mapping stays outside this
   artifact in a future contextual-strategy configuration.
 
+### M2-015 — Propose a Vintage Cube macro-path and package vocabulary
+
+- **Labels/state:** `component::lab`, `type::proposal`, `priority::high`, `human::decision`, `PROPOSED`
+- **Dependencies:** M2-006, M2-014, and a complete enough exact-version
+  membership capture for curation.
+- **Goal/context:** Decide whether the next Vintage Cube vocabulary should
+  distinguish card roles, broad macro paths, and overlapping packages before
+  large-scale affinity curation.
+- **Scope/out of scope:** Evidence-backed vocabulary/migration proposal and
+  assignment-contract implications only; no active assignments, automatic
+  classification, source-tag activation, Bot scoring, Inspector changes, or
+  API/UI implementation.
+- **Completion evidence:** Human decision on
+  [`Vintage Cube Strategic Vocabulary Proposal`](../research/vintage-cube-strategic-vocabulary-proposal.md).
+
 ### M2-007 — Add explainable draft-fit features
 
 - **Labels/state:** `component::lab`, `type::feature`, `priority::medium`, `agent::supervised`, `BLOCKED`
