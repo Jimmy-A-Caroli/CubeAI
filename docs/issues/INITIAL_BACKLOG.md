@@ -486,18 +486,47 @@ stated dependencies and further refinement.
 
 ### M2-006 — Define a versioned archetype/tag vocabulary
 
-- **Labels/state:** `component::lab`, `type::proposal`, `priority::medium`, `human::decision`, `BLOCKED`
+- **Labels/state:** `component::lab`, `type::proposal`, `priority::medium`, `COMPLETE`
 - **Dependencies:** M1-007.
 - **Goal/context:** Represent Cube-specific archetypes and card roles without pretending one universal taxonomy exists.
 - **Scope/out of scope:** Schema, source, version, confidence, overrides, and fixture; no auto-tagging ML.
 - **Acceptance criteria:** Tags can be Cube-specific, multi-valued, explainable, and migrated/versioned.
 - **Required tests:** Schema validation and override/unknown cases.
 - **Expected artifacts/areas:** proposal/ADR, domain schema, fixture.
+- **Completion evidence:** [`M2-006 Vocabulary Contract`](../M2-006-VOCABULARY-CONTRACT.md)
+  accepts the closed `vintage-cube-archetypes-v0` role and archetype keys,
+  versioning, and active-provenance boundary. It deliberately makes no card
+  association; M2-014 owns that separate assignment layer.
+
+### M2-014 — Define the archetype affinity assignment contract
+
+- **Labels/state:** `component::lab`, `type::proposal`, `priority::high`, `human::decision`, `BLOCKED`
+- **Dependencies:** M2-004, M2-006.
+- **Goal/context:** Define a human-reviewable, versioned bridge from an exact
+  CubeVersion membership or CardIdentity to one or more approved archetype
+  paths without embedding Bot scoring policy in the labels.
+- **Scope/out of scope:** JSON assignment artifact, exact-version/scope
+  validation, provenance/review state, and coverage report; no auto-tagging,
+  provider-tag activation, scoring coefficients, contextual Bot, candidate
+  ledger, UI administration, or real provider/Cube corpus.
+- **Acceptance criteria:** Every assignment names its exact CubeVersion,
+  identity scope, vocabulary version, archetype, provenance, review state, and
+  support conclusion; `UNKNOWN`/unreviewed remains distinct from explicit
+  `NONE`; only curator/human provenance can be active; coverage exposes gaps
+  and ambiguous overlap rather than choosing silently.
+- **Required tests:** Synthetic strong, multi-path, explicit-none, unknown,
+  provenance, version/scope, duplicate-membership, duplicate-record, and
+  conflict cases.
+- **Expected artifacts/areas:** assignment contract, framework-free validator
+  and coverage report, synthetic JSON fixture, tests.
+- **Decision gate:** Approve the recommended categorical `none` / `supports` /
+  `strong` review labels and keep their numeric mapping out of the assignment
+  contract and in a future versioned contextual-strategy configuration.
 
 ### M2-007 — Add explainable draft-fit features
 
 - **Labels/state:** `component::lab`, `type::feature`, `priority::medium`, `agent::supervised`, `BLOCKED`
-- **Dependencies:** M2-004, M2-006.
+- **Dependencies:** M2-004, M2-006, M2-014, accepted reviewed assignment set, and contextual scoring contract.
 - **Goal/context:** Decompose advice into power, openness, curve, synergy, and pool fit.
 - **Scope/out of scope:** Versioned heuristics and explanations; no single opaque truth score or ML.
 - **Acceptance criteria:** Each output lists inputs/contributions and uncertainty; missing tags/ratings degrade visibly.

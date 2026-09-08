@@ -14,7 +14,10 @@ The Inspector Foundation contract is recorded in
 [`docs/M2-012-DRAFT-INSPECTOR-FOUNDATION.md`](../M2-012-DRAFT-INSPECTOR-FOUNDATION.md).
 The bounded all-Bot fast-draft contract is recorded in
 [`docs/M2-013-FAST-DRAFT-EVIDENCE.md`](../M2-013-FAST-DRAFT-EVIDENCE.md).
-M2-010 remains ready as a separate metrics-only analytics consumer. Other later
+M2-010 remains ready as a separate metrics-only analytics consumer. The closed
+M2-006 `vintage-cube-archetypes-v0` vocabulary is accepted, but its separate
+M2-014 affinity-assignment contract still awaits its categorical-scale decision
+and the M2-004 dependency. Other later
 M2 candidate issues remain blocked until their declared dependencies and
 refinement are complete.
 
@@ -41,6 +44,10 @@ Make a draft understandable during and after play while preserving the distincti
 
 - Versioned tags with source and confidence.
 - Archetype support views based on explicit features.
+- The accepted `vintage-cube-archetypes-v0` names roles and strategic paths;
+  only a separately reviewed, exact-CubeVersion M2-014 assignment set may
+  connect a membership or CardIdentity to a path. Provider tags remain inactive
+  evidence, and unreviewed is not explicit `none`.
 - Suggestions decomposed into power, color openness, curve, synergy, and current-pool fit.
 - Explanations and uncertainty shown with every composite recommendation.
 
@@ -63,8 +70,9 @@ Make a draft understandable during and after play while preserving the distincti
 | M2-003 | Add local tracked-card behavior and UI | M2-001 | COMPLETE |
 | M2-004 | Add mana curve and color-distribution projections | M1-018 | BLOCKED |
 | M2-005 | Define mana-requirement and source-count model | M2-004 | BLOCKED |
-| M2-006 | Define versioned archetype/tag vocabulary | M1-007 | BLOCKED |
-| M2-007 | Add explainable draft-fit feature scores | M2-004, M2-006 | BLOCKED |
+| M2-006 | Define versioned archetype/tag vocabulary | M1-007 | COMPLETE |
+| M2-014 | Define archetype affinity assignment contract | M2-004, M2-006 | BLOCKED — categorical-scale decision and reviewed assignment set remain |
+| M2-007 | Add explainable draft-fit feature scores | M2-004, M2-006, M2-014 | BLOCKED |
 | M2-008 | Build post-draft Draft Inspector and timeline review | M2-001, M2-007 | BLOCKED |
 | M2-009 | Define provenance-aware pick metric schemas | M2-001 | COMPLETE |
 | M2-010 | Build initial analytics views and filters | M2-009 | READY |

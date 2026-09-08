@@ -1,0 +1,57 @@
+{
+  "fixture_type": "cubeai-synthetic",
+  "schema_version": 1,
+  "purpose": "M2-014 archetype affinity assignment validation and coverage",
+  "provenance": {
+    "source": "CubeAI-authored synthetic fixture",
+    "license": "MIT",
+    "contains_provider_data": false
+  },
+  "assignment_set": {
+    "id": "synthetic-affinities-v0",
+    "cube_version_id": "synthetic-cube-version-1",
+    "vocabulary_version": "vintage-cube-archetypes-v0",
+    "assignments": [
+      {
+        "target_id": "membership-strong",
+        "identity_scope": "cube_membership",
+        "archetype": "reanimator",
+        "support_level": "strong",
+        "provenance": "human_annotated",
+        "review_status": "active"
+      },
+      {
+        "target_id": "identity-shared",
+        "identity_scope": "card_identity",
+        "archetype": "artifacts",
+        "support_level": "strong",
+        "provenance": "curator_defined",
+        "review_status": "active"
+      },
+      {
+        "target_id": "identity-shared",
+        "identity_scope": "card_identity",
+        "archetype": "ramp",
+        "support_level": "supports",
+        "provenance": "curator_defined",
+        "review_status": "reviewed"
+      },
+      {
+        "target_id": "membership-none",
+        "identity_scope": "cube_membership",
+        "archetype": "aggro",
+        "support_level": "none",
+        "provenance": "human_annotated",
+        "review_status": "active"
+      },
+      {
+        "target_id": "identity-unreviewed",
+        "identity_scope": "card_identity",
+        "archetype": "control",
+        "support_level": "supports",
+        "provenance": "source_provided",
+        "review_status": "proposed"
+      }
+    ]
+  }
+}
