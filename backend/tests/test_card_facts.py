@@ -116,9 +116,7 @@ def test_unknown_layout_preserves_valid_top_level_facts_as_deferred() -> None:
 
 def test_incomplete_face_semantics_preserve_valid_top_level_facts_as_partial() -> None:
     printing = _printing("modal_dfc")
-    incomplete_face = replace(
-        printing.faces[1], colors=None, type_line=None
-    )
+    incomplete_face = replace(printing.faces[1], colors=None, type_line=None)
     changed = replace(printing, faces=(printing.faces[0], incomplete_face))
 
     facts = card_facts_from_resolved_printing(changed, metadata_snapshot_id=SNAPSHOT_ID)

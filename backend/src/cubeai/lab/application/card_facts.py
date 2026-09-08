@@ -84,8 +84,7 @@ def card_facts_from_resolved_printing(
         loyalty=printing.loyalty,
         is_land=is_land,
         is_creature=is_creature,
-        has_nonland_face=not is_land
-        or any(face.is_land is False for face in faces),
+        has_nonland_face=not is_land or any(face.is_land is False for face in faces),
         faces=faces,
         metadata_snapshot_id=metadata_snapshot_id,
     )

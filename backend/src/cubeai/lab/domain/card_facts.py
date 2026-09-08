@@ -73,9 +73,7 @@ class CardFaceFacts:
             if value is not None:
                 _require_text(value, field)
         if self.colors is not None:
-            object.__setattr__(
-                self, "colors", _validate_colours(self.colors, "colors")
-            )
+            object.__setattr__(self, "colors", _validate_colours(self.colors, "colors"))
         for field in ("is_land", "is_creature"):
             value = getattr(self, field)
             if value is not None and not isinstance(value, bool):
@@ -140,7 +138,9 @@ class CardFacts:
             )
         if self.layout is CardLayout.DEFERRED:
             if DeferredCardSemantic.LAYOUT not in deferred_semantics:
-                raise ValueError("deferred layout must identify deferred layout semantics")
+                raise ValueError(
+                    "deferred layout must identify deferred layout semantics"
+                )
         elif DeferredCardSemantic.LAYOUT in deferred_semantics:
             raise ValueError("reviewed layout cannot defer layout semantics")
         if self.completeness is CardFactsCompleteness.COMPLETE and deferred_semantics:
