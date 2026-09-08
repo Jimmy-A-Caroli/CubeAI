@@ -17,6 +17,7 @@
         "collector_number": "1",
         "lang": "en",
         "layout": "normal",
+        "cmc": 1.0,
         "mana_cost": "{R}",
         "type_line": "Creature — Wizard",
         "oracle_text": "Synthetic rules text.",

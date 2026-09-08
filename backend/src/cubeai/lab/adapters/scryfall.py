@@ -8,6 +8,7 @@ from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 import hashlib
 import json
+import math
 from pathlib import Path
 import sqlite3
 import time
@@ -35,7 +36,7 @@ MINIMUM_REQUEST_INTERVAL_SECONDS = 0.5
 RATE_LIMIT_COOLDOWN_SECONDS = 30.0
 RETRY_DELAY_SECONDS = 0.5
 REQUEST_TIMEOUT_SECONDS = 10.0
-RESPONSE_SCHEMA_VERSION = 2
+RESPONSE_SCHEMA_VERSION = 3
 
 
 class _Response(Protocol):
@@ -129,6 +130,13 @@ def _printing_to_json(printing: ResolvedPrinting) -> str:
                 "name": face.name,
                 "oracle_id": face.oracle_id,
                 "image_uris": list(face.image_uris),
+                "mana_cost": face.mana_cost,
+                "colors": None if face.colors is None else list(face.colors),
+                "type_line": face.type_line,
+                "oracle_text": face.oracle_text,
+                "power": face.power,
+                "toughness": face.toughness,
+                "loyalty": face.loyalty,
             }
             for face in printing.faces
         ],
@@ -144,6 +152,7 @@ def _printing_to_json(printing: ResolvedPrinting) -> str:
         "loyalty": printing.loyalty,
         "colors": list(printing.colors),
         "color_identity": list(printing.color_identity),
+        "mana_value": printing.mana_value,
     }
     return json.dumps(payload, sort_keys=True, separators=(",", ":"))
 
@@ -164,6 +173,17 @@ def _printing_from_json(payload: str) -> ResolvedPrinting:
                 _require_text(face.get("name"), "face.name"),
                 _optional_text(face.get("oracle_id"), "face.oracle_id"),
                 _stored_uri_pairs(face.get("image_uris"), "face.image_uris"),
+                _optional_card_text(face.get("mana_cost"), "face.mana_cost"),
+                (
+                    None
+                    if face.get("colors") is None
+                    else _color_codes(face.get("colors"), "face.colors")
+                ),
+                _optional_card_text(face.get("type_line"), "face.type_line"),
+                _optional_card_text(face.get("oracle_text"), "face.oracle_text"),
+                _optional_card_text(face.get("power"), "face.power"),
+                _optional_card_text(face.get("toughness"), "face.toughness"),
+                _optional_card_text(face.get("loyalty"), "face.loyalty"),
             )
         )
     schema_version = decoded.get("response_schema_version")
@@ -191,6 +211,7 @@ def _printing_from_json(payload: str) -> ResolvedPrinting:
         _optional_text(decoded.get("loyalty"), "loyalty"),
         _color_codes(decoded.get("colors", []), "colors"),
         _color_codes(decoded.get("color_identity", []), "color_identity"),
+        _cached_mana_value(decoded.get("mana_value")),
     )
 
 
@@ -206,6 +227,26 @@ def _optional_card_text(value: object, field: str) -> str | None:
     if value is None or value == "":
         return None
     return _require_text(value, field)
+
+
+def _mana_value(value: object, field: str) -> int:
+    """Accept only the provider numeric whole-card mana-value semantics."""
+
+    if type(value) is int:
+        parsed = value
+    elif type(value) is float and math.isfinite(value) and value.is_integer():
+        parsed = int(value)
+    else:
+        raise ValueError(f"{field} must be a non-negative integral number")
+    if parsed < 0:
+        raise ValueError(f"{field} must be a non-negative integral number")
+    return parsed
+
+
+def _cached_mana_value(value: object) -> int | None:
+    if value is None:
+        return None
+    return _mana_value(value, "mana_value")
 
 
 def _color_codes(value: object, field: str) -> tuple[str, ...]:
@@ -597,6 +638,15 @@ def _parse_printing(
                 _require_text(raw_face.get("name"), "card_faces.name"),
                 _optional_text(raw_face.get("oracle_id"), "card_faces.oracle_id"),
                 _uri_pairs(raw_face.get("image_uris"), "card_faces.image_uris"),
+                _optional_card_text(raw_face.get("mana_cost"), "card_faces.mana_cost"),
+                _color_codes(raw_face.get("colors"), "card_faces.colors"),
+                _require_text(raw_face.get("type_line"), "card_faces.type_line"),
+                _optional_card_text(
+                    raw_face.get("oracle_text"), "card_faces.oracle_text"
+                ),
+                _optional_card_text(raw_face.get("power"), "card_faces.power"),
+                _optional_card_text(raw_face.get("toughness"), "card_faces.toughness"),
+                _optional_card_text(raw_face.get("loyalty"), "card_faces.loyalty"),
             )
         )
     return ResolvedPrinting(
@@ -621,6 +671,7 @@ def _parse_printing(
         _optional_card_text(row.get("loyalty"), "loyalty"),
         _color_codes(row.get("colors", []), "colors"),
         _color_codes(row.get("color_identity", []), "color_identity"),
+        _mana_value(row.get("cmc"), "cmc"),
     )
 
 

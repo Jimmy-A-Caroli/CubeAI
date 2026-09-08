@@ -139,6 +139,7 @@ def test_exact_collection_contract_maps_printing_and_preserves_identity_layers(
     assert result.printing.collector_number == "1"
     assert result.printing.language == "en"
     assert result.printing.layout == "normal"
+    assert result.printing.mana_value == 1
     assert result.printing.mana_cost == "{R}"
     assert result.printing.type_line == "Creature — Wizard"
     assert result.printing.oracle_text == "Synthetic rules text."
@@ -148,7 +149,7 @@ def test_exact_collection_contract_maps_printing_and_preserves_identity_layers(
         ("normal", "https://images.example.invalid/synthetic-ember.jpg"),
     )
     assert (
-        result.cache_reference == f"scryfall:{PRINTING_ID}:2026-09-03T12:00:00+00:00:v2"
+        result.cache_reference == f"scryfall:{PRINTING_ID}:2026-09-03T12:00:00+00:00:v3"
     )
     assert snapshot.snapshot_id.startswith("scryfall-resolution-v1:")
     request = opener.calls[0]

@@ -1,0 +1,36 @@
+{
+  "fixture_type": "cubeai-synthetic-contract",
+  "schema_version": 1,
+  "purpose": "M2-004 normalized CardFacts layout coverage",
+  "provenance": {
+    "source": "CubeAI-authored synthetic test data",
+    "license": "MIT",
+    "provider_data": "none"
+  },
+  "cases": {
+    "multicolor_spell": {
+      "id": "22222222-2222-4222-8222-222222222222", "oracle_id": "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb", "name": "Synthetic Prism", "set": "syn", "collector_number": "2", "lang": "en", "layout": "normal", "cmc": 3.0, "mana_cost": "{R}{W}{U}", "type_line": "Instant", "oracle_text": "Synthetic rules text.", "colors": ["R", "W", "U"], "color_identity": ["R", "W", "U"]
+    },
+    "colorless_artifact": {
+      "id": "33333333-3333-4333-8333-333333333333", "oracle_id": "cccccccc-cccc-4ccc-8ccc-cccccccccccc", "name": "Synthetic Relic", "set": "syn", "collector_number": "3", "lang": "en", "layout": "normal", "cmc": 2.0, "mana_cost": "{2}", "type_line": "Artifact", "oracle_text": "Synthetic rules text.", "colors": [], "color_identity": []
+    },
+    "colored_mana_land": {
+      "id": "44444444-4444-4444-8444-444444444444", "oracle_id": "dddddddd-dddd-4ddd-8ddd-dddddddddddd", "name": "Synthetic Shore", "set": "syn", "collector_number": "4", "lang": "en", "layout": "normal", "cmc": 0.0, "type_line": "Land", "oracle_text": "{T}: Add {U}.", "colors": [], "color_identity": ["U"]
+    },
+    "transform": {
+      "id": "55555555-5555-4555-8555-555555555555", "oracle_id": "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee", "name": "Synthetic Day // Synthetic Night", "set": "syn", "collector_number": "5", "lang": "en", "layout": "transform", "cmc": 2.0, "type_line": "Creature — Human", "oracle_text": "Synthetic rules text.", "colors": ["G"], "color_identity": ["G"], "card_faces": [{"name": "Synthetic Day", "mana_cost": "{1}{G}", "colors": ["G"], "type_line": "Creature — Human", "oracle_text": "Day.", "power": "2", "toughness": "2"}, {"name": "Synthetic Night", "colors": ["G"], "type_line": "Creature — Wolf", "oracle_text": "Night.", "power": "3", "toughness": "3"}]
+    },
+    "modal_dfc": {
+      "id": "66666666-6666-4666-8666-666666666666", "oracle_id": "ffffffff-ffff-4fff-8fff-ffffffffffff", "name": "Synthetic Path // Synthetic Field", "set": "syn", "collector_number": "6", "lang": "en", "layout": "modal_dfc", "cmc": 3.0, "type_line": "Sorcery", "oracle_text": "Synthetic rules text.", "colors": ["W"], "color_identity": ["W"], "card_faces": [{"name": "Synthetic Path", "mana_cost": "{2}{W}", "colors": ["W"], "type_line": "Sorcery", "oracle_text": "Path."}, {"name": "Synthetic Field", "colors": [], "type_line": "Land", "oracle_text": "{T}: Add {W}."}]
+    },
+    "adventure": {
+      "id": "77777777-7777-4777-8777-777777777777", "oracle_id": "11111111-aaaa-4111-8111-111111111111", "name": "Synthetic Quest", "set": "syn", "collector_number": "7", "lang": "en", "layout": "adventure", "cmc": 4.0, "type_line": "Creature — Knight", "oracle_text": "Synthetic rules text.", "colors": ["W"], "color_identity": ["W"], "card_faces": [{"name": "Synthetic Quest", "mana_cost": "{1}{W}", "colors": ["W"], "type_line": "Sorcery", "oracle_text": "Quest."}, {"name": "Synthetic Knight", "mana_cost": "{3}{W}", "colors": ["W"], "type_line": "Creature — Knight", "oracle_text": "Knight.", "power": "3", "toughness": "3"}]
+    },
+    "split": {
+      "id": "88888888-8888-4888-8888-888888888888", "oracle_id": "22222222-aaaa-4222-8222-222222222222", "name": "Synthetic Rise // Synthetic Fall", "set": "syn", "collector_number": "8", "lang": "en", "layout": "split", "cmc": 5.0, "type_line": "Sorcery", "oracle_text": "Synthetic rules text.", "colors": ["B", "R"], "color_identity": ["B", "R"], "card_faces": [{"name": "Synthetic Rise", "mana_cost": "{2}{B}", "colors": ["B"], "type_line": "Sorcery", "oracle_text": "Rise."}, {"name": "Synthetic Fall", "mana_cost": "{2}{R}", "colors": ["R"], "type_line": "Sorcery", "oracle_text": "Fall."}]
+    },
+    "prepare": {
+      "id": "99999999-9999-4999-8999-999999999999", "oracle_id": "33333333-aaaa-4333-8333-333333333333", "name": "Synthetic Prepare // Synthetic Aftermath", "set": "syn", "collector_number": "9", "lang": "en", "layout": "prepare", "cmc": 2.0, "type_line": "Sorcery", "oracle_text": "Synthetic rules text.", "colors": ["U"], "color_identity": ["U"], "card_faces": [{"name": "Synthetic Prepare", "mana_cost": "{1}{U}", "colors": ["U"], "type_line": "Sorcery", "oracle_text": "Prepare."}, {"name": "Synthetic Aftermath", "mana_cost": "{3}{U}", "colors": ["U"], "type_line": "Sorcery", "oracle_text": "Aftermath."}]
+    }
+  }
+}

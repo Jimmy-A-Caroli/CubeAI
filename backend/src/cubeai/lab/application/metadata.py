@@ -56,11 +56,36 @@ class ScryfallFace:
     name: str
     oracle_id: str | None
     image_uris: tuple[tuple[str, str], ...] = ()
+    mana_cost: str | None = None
+    colors: tuple[str, ...] | None = None
+    type_line: str | None = None
+    oracle_text: str | None = None
+    power: str | None = None
+    toughness: str | None = None
+    loyalty: str | None = None
 
     def __post_init__(self) -> None:
         _require_text(self.name, "name")
         if self.oracle_id is not None:
             _require_text(self.oracle_id, "oracle_id")
+        for field in (
+            "mana_cost",
+            "type_line",
+            "oracle_text",
+            "power",
+            "toughness",
+            "loyalty",
+        ):
+            value = getattr(self, field)
+            if value is not None:
+                _require_text(value, field)
+        if self.colors is not None:
+            colors = tuple(self.colors)
+            if any(value not in {"W", "U", "B", "R", "G"} for value in colors) or len(
+                colors
+            ) != len(set(colors)):
+                raise ValueError("colors must contain distinct WUBRG colour codes")
+            object.__setattr__(self, "colors", colors)
         image_uris = tuple(self.image_uris)
         if any(
             not isinstance(key, str)
@@ -98,6 +123,7 @@ class ResolvedPrinting:
     loyalty: str | None = None
     colors: tuple[str, ...] = ()
     color_identity: tuple[str, ...] = ()
+    mana_value: int | None = None
 
     def __post_init__(self) -> None:
         for field, value in (
@@ -149,6 +175,10 @@ class ResolvedPrinting:
             or self.response_schema_version < 1
         ):
             raise ValueError("response_schema_version must be a positive integer")
+        if self.mana_value is not None and (
+            type(self.mana_value) is not int or self.mana_value < 0
+        ):
+            raise ValueError("mana_value must be a non-negative integer or None")
         object.__setattr__(self, "faces", faces)
         object.__setattr__(self, "image_uris", images)
 
