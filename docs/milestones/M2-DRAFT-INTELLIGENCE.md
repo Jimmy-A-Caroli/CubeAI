@@ -17,7 +17,10 @@ The bounded all-Bot fast-draft contract is recorded in
 M2-010 remains ready as a separate metrics-only analytics consumer. The closed
 M2-006 `vintage-cube-archetypes-v0` vocabulary is accepted, but its separate
 M2-014 affinity-assignment contract still awaits its categorical-scale decision
-and the M2-004 dependency. Other later
+and the remaining M2-004 projections/API/UI dependency. The CardFacts
+foundation is implemented, including explicit partial/deferred face and layout
+semantics, but it is not a mana-curve or color-distribution implementation.
+Other later
 M2 candidate issues remain blocked until their declared dependencies and
 refinement are complete.
 
@@ -68,7 +71,7 @@ Make a draft understandable during and after play while preserving the distincti
 | M2-001 | Define derived cards-seen and pick-history projections | M1-018 | COMPLETE |
 | M2-002 | Define and test wheel detection | M2-001 | COMPLETE |
 | M2-003 | Add local tracked-card behavior and UI | M2-001 | COMPLETE |
-| M2-004 | Add mana curve and color-distribution projections | M1-018 | BLOCKED |
+| M2-004 | Add mana curve and color-distribution projections | M1-018 | IN PROGRESS — CardFacts foundation complete; projections/API/UI remain |
 | M2-005 | Define mana-requirement and source-count model | M2-004 | BLOCKED |
 | M2-006 | Define versioned archetype/tag vocabulary | M1-007 | COMPLETE |
 | M2-014 | Define archetype affinity assignment contract | M2-004, M2-006 | BLOCKED — categorical-scale decision and reviewed assignment set remain |

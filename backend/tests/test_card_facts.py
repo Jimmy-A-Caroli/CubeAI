@@ -12,11 +12,14 @@ import pytest
 from cubeai.lab.adapters.scryfall import _parse_printing
 from cubeai.lab.adapters.scryfall import SQLiteScryfallCache
 from cubeai.lab.application.card_facts import (
-    CardFactsNormalizationError,
     card_facts_from_resolved_printing,
 )
 from cubeai.lab.application.metadata import ResolvedPrinting
-from cubeai.lab.domain.card_facts import CardLayout
+from cubeai.lab.domain.card_facts import (
+    CardFactsCompleteness,
+    CardLayout,
+    DeferredCardSemantic,
+)
 
 
 FIXTURE = (
@@ -55,6 +58,9 @@ def test_normalizes_reviewed_layouts_without_provider_objects(
     )
 
     assert facts.layout is layout
+    assert facts.provider_layout
+    assert facts.completeness is CardFactsCompleteness.COMPLETE
+    assert facts.deferred_semantics == ()
     assert facts.metadata_snapshot_id == SNAPSHOT_ID
     assert facts.printing_id
     assert facts.card_identity_id
@@ -96,13 +102,37 @@ def test_modal_faces_are_ordered_and_overlap_is_explicit() -> None:
     assert not hasattr(facts.faces[0], "mana_value")
 
 
-def test_unknown_layout_is_visible_not_guessed() -> None:
-    with pytest.raises(
-        CardFactsNormalizationError, match="unsupported provider layout"
-    ):
-        card_facts_from_resolved_printing(
-            _printing("prepare"), metadata_snapshot_id=SNAPSHOT_ID
-        )
+def test_unknown_layout_preserves_valid_top_level_facts_as_deferred() -> None:
+    facts = card_facts_from_resolved_printing(
+        _printing("prepare"), metadata_snapshot_id=SNAPSHOT_ID
+    )
+
+    assert facts.name == "Synthetic Prepare // Synthetic Aftermath"
+    assert facts.layout is CardLayout.DEFERRED
+    assert facts.provider_layout == "prepare"
+    assert facts.completeness is CardFactsCompleteness.DEFERRED
+    assert facts.deferred_semantics == (DeferredCardSemantic.LAYOUT,)
+
+
+def test_incomplete_face_semantics_preserve_valid_top_level_facts_as_partial() -> None:
+    printing = _printing("modal_dfc")
+    incomplete_face = replace(
+        printing.faces[1], colors=None, type_line=None
+    )
+    changed = replace(printing, faces=(printing.faces[0], incomplete_face))
+
+    facts = card_facts_from_resolved_printing(changed, metadata_snapshot_id=SNAPSHOT_ID)
+
+    assert facts.name == printing.name
+    assert facts.layout is CardLayout.MODAL_DFC
+    assert facts.completeness is CardFactsCompleteness.PARTIAL
+    assert facts.deferred_semantics == (
+        DeferredCardSemantic.FACE_COLOURS,
+        DeferredCardSemantic.FACE_TYPE_FLAGS,
+    )
+    assert facts.faces[1].colors is None
+    assert facts.faces[1].is_land is None
+    assert facts.faces[1].is_creature is None
 
 
 def test_cache_round_trips_mana_value_and_complete_face_facts(tmp_path: Path) -> None:

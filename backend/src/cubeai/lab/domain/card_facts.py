@@ -30,6 +30,23 @@ class CardLayout(StrEnum):
     ADVENTURE = "adventure"
     TRANSFORM = "transform"
     MODAL_DFC = "modal_dfc"
+    DEFERRED = "deferred"
+
+
+class CardFactsCompleteness(StrEnum):
+    """Whether every structural semantic needed by later projections is known."""
+
+    COMPLETE = "complete"
+    PARTIAL = "partial"
+    DEFERRED = "deferred"
+
+
+class DeferredCardSemantic(StrEnum):
+    """A structural semantic deliberately retained but not normalized yet."""
+
+    LAYOUT = "layout"
+    FACE_COLOURS = "face_colours"
+    FACE_TYPE_FLAGS = "face_type_flags"
 
 
 @dataclass(frozen=True, slots=True)
@@ -38,26 +55,35 @@ class CardFaceFacts:
 
     name: str
     mana_cost: str | None
-    colors: tuple[str, ...]
-    type_line: str
+    colors: tuple[str, ...] | None
+    type_line: str | None
     oracle_text: str | None
     power: str | None
     toughness: str | None
     loyalty: str | None
-    is_land: bool
-    is_creature: bool
+    is_land: bool | None
+    is_creature: bool | None
 
     def __post_init__(self) -> None:
         _require_text(self.name, "name")
-        _require_text(self.type_line, "type_line")
+        if self.type_line is not None:
+            _require_text(self.type_line, "type_line")
         for field in ("mana_cost", "oracle_text", "power", "toughness", "loyalty"):
             value = getattr(self, field)
             if value is not None:
                 _require_text(value, field)
-        object.__setattr__(self, "colors", _validate_colours(self.colors, "colors"))
+        if self.colors is not None:
+            object.__setattr__(
+                self, "colors", _validate_colours(self.colors, "colors")
+            )
         for field in ("is_land", "is_creature"):
-            if not isinstance(getattr(self, field), bool):
-                raise ValueError(f"{field} must be a boolean")
+            value = getattr(self, field)
+            if value is not None and not isinstance(value, bool):
+                raise ValueError(f"{field} must be a boolean or None")
+        if (self.type_line is None) != (self.is_land is None) or (
+            self.type_line is None
+        ) != (self.is_creature is None):
+            raise ValueError("face type flags must be deferred with type_line")
 
 
 @dataclass(frozen=True, slots=True)
@@ -72,6 +98,9 @@ class CardFacts:
     card_identity_id: str
     name: str
     layout: CardLayout
+    provider_layout: str
+    completeness: CardFactsCompleteness
+    deferred_semantics: tuple[DeferredCardSemantic, ...]
     mana_cost: str | None
     mana_value: int
     colors: tuple[str, ...]
@@ -98,6 +127,29 @@ class CardFacts:
             _require_text(getattr(self, field), field)
         if not isinstance(self.layout, CardLayout):
             raise ValueError("layout must be a CardLayout")
+        _require_text(self.provider_layout, "provider_layout")
+        if not isinstance(self.completeness, CardFactsCompleteness):
+            raise ValueError("completeness must be a CardFactsCompleteness")
+        deferred_semantics = tuple(self.deferred_semantics)
+        if any(
+            not isinstance(semantic, DeferredCardSemantic)
+            for semantic in deferred_semantics
+        ) or len(deferred_semantics) != len(set(deferred_semantics)):
+            raise ValueError(
+                "deferred_semantics must contain distinct DeferredCardSemantic values"
+            )
+        if self.layout is CardLayout.DEFERRED:
+            if DeferredCardSemantic.LAYOUT not in deferred_semantics:
+                raise ValueError("deferred layout must identify deferred layout semantics")
+        elif DeferredCardSemantic.LAYOUT in deferred_semantics:
+            raise ValueError("reviewed layout cannot defer layout semantics")
+        if self.completeness is CardFactsCompleteness.COMPLETE and deferred_semantics:
+            raise ValueError("complete CardFacts cannot defer semantics")
+        if self.completeness is CardFactsCompleteness.DEFERRED and (
+            DeferredCardSemantic.LAYOUT not in deferred_semantics
+        ):
+            raise ValueError("deferred CardFacts must defer layout semantics")
+        object.__setattr__(self, "deferred_semantics", deferred_semantics)
         if type(self.mana_value) is not int or self.mana_value < 0:
             raise ValueError("mana_value must be a non-negative integer")
         for field in ("mana_cost", "oracle_text", "power", "toughness", "loyalty"):

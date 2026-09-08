@@ -466,13 +466,13 @@ stated dependencies and further refinement.
 
 ### M2-004 — Add mana curve and color projections
 
-- **Labels/state:** `component::lab`, `component::ui`, `type::feature`, `priority::high`, `agent::supervised`, `BLOCKED`
+- **Labels/state:** `component::lab`, `component::ui`, `type::feature`, `priority::high`, `agent::supervised`, `IN PROGRESS — CardFacts foundation complete; projections/API/UI remain`
 - **Dependencies:** M1-018.
 - **Goal/context:** Show pool shape using documented card-face and land rules.
-- **Scope/out of scope:** Curve, colors, color identity, user inclusion toggles; no castability claim yet.
+- **Scope/out of scope:** The implemented CardFacts foundation records provider-neutral top-level facts and explicit partial/deferred face/layout semantics; remaining scope is curve, colors, color identity, and user inclusion toggles; no castability claim yet.
 - **Acceptance criteria:** Metric definitions are visible and deterministic for modal/multi-face/land fixtures.
 - **Required tests:** Representative card-layout fixtures and UI rendering.
-- **Expected artifacts/areas:** projections/API/UI/tests.
+- **Expected artifacts/areas:** CardFacts foundation ([`docs/M2-004-CARD-FACTS-FOUNDATION.md`](../M2-004-CARD-FACTS-FOUNDATION.md)); remaining projections/API/UI/tests.
 
 ### M2-005 — Model mana requirements and sources
 

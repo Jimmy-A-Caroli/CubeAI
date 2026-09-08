@@ -1,7 +1,13 @@
 """Normalize provider-resolution records into provider-neutral card facts."""
 
 from cubeai.lab.application.metadata import ResolvedPrinting, ScryfallFace
-from cubeai.lab.domain.card_facts import CardFaceFacts, CardFacts, CardLayout
+from cubeai.lab.domain.card_facts import (
+    CardFaceFacts,
+    CardFacts,
+    CardFactsCompleteness,
+    CardLayout,
+    DeferredCardSemantic,
+)
 
 
 class CardFactsNormalizationError(ValueError):
@@ -55,19 +61,18 @@ def card_facts_from_resolved_printing(
         raise CardFactsNormalizationError(
             "resolved printing lacks the type facts required for CardFacts"
         )
-    try:
-        layout = _LAYOUTS[printing.layout]
-    except KeyError as error:
-        raise CardFactsNormalizationError(
-            f"unsupported provider layout for CardFacts: {printing.layout}"
-        ) from error
+    layout = _LAYOUTS.get(printing.layout, CardLayout.DEFERRED)
     faces = tuple(_face_facts(face) for face in printing.faces)
     is_land, is_creature = _type_flags(printing.type_line)
+    deferred_semantics = _deferred_semantics(layout, faces)
     return CardFacts(
         printing_id=printing.printing_id,
         card_identity_id=printing.oracle_id,
         name=printing.name,
         layout=layout,
+        provider_layout=printing.layout,
+        completeness=_completeness(layout, deferred_semantics),
+        deferred_semantics=deferred_semantics,
         mana_cost=printing.mana_cost,
         mana_value=printing.mana_value,
         colors=printing.colors,
@@ -79,18 +84,17 @@ def card_facts_from_resolved_printing(
         loyalty=printing.loyalty,
         is_land=is_land,
         is_creature=is_creature,
-        has_nonland_face=not is_land or any(not face.is_land for face in faces),
+        has_nonland_face=not is_land
+        or any(face.is_land is False for face in faces),
         faces=faces,
         metadata_snapshot_id=metadata_snapshot_id,
     )
 
 
 def _face_facts(face: ScryfallFace) -> CardFaceFacts:
-    if face.type_line is None or face.colors is None:
-        raise CardFactsNormalizationError(
-            f"face {face.name!r} lacks the type or colour facts required for CardFacts"
-        )
-    is_land, is_creature = _type_flags(face.type_line)
+    is_land, is_creature = (
+        _type_flags(face.type_line) if face.type_line is not None else (None, None)
+    )
     return CardFaceFacts(
         name=face.name,
         mana_cost=face.mana_cost,
@@ -103,6 +107,29 @@ def _face_facts(face: ScryfallFace) -> CardFaceFacts:
         is_land=is_land,
         is_creature=is_creature,
     )
+
+
+def _deferred_semantics(
+    layout: CardLayout, faces: tuple[CardFaceFacts, ...]
+) -> tuple[DeferredCardSemantic, ...]:
+    deferred: list[DeferredCardSemantic] = []
+    if layout is CardLayout.DEFERRED:
+        deferred.append(DeferredCardSemantic.LAYOUT)
+    if any(face.colors is None for face in faces):
+        deferred.append(DeferredCardSemantic.FACE_COLOURS)
+    if any(face.type_line is None for face in faces):
+        deferred.append(DeferredCardSemantic.FACE_TYPE_FLAGS)
+    return tuple(deferred)
+
+
+def _completeness(
+    layout: CardLayout, deferred_semantics: tuple[DeferredCardSemantic, ...]
+) -> CardFactsCompleteness:
+    if layout is CardLayout.DEFERRED:
+        return CardFactsCompleteness.DEFERRED
+    if deferred_semantics:
+        return CardFactsCompleteness.PARTIAL
+    return CardFactsCompleteness.COMPLETE
 
 
 def _type_flags(type_line: str) -> tuple[bool, bool]:
