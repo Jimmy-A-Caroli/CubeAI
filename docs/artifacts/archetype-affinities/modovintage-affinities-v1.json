@@ -1,0 +1,10 @@
+{
+  "artifact_type": "cubeai.archetype-affinity-assignment-set",
+  "assignment_set": {
+    "assignments": [],
+    "cube_version_id": "sha256:25eb8419430fc1ef659723c388caf17697c80054fd7e74a7e73fbb9411242c12",
+    "id": "modovintage-affinities-v1",
+    "vocabulary_version": "vintage-cube-archetypes-v0"
+  },
+  "schema_version": 1
+}

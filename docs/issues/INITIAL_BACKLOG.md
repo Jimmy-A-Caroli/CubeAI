@@ -500,7 +500,7 @@ stated dependencies and further refinement.
 
 ### M2-014 — Define the archetype affinity assignment contract
 
-- **Labels/state:** `component::lab`, `type::proposal`, `priority::high`, `human::decision`, `BLOCKED`
+- **Labels/state:** `component::lab`, `type::feature`, `priority::high`, `IN PROGRESS`
 - **Dependencies:** M2-004, M2-006.
 - **Goal/context:** Define a human-reviewable, versioned bridge from an exact
   CubeVersion membership or CardIdentity to one or more approved archetype
@@ -519,9 +519,11 @@ stated dependencies and further refinement.
   conflict cases.
 - **Expected artifacts/areas:** assignment contract, framework-free validator
   and coverage report, synthetic JSON fixture, tests.
-- **Decision gate:** Approve the recommended categorical `none` / `supports` /
-  `strong` review labels and keep their numeric mapping out of the assignment
-  contract and in a future versioned contextual-strategy configuration.
+- **Approved decision:** The categorical scale is `none` / `supports` /
+  `strong`; `UNKNOWN` remains absence of reviewed evidence rather than an
+  affinity value. Multiple positive associations are allowed, v1 is
+  non-negative, and numerical category-to-weight mapping stays outside this
+  artifact in a future contextual-strategy configuration.
 
 ### M2-007 — Add explainable draft-fit features
 

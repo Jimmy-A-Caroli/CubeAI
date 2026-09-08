@@ -15,9 +15,11 @@ The Inspector Foundation contract is recorded in
 The bounded all-Bot fast-draft contract is recorded in
 [`docs/M2-013-FAST-DRAFT-EVIDENCE.md`](../M2-013-FAST-DRAFT-EVIDENCE.md).
 M2-010 remains ready as a separate metrics-only analytics consumer. The closed
-M2-006 `vintage-cube-archetypes-v0` vocabulary is accepted, but its separate
-M2-014 affinity-assignment contract still awaits its categorical-scale decision
-and the remaining M2-004 projections/API/UI dependency. The CardFacts
+M2-006 `vintage-cube-archetypes-v0` vocabulary is accepted. Its separate
+M2-014 affinity-assignment contract has an approved categorical scale and an
+exact-version all-UNKNOWN curation baseline; it awaits reviewed card
+associations. The remaining M2-004 projections/API/UI dependency also remains.
+The CardFacts
 foundation is implemented, including explicit partial/deferred face and layout
 semantics, but it is not a mana-curve or color-distribution implementation.
 Other later
@@ -74,7 +76,7 @@ Make a draft understandable during and after play while preserving the distincti
 | M2-004 | Add mana curve and color-distribution projections | M1-018 | IN PROGRESS — CardFacts foundation complete; projections/API/UI remain |
 | M2-005 | Define mana-requirement and source-count model | M2-004 | BLOCKED |
 | M2-006 | Define versioned archetype/tag vocabulary | M1-007 | COMPLETE |
-| M2-014 | Define archetype affinity assignment contract | M2-004, M2-006 | BLOCKED — categorical-scale decision and reviewed assignment set remain |
+| M2-014 | Define archetype affinity assignment contract | M2-004, M2-006 | IN PROGRESS — scale approved; first exact-version baseline has zero reviewed associations |
 | M2-007 | Add explainable draft-fit feature scores | M2-004, M2-006, M2-014 | BLOCKED |
 | M2-008 | Build post-draft Draft Inspector and timeline review | M2-001, M2-007 | BLOCKED |
 | M2-009 | Define provenance-aware pick metric schemas | M2-001 | COMPLETE |

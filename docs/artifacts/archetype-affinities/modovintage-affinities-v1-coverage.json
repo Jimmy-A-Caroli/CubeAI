@@ -1,0 +1,33 @@
+{
+  "assignment_set_id": "modovintage-affinities-v1",
+  "coverage": {
+    "ambiguous_reviewed_memberships": 0,
+    "assignments_by_provenance": {
+      "curator_defined": 0,
+      "human_annotated": 0,
+      "model_inferred": 0,
+      "rule_derived": 0,
+      "source_provided": 0
+    },
+    "explicit_none_assignments": 0,
+    "multi_archetype_memberships": 0,
+    "reviewed_memberships": 0,
+    "reviewed_positive_memberships_by_archetype": {
+      "aggro": 0,
+      "artifacts": 0,
+      "control": 0,
+      "midrange": 0,
+      "ramp": 0,
+      "reanimator": 0
+    },
+    "total_memberships": 540,
+    "unknown_unreviewed_memberships": 540
+  },
+  "cube_version_id": "sha256:25eb8419430fc1ef659723c388caf17697c80054fd7e74a7e73fbb9411242c12",
+  "membership_resolution": {
+    "resolved_card_identities": 240,
+    "total": 540,
+    "unresolved_or_custom": 300
+  },
+  "vocabulary_version": "vintage-cube-archetypes-v0"
+}

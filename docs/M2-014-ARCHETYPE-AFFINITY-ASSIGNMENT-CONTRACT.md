@@ -1,8 +1,11 @@
 # M2-014 Archetype Affinity Assignment Contract
 
-**Status:** READY FOR HUMAN DECISION on the proposed categorical affinity
-scale; validation and coverage machinery are implemented but no real Cube
-assignment set is accepted.
+**Status:** APPROVED. The categorical v1 labels are `none`, `supports`, and
+`strong`; `unknown` remains an unreviewed state rather than a serialized
+affinity. Numeric weights remain outside this artifact in a future contextual
+strategy configuration. The first exact-version baseline is recorded under
+[`docs/artifacts/archetype-affinities/`](artifacts/archetype-affinities/),
+with no active card associations until a curator or human review supplies one.
 
 **Dependencies:** M2-004, M2-006
 
@@ -56,13 +59,14 @@ that evidence remains visible. Coverage reports a membership as ambiguous when
 reviewed records for the same archetype disagree on support level; it never
 chooses an implicit precedence or creates an override.
 
-## Affinity scale: one recommendation requiring approval
+## Approved affinity scale
 
-**Recommended human-facing scale:** categorical `none`, `supports`, and
-`strong`. It is legible in a review diff, avoids false decimal precision, and
-does not force the future strategy to use a particular coefficient. The
-numeric mapping, if any, belongs to a separately versioned contextual strategy
-configuration and is not decided by this contract.
+**Approved human-facing scale:** categorical `none`, `supports`, and `strong`.
+It is legible in a review diff, avoids false decimal precision, and does not
+force the future strategy to use a particular coefficient. `UNKNOWN` means no
+reviewed association and is never serialized as an affinity. A card may have
+multiple positive `supports`/`strong` associations. All v1 affinities are
+non-negative: no anti-archetype category or weight is introduced.
 
 The alternative is a small fixed numeric scale. It would make a future scoring
 implementation superficially shorter, but would prematurely embed scoring
@@ -71,8 +75,22 @@ evidence warrants. Initial affinities are non-negative only: no present
 evidence requires an anti-archetype label, and negative consequences can be
 introduced later as explicit, explainable features.
 
-**Human decision required:** approve the categorical v0 support-level labels
-and defer any numeric mapping to the contextual strategy configuration.
+The numeric mapping, if any, belongs to a separately versioned contextual
+strategy configuration and is not decided by this contract.
+
+## Small human-curation workflow
+
+Run `scripts/prepare_affinity_curation.py` through the locked environment with
+the public identifier, a caller-local state directory, a caller-local worklist,
+and intended artifact/report paths. It imports and freezes one CubeVersion,
+writes the complete source-derived worklist only outside the repository, then
+emits a compact empty assignment artifact and a coverage report for review.
+
+The reviewer uses the local worklist to add only independently reviewed
+`curator_defined` or `human_annotated` records to the artifact. A card remains
+`UNKNOWN` when no conclusion is ready. The reviewer reruns the command/report
+against the exact stored version after editing; no provider tags, Oracle text,
+or generated suggestions enter the artifact.
 
 ## Validation and coverage
 
