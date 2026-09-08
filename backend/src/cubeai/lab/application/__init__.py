@@ -82,6 +82,10 @@ from cubeai.lab.application.draft_sessions import (
     validate_local_cube,
 )
 from cubeai.lab.application.local_imports import LocalCubeImport, import_local_cube
+from cubeai.lab.application.archetype_affinities import (
+    assignment_set_from_json_document,
+    load_assignment_set,
+)
 
 __all__ = (
     "CandidateResolution",
@@ -152,4 +156,6 @@ __all__ = (
     "validate_local_cube",
     "LocalCubeImport",
     "import_local_cube",
+    "assignment_set_from_json_document",
+    "load_assignment_set",
 )
