@@ -8,6 +8,9 @@ from pathlib import Path
 import pytest
 
 from cubeai.lab.application.archetype_affinities import (
+    ASSIGNMENT_ARTIFACT_SCHEMA_VERSION,
+    ASSIGNMENT_ARTIFACT_TYPE,
+    assignment_set_from_artifact,
     assignment_set_from_json_document,
     load_assignment_set,
 )
@@ -70,8 +73,18 @@ def _cube_version() -> CubeVersion:
     )
 
 
-def test_synthetic_assignment_artifact_validates_scope_version_and_coverage() -> None:
-    assignment_set = load_assignment_set(FIXTURE)
+def _artifact_document(assignment_set: object) -> dict[str, object]:
+    return {
+        "artifact_type": ASSIGNMENT_ARTIFACT_TYPE,
+        "schema_version": ASSIGNMENT_ARTIFACT_SCHEMA_VERSION,
+        "assignment_set": assignment_set,
+    }
+
+
+def test_synthetic_assignment_fixture_validates_scope_version_and_coverage() -> None:
+    assignment_set = assignment_set_from_json_document(
+        json.loads(FIXTURE.read_text(encoding="utf-8"))
+    )
     coverage = assignment_coverage(assignment_set, _cube_version())
 
     assert assignment_set.vocabulary_version == "vintage-cube-archetypes-v0"
@@ -110,6 +123,16 @@ def test_unknown_is_absence_of_a_reviewed_assignment_not_explicit_none() -> None
     assert coverage.reviewed_memberships == 0
     assert coverage.unreviewed_memberships == 5
     assert coverage.explicit_none_assignments == 0
+
+
+def test_assignment_set_rejects_an_unaccepted_vocabulary_version() -> None:
+    with pytest.raises(ValueError, match="vocabulary_version"):
+        ArchetypeAffinityAssignmentSet(
+            id="unaccepted-vocabulary",
+            cube_version_id="synthetic-cube-version-1",
+            vocabulary_version="another-vocabulary-v0",
+            assignments=(),
+        )
 
 
 def test_active_assignment_rejects_inactive_provenance() -> None:
@@ -192,10 +215,27 @@ def test_duplicate_records_and_reviewed_conflicts_remain_diagnosable() -> None:
 def test_json_loader_rejects_unknown_keys_and_malformed_json(tmp_path: Path) -> None:
     document = json.loads(FIXTURE.read_text(encoding="utf-8"))
     document["unexpected"] = True
-    with pytest.raises(ValueError, match="document keys"):
+    with pytest.raises(ValueError, match="assignment_set keys"):
         assignment_set_from_json_document(document)
 
-    path = tmp_path / "invalid.json"
-    path.write_text("{", encoding="utf-8")
+    artifact = _artifact_document(json.loads(FIXTURE.read_text(encoding="utf-8")))
+    artifact["fixture_type"] = "cubeai-synthetic"
+    with pytest.raises(ValueError, match="artifact keys"):
+        assignment_set_from_artifact(artifact)
+
+    artifact["artifact_type"] = "wrong-artifact"
+    del artifact["fixture_type"]
+    with pytest.raises(ValueError, match="artifact_type"):
+        assignment_set_from_artifact(artifact)
+
+    path = tmp_path / "assignment-artifact.json"
+    path.write_text(
+        json.dumps(_artifact_document(json.loads(FIXTURE.read_text(encoding="utf-8")))),
+        encoding="utf-8",
+    )
+    assert load_assignment_set(path).id == "synthetic-affinities-v0"
+
+    invalid_path = tmp_path / "invalid.json"
+    invalid_path.write_text("{", encoding="utf-8")
     with pytest.raises(ValueError, match="invalid assignment artifact JSON"):
-        load_assignment_set(path)
+        load_assignment_set(invalid_path)

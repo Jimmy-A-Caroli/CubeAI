@@ -116,6 +116,10 @@ class ArchetypeAffinityAssignmentSet:
     def __post_init__(self) -> None:
         for field in ("id", "cube_version_id", "vocabulary_version"):
             _require_text(getattr(self, field), field)
+        if self.vocabulary_version != VOCABULARY_VERSION_V0:
+            raise ValueError(
+                f"assignment set vocabulary_version must be {VOCABULARY_VERSION_V0!r}"
+            )
         assignments = tuple(self.assignments)
         if any(
             not isinstance(item, ArchetypeAffinityAssignment) for item in assignments

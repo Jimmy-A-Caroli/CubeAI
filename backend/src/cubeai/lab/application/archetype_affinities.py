@@ -15,6 +15,10 @@ from cubeai.lab.domain.archetypes import (
 )
 
 
+ASSIGNMENT_ARTIFACT_TYPE = "cubeai.archetype-affinity-assignment-set"
+ASSIGNMENT_ARTIFACT_SCHEMA_VERSION = 1
+
+
 def _require_mapping(value: object, field: str) -> dict[str, object]:
     if not isinstance(value, dict):
         raise ValueError(f"{field} must be an object")
@@ -34,25 +38,9 @@ def _require_exact_keys(
 def assignment_set_from_json_document(
     document: object,
 ) -> ArchetypeAffinityAssignmentSet:
-    """Parse the intentionally small v1 artifact shape without provider input."""
+    """Parse a bare assignment-set mapping for small synthetic test fixtures."""
 
-    envelope = _require_mapping(document, "document")
-    _require_exact_keys(
-        envelope,
-        frozenset(
-            {
-                "fixture_type",
-                "schema_version",
-                "purpose",
-                "provenance",
-                "assignment_set",
-            }
-        ),
-        "document",
-    )
-    if envelope["schema_version"] != 1:
-        raise ValueError("schema_version must be 1")
-    values = _require_mapping(envelope["assignment_set"], "assignment_set")
+    values = _require_mapping(document, "assignment_set")
     _require_exact_keys(
         values,
         frozenset({"id", "cube_version_id", "vocabulary_version", "assignments"}),
@@ -70,6 +58,26 @@ def assignment_set_from_json_document(
     )
 
 
+def assignment_set_from_artifact(
+    document: object,
+) -> ArchetypeAffinityAssignmentSet:
+    """Parse the versioned envelope required for a reviewable real artifact."""
+
+    envelope = _require_mapping(document, "artifact")
+    _require_exact_keys(
+        envelope,
+        frozenset({"artifact_type", "schema_version", "assignment_set"}),
+        "artifact",
+    )
+    if envelope["artifact_type"] != ASSIGNMENT_ARTIFACT_TYPE:
+        raise ValueError(f"artifact_type must be {ASSIGNMENT_ARTIFACT_TYPE!r}")
+    if envelope["schema_version"] != ASSIGNMENT_ARTIFACT_SCHEMA_VERSION:
+        raise ValueError(
+            f"artifact schema_version must be {ASSIGNMENT_ARTIFACT_SCHEMA_VERSION}"
+        )
+    return assignment_set_from_json_document(envelope["assignment_set"])
+
+
 def load_assignment_set(path: Path) -> ArchetypeAffinityAssignmentSet:
     """Load a local review artifact; callers still validate it against a CubeVersion."""
 
@@ -79,7 +87,7 @@ def load_assignment_set(path: Path) -> ArchetypeAffinityAssignmentSet:
         raise ValueError(f"unable to read assignment artifact: {path}") from error
     except json.JSONDecodeError as error:
         raise ValueError(f"invalid assignment artifact JSON: {path}") from error
-    return assignment_set_from_json_document(document)
+    return assignment_set_from_artifact(document)
 
 
 def _assignment_from_json(value: object) -> ArchetypeAffinityAssignment:
