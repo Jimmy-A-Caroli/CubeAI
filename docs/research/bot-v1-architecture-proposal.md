@@ -1,8 +1,9 @@
 # Bot v1 Architecture Proposal: Contextual, Deterministic, Explainable
 
-**Status: READY FOR HUMAN DECISION.** This is an implementation-ready
-conceptual proposal only. It does not accept M2-004/M2-006, implement a Bot,
-authorise external data, or alter Bot v0.
+**Status: ARCHITECTURE DIRECTION ACCEPTED; IMPLEMENTATION STILL BLOCKED.**
+The human accepted Option B, the M2-004 CardFacts semantics, and the M2-006 v0
+vocabulary on 2026-09-08. This proposal does not implement a Bot, authorise
+external data, or alter Bot v0.
 
 ## Recommendation
 
@@ -34,15 +35,17 @@ M1-018
   │                       ├─ M2-003 local tracking
   │                       ├─ M2-009 factual metrics ── M2-010 analytics views (READY)
   │                       └─ M2-012 factual Inspector ── M2-011 human review
-  └─ M2-004 CardFacts (BLOCKED; decision-ready proposal exists only on a research branch)
+  └─ M2-004 CardFacts foundation (COMPLETE; projections/API/UI remain)
 
-M1-007 ── M2-006 vocabulary (BLOCKED in canonical backlog; decision-ready proposal exists only on a research branch)
-M2-004 + M2-006 ── M2-007 explainable draft-fit ── M2-008 full Inspector
+M1-007 ── M2-006 vocabulary (COMPLETE: vintage-cube-archetypes-v0)
+M2-004 + M2-006 ── M2-014 affinity contract (awaits categorical-scale decision and reviewed set)
+M2-004 + M2-006 + M2-014 ── M2-007 explainable draft-fit ── M2-008 full Inspector
 ```
 
-M2-004 and M2-006 are therefore design prerequisites, not current production
-inputs. M2-007's planned user-facing draft-fit score is a separate scope from
-this Bot strategy proposal and must not be silently satisfied by it.
+M2-004's normalized facts and M2-006's vocabulary are now accepted foundations,
+but neither supplies active card-to-archetype assignments. M2-007's planned
+user-facing draft-fit score remains a separate scope and must not be silently
+satisfied by this Bot strategy proposal.
 
 ## Options considered
 
@@ -201,15 +204,13 @@ exist.
 | M2-002 wheels | future, seat-visible experiment only | signal semantics/calibration |
 | M2-009 metrics | factual population filters and later reporting | analytics views / comparison contract |
 | Inspector + Human Review | explain/debrief/calibration | candidate-ledger Inspector projection; annotation aggregate proposal |
-| M2-004 CardFacts proposal | future factual classifiers | human approval, fixtures, implementation |
-| M2-006 vocabulary proposal | required reviewed affinities | human approval, assignment set, versioning, fixtures |
+| M2-004 CardFacts foundation | future factual classifiers | projections/API/UI, not new factual identity rules |
+| M2-006 vocabulary contract | required reviewed affinities | M2-014 categorical-scale decision and reviewed assignment set |
 
-The present blocker is not a missing neural model. It is accepting and
-implementing trustworthy, versioned Cube-specific facts/vocabulary and a
-candidate-provenance contract. M2-004 and M2-006 remain blocked in the
-canonical backlog; decision-ready proposals for both exist only on the current
-research branch and have not been accepted. Bot v1 should therefore not begin
-until an approved successor issue makes those dependencies explicit.
+The present blocker is not a missing neural model. It is the M2-014
+categorical-affinity decision and a reviewed exact-CubeVersion assignment set,
+followed by a contextual-scoring and candidate-ledger contract. Bot v1 must not
+begin until those successor issues are approved.
 
 ## Deferred experimental track (v1.1 or later)
 
@@ -223,15 +224,13 @@ until an approved successor issue makes those dependencies explicit.
 
 ## Human decisions required
 
-1. Accept or revise the M2-004 facts and M2-006 vocabulary/assignment decision
-   gates before authorizing a Bot v1 issue.
-2. Accept Option B as the architecture direction, including a versioned
-   candidate-ledger rather than selected-score-only provenance.
-3. Choose the calibration corpus/reviewer process and promotion threshold after
+1. Approve or revise the recommended categorical affinity labels (`none`,
+   `supports`, `strong`); numeric mapping stays in a later strategy config.
+2. Choose the calibration corpus/reviewer process and promotion threshold after
    a representative local review set exists; do not make annotations training
    data by default.
 
 ## Next action
 
-**Approve or revise this Option B proposal and the prerequisite M2-004/M2-006
-decision gates; do not begin Bot v1 implementation until then.**
+**Approve or revise the M2-014 categorical affinity scale; do not begin Bot v1
+implementation until an exact-CubeVersion reviewed assignment set exists.**
