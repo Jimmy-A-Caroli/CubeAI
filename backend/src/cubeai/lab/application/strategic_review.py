@@ -18,7 +18,6 @@ from cubeai.lab.application.strategic_curation import (
 )
 from cubeai.lab.application.strategic_proposals import (
     StrategicProposalSet,
-    validate_proposal_set,
 )
 from cubeai.lab.domain.archetypes import (
     AffinitySupportLevel,
@@ -213,7 +212,14 @@ class StrategicReviewService:
 
     def _validate_version(self, cube_version: CubeVersion) -> None:
         try:
-            validate_proposal_set(self.proposal_set, cube_version)
+            membership_ids = {card.id for card in cube_version.cards}
+            if any(
+                proposal["target_id"] not in membership_ids
+                for proposal in self.proposal_set.proposals
+            ):
+                raise StrategicReviewError(
+                    "proposal targets a membership absent from the current CubeVersion"
+                )
         except ValueError as error:
             raise StrategicReviewError(str(error)) from error
         try:
@@ -235,9 +241,7 @@ class StrategicReviewService:
         if self.initial_assignments is None:
             return ()
         if self.initial_assignments.cube_version_id != cube_version.id:
-            raise StrategicReviewError(
-                "initial reviewed artifact is for another CubeVersion"
-            )
+            return self.initial_assignments.assignments
         return self.initial_assignments.assignments
 
     @staticmethod

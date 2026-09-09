@@ -167,6 +167,15 @@ class SQLiteDraftRepository:
         with self._connect() as connection:
             return self._load_cube_version(connection, cube_version_id)
 
+    def load_current_cube_version(self) -> CubeVersion | None:
+        with self._connect() as connection:
+            for row in connection.execute(
+                "SELECT payload FROM cube_versions ORDER BY rowid DESC"
+            ).fetchall():
+                version = _cube_version_from_payload(_decode(row["payload"]))
+                return version
+        return None
+
     def load_draft(self, draft_id: str) -> DraftState | None:
         if not isinstance(draft_id, str) or not draft_id.strip():
             raise ValueError("draft_id must be a nonblank string")

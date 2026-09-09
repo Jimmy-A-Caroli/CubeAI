@@ -423,7 +423,8 @@ def create_application(services: LocalApiServices) -> FastAPI:
                     "detail": "proposal set or vocabulary version is not current",
                 },
             )
-        if request.cube_version_id != service.proposal_set.cube_version_id:
+        version = _strategic_review_version(services, service)
+        if request.cube_version_id != version.id:
             raise HTTPException(
                 status_code=409,
                 detail={
@@ -431,7 +432,6 @@ def create_application(services: LocalApiServices) -> FastAPI:
                     "detail": "CubeVersion is not the fixed review version",
                 },
             )
-        version = _strategic_review_version(services, service)
         try:
             return service.submit(
                 version,
@@ -717,9 +717,7 @@ def _required_strategic_review_service(
 def _strategic_review_version(
     services: LocalApiServices, service: StrategicReviewService
 ) -> CubeVersion:
-    version = services.repository.load_cube_version(
-        service.proposal_set.cube_version_id
-    )
+    version = services.repository.load_current_cube_version()
     if version is None:
         raise HTTPException(
             status_code=409,
