@@ -685,7 +685,7 @@ def create_default_application(state_directory: Path) -> FastAPI:
         load_assignment_set(
             artifact_root
             / "strategic-affinities"
-            / "modovintage-strategic-proposals-v1-2026-09-09-reviewed-5fc9a024f7cd.json"
+            / "modovintage-strategic-proposals-v1-2026-09-09-reviewed-9d77d5e8e1f6.json"
         ),
     )
     return create_application(

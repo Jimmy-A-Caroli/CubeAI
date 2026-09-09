@@ -98,7 +98,7 @@ describe('StrategicCurationPage', () => {
       window.localStorage.getItem(
         'cubeai.strategic-curation.draft.v1:version-1:proposals-1',
       ),
-    ).toBeNull();
+    ).toContain('none');
     view.unmount();
   });
 

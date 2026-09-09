@@ -191,10 +191,8 @@ export default function StrategicCurationPage({
       const result = await api.submit(session, submitted);
       download(result.assignment_artifact, result.artifact_filename);
       download(result.coverage_report, result.coverage_filename);
-      window.localStorage.removeItem(draftKey(session));
-      setDecisions({});
       setNotice(
-        `${result.reviewed_count} reviewed assignments; ${result.unknown_remaining} memberships remain UNKNOWN. Both JSON artifacts were downloaded.`,
+        `${result.reviewed_count} reviewed assignments; ${result.unknown_remaining} memberships remain UNKNOWN. Both JSON artifacts were downloaded and this browser draft remains saved.`,
       );
     } catch (requestError) {
       setError(
