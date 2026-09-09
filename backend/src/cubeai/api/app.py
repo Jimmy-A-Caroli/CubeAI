@@ -46,6 +46,12 @@ from cubeai.lab.application.imports import CubeSource, ImportResult
 from cubeai.lab.application.metadata import MetadataResolver, ResolvedPrinting
 from cubeai.lab.application.repositories import DraftRepository
 from cubeai.lab.application.ratings import load_raw_ranking_v0_artifact
+from cubeai.lab.application.strategic_proposals import load_proposal_set
+from cubeai.lab.application.strategic_review import (
+    StrategicReviewDecision,
+    StrategicReviewError,
+    StrategicReviewService,
+)
 from cubeai.lab.domain.bot import BotStrategy, RawRankingStrategyV0
 from cubeai.lab.domain.cube import CubeCard, CubeVersion
 from cubeai.lab.domain.draft import (
@@ -280,6 +286,21 @@ class DraftTrackingDto(_Dto):
     tracked_card_instance_ids: list[str]
 
 
+class StrategicReviewDecisionDto(_Dto):
+    target_id: str = Field(min_length=1)
+    identity_scope: str = Field(min_length=1)
+    target_type: str = Field(min_length=1)
+    target: str = Field(min_length=1)
+    support_level: str = Field(min_length=1)
+
+
+class StrategicReviewSubmissionDto(_Dto):
+    cube_version_id: str = Field(min_length=1)
+    vocabulary_version: str = Field(min_length=1)
+    proposal_set_id: str = Field(min_length=1)
+    decisions: list[StrategicReviewDecisionDto]
+
+
 @dataclass(frozen=True, slots=True)
 class LocalApiServices:
     repository: DraftRepository
@@ -287,6 +308,7 @@ class LocalApiServices:
     resolver: MetadataResolver
     strategy: RawRankingStrategyV0
     metadata_lookup: CardMetadataLookup | None = None
+    strategic_review: StrategicReviewService | None = None
 
 
 def create_application(services: LocalApiServices) -> FastAPI:
@@ -367,6 +389,67 @@ def create_application(services: LocalApiServices) -> FastAPI:
             cube_name=version.cube.name,
             membership_count=len(version.cards),
         )
+
+    @app.get("/v1/strategic-curation", response_model=dict[str, object])
+    def strategic_curation_session() -> dict[str, object]:
+        service = _required_strategic_review_service(services)
+        version = _strategic_review_version(services, service)
+        try:
+            return service.session_document(version, services.metadata_lookup)
+        except StrategicReviewError as error:
+            raise HTTPException(
+                status_code=409,
+                detail={"code": "STRATEGIC_CURATION_UNAVAILABLE", "detail": str(error)},
+            ) from error
+
+    @app.post(
+        "/v1/strategic-curation/submissions",
+        response_model=dict[str, object],
+        status_code=201,
+    )
+    def submit_strategic_curation(
+        request: StrategicReviewSubmissionDto,
+    ) -> dict[str, object]:
+        service = _required_strategic_review_service(services)
+        if (
+            request.proposal_set_id != service.proposal_set.id
+            or request.vocabulary_version != service.proposal_set.vocabulary_version
+        ):
+            raise HTTPException(
+                status_code=409,
+                detail={
+                    "code": "STRATEGIC_CURATION_STALE",
+                    "detail": "proposal set or vocabulary version is not current",
+                },
+            )
+        if request.cube_version_id != service.proposal_set.cube_version_id:
+            raise HTTPException(
+                status_code=409,
+                detail={
+                    "code": "STRATEGIC_CURATION_STALE",
+                    "detail": "CubeVersion is not the fixed review version",
+                },
+            )
+        version = _strategic_review_version(services, service)
+        try:
+            return service.submit(
+                version,
+                tuple(
+                    StrategicReviewDecision(
+                        item.target_id,
+                        item.identity_scope,
+                        item.target_type,
+                        item.target,
+                        item.support_level,
+                    )
+                    for item in request.decisions
+                ),
+            )
+        except StrategicReviewError as error:
+            raise HTTPException(
+                status_code=409,
+                detail={"code": "STRATEGIC_CURATION_INVALID", "detail": str(error)},
+            ) from error
 
     @app.post(
         "/v1/cube-versions/{cube_version_id}/validation", response_model=ValidationDto
@@ -591,6 +674,14 @@ def create_default_application(state_directory: Path) -> FastAPI:
     resolver = ScryfallMetadataResolver(
         SQLiteScryfallCache(state_directory / "scryfall.sqlite3")
     )
+    artifact_root = Path(__file__).resolve().parents[4] / "docs" / "artifacts"
+    strategic_review = StrategicReviewService(
+        load_proposal_set(
+            artifact_root
+            / "strategic-affinity-proposals"
+            / "modovintage-strategic-proposals-v1-2026-09-09.json"
+        )
+    )
     return create_application(
         LocalApiServices(
             SQLiteDraftRepository(state_directory / "drafts.sqlite3"),
@@ -598,8 +689,40 @@ def create_default_application(state_directory: Path) -> FastAPI:
             resolver,
             RawRankingStrategyV0(load_raw_ranking_v0_artifact()),
             resolver,
+            strategic_review,
         )
     )
+
+
+def _required_strategic_review_service(
+    services: LocalApiServices,
+) -> StrategicReviewService:
+    if services.strategic_review is None:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "code": "STRATEGIC_CURATION_UNAVAILABLE",
+                "detail": "strategic curation is not configured for this local app",
+            },
+        )
+    return services.strategic_review
+
+
+def _strategic_review_version(
+    services: LocalApiServices, service: StrategicReviewService
+) -> CubeVersion:
+    version = services.repository.load_cube_version(
+        service.proposal_set.cube_version_id
+    )
+    if version is None:
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "code": "STRATEGIC_CURATION_UNAVAILABLE",
+                "detail": "import the exact current modovintage CubeVersion before review",
+            },
+        )
+    return version
 
 
 def _required_cube_version(

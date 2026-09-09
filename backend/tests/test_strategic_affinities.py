@@ -15,6 +15,11 @@ from cubeai.lab.application.strategic_proposals import (
     proposal_set_from_artifact,
     validate_proposal_set,
 )
+from cubeai.lab.application.strategic_review import (
+    StrategicReviewDecision,
+    StrategicReviewError,
+    StrategicReviewService,
+)
 from cubeai.lab.domain.archetypes import (
     AffinitySupportLevel,
     AssignmentIdentityScope,
@@ -237,3 +242,84 @@ def test_successor_baseline_keeps_all_memberships_unknown() -> None:
     assert report["coverage"]["reviewed_memberships"] == 0
     assert report["coverage"]["unknown_unreviewed_memberships"] == 2
     assert report["coverage"]["explicit_none_assignments"] == 0
+
+
+def test_human_review_submission_is_deterministic_and_leaves_skipped_unknown() -> None:
+    version = _recovered_version()
+    proposals = proposal_set_from_artifact(
+        {
+            "artifact_type": "cubeai.strategic-affinity-proposal-set",
+            "schema_version": 1,
+            "proposal_set": {
+                "id": "synthetic-proposals",
+                "cube_version_id": version.id,
+                "vocabulary_version": "vintage-cube-strategic-v1",
+                "status": "proposed",
+                "proposed_by": "research",
+                "evidence_sources": [
+                    {
+                        "id": "source",
+                        "kind": "test",
+                        "url": "https://example.test/source",
+                        "published_on": "undated",
+                        "currentness": "test evidence",
+                    }
+                ],
+                "proposals": [
+                    {
+                        "target_id": "member-1",
+                        "identity_scope": "cube_membership",
+                        "target_type": "package",
+                        "target": "reanimator",
+                        "support_level": "strong",
+                        "source_ids": ["source"],
+                        "rationale": "test rationale",
+                    },
+                    {
+                        "target_id": "member-2",
+                        "identity_scope": "cube_membership",
+                        "target_type": "macro_path",
+                        "target": "control",
+                        "support_level": "supports",
+                        "source_ids": ["source"],
+                        "rationale": "test rationale",
+                    },
+                ],
+            },
+        }
+    )
+    service = StrategicReviewService(proposals)
+    result = service.submit(
+        version,
+        (
+            StrategicReviewDecision(
+                "member-1", "cube_membership", "package", "reanimator", "none"
+            ),
+        ),
+    )
+
+    assignment = result["assignment_artifact"]["assignment_set"]["assignments"][0]
+    assert assignment["support_level"] == "none"
+    assert assignment["provenance"] == "human_annotated"
+    assert assignment["review_status"] == "reviewed"
+    assert result["coverage_report"]["coverage"]["unknown_unreviewed_memberships"] == 1
+    assert (
+        service.submit(
+            version,
+            (
+                StrategicReviewDecision(
+                    "member-1", "cube_membership", "package", "reanimator", "none"
+                ),
+            ),
+        )["artifact_filename"]
+        == result["artifact_filename"]
+    )
+    with pytest.raises(StrategicReviewError, match="not in this proposal"):
+        service.submit(
+            version,
+            (
+                StrategicReviewDecision(
+                    "member-1", "cube_membership", "package", "artifacts", "strong"
+                ),
+            ),
+        )

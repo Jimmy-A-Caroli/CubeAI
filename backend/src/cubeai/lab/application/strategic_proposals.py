@@ -32,9 +32,10 @@ def _text(value: object, field: str) -> str:
 
 @dataclass(frozen=True, slots=True)
 class StrategicProposalSet:
+    id: str
     cube_version_id: str
     vocabulary_version: str
-    source_ids: frozenset[str]
+    evidence_sources: tuple[dict[str, str], ...]
     proposals: tuple[dict[str, object], ...]
 
 
@@ -122,9 +123,10 @@ def proposal_set_from_artifact(document: object) -> StrategicProposalSet:
         _text(item["rationale"], "proposal.rationale")
         parsed.append(item)
     return StrategicProposalSet(
+        _text(values["id"], "proposal_set.id"),
         cube_version_id,
         STRATEGIC_VOCABULARY_VERSION_V1,
-        frozenset(source_ids),
+        tuple(cast(dict[str, str], item) for item in sources),
         tuple(parsed),
     )
 

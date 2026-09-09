@@ -1,0 +1,69 @@
+.curation {
+  display: grid;
+  gap: 1rem;
+}
+.curation__filters {
+  align-items: end;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.curation__filters label {
+  display: grid;
+  gap: 0.35rem;
+}
+.curation__filters select,
+.curation-card button {
+  min-height: 2.5rem;
+}
+.curation__list {
+  display: grid;
+  gap: 1rem;
+}
+.curation-card {
+  background: #151d2b;
+  border: 1px solid #33435e;
+  border-radius: 0.7rem;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: minmax(9rem, 14rem) 1fr;
+  padding: 1rem;
+}
+.curation-card .card-art {
+  width: 100%;
+}
+.curation-card h2,
+.curation-card h3,
+.curation-card p {
+  margin: 0.3rem 0;
+}
+.curation-card fieldset {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-top: 0.7rem;
+}
+.curation-card fieldset label {
+  align-items: center;
+  display: flex;
+  gap: 0.25rem;
+  min-height: 2.5rem;
+}
+.curation-card a {
+  margin-right: 0.7rem;
+}
+.curation__notice {
+  min-height: 1.5rem;
+}
+.curation__submit {
+  justify-self: start;
+  min-height: 2.75rem;
+}
+@media (max-width: 42rem) {
+  .curation-card {
+    grid-template-columns: 1fr;
+  }
+  .curation-card .card-art {
+    max-width: 17rem;
+  }
+}
