@@ -1,0 +1,10 @@
+{
+  "artifact_type": "cubeai.strategic-affinity-assignment-set",
+  "schema_version": 1,
+  "assignment_set": {
+    "id": "modovintage-strategic-affinities-v1",
+    "cube_version_id": "sha256:25eb8419430fc1ef659723c388caf17697c80054fd7e74a7e73fbb9411242c12",
+    "vocabulary_version": "vintage-cube-strategic-v1",
+    "assignments": []
+  }
+}

@@ -7,6 +7,11 @@ strategy configuration. The first exact-version baseline is recorded under
 [`docs/artifacts/archetype-affinities/`](artifacts/archetype-affinities/),
 with no active card associations until a curator or human review supplies one.
 
+The accepted v1 successor keeps the v0 artifact immutable and uses explicit
+`macro_path` and `package` target types. See
+[`M2-015 Strategic Vocabulary Contract`](M2-015-STRATEGIC-VOCABULARY-CONTRACT.md)
+and its separate all-UNKNOWN artifact.
+
 **Dependencies:** M2-004, M2-006
 
 ## Purpose and non-goals

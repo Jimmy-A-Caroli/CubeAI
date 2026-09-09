@@ -1,8 +1,8 @@
 # Proposal: Roles, Macro Paths, and Packages for Vintage Cube
 
-**Status:** READY FOR HUMAN DECISION. This is a semantic proposal only. It
-does not change `vintage-cube-archetypes-v0`, M2-014 validation, the all-
-`UNKNOWN` artifact, or Bot v0.
+**Status:** ACCEPTED on 2026-09-09. The approved contract is recorded in
+[`M2-015 Strategic Vocabulary Contract`](../M2-015-STRATEGIC-VOCABULARY-CONTRACT.md).
+This proposal remains the supporting decision record; it does not alter Bot v0.
 
 ## Problem
 
@@ -73,16 +73,12 @@ This keeps the expected workload sparse: macro review is broad but finite;
 package review focuses on cards with a credible evidence lead. It does not
 pretend every card needs every package decision up front.
 
-## Human decisions needed
+## Deferred decision
 
-1. Approve or reject Model C and the proposed small v1 macro/package keys.
-2. If approved, decide whether `spell-combo` needs a later dedicated package
-   refinement after an exact-version evidence review, rather than adding one
-   prematurely.
+Whether a future exact-version evidence review warrants a dedicated
+`spell-combo` package remains deferred. It is not needed for current curation.
 
 ## Proposed backlog follow-up
 
-Create a **proposed** successor issue, M2-015: “Define a versioned Vintage Cube
-macro-path and package vocabulary plus M2-014 migration contract.” It depends
-on this decision and a complete exact-version membership capture. It must not
-implement scoring, modify Bot v0, or populate affinities.
+M2-015 is complete. A later successor, if evidence warrants one, may consider
+an additional narrow package without changing this v1 contract in place.

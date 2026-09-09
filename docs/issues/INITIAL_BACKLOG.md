@@ -527,7 +527,7 @@ stated dependencies and further refinement.
 
 ### M2-015 — Propose a Vintage Cube macro-path and package vocabulary
 
-- **Labels/state:** `component::lab`, `type::proposal`, `priority::high`, `human::decision`, `PROPOSED`
+- **Labels/state:** `component::lab`, `type::proposal`, `priority::high`, `COMPLETE`
 - **Dependencies:** M2-006, M2-014, and a complete enough exact-version
   membership capture for curation.
 - **Goal/context:** Decide whether the next Vintage Cube vocabulary should
@@ -537,8 +537,10 @@ stated dependencies and further refinement.
   assignment-contract implications only; no active assignments, automatic
   classification, source-tag activation, Bot scoring, Inspector changes, or
   API/UI implementation.
-- **Completion evidence:** Human decision on
-  [`Vintage Cube Strategic Vocabulary Proposal`](../research/vintage-cube-strategic-vocabulary-proposal.md).
+- **Completion evidence:** Human approval of Model C on 2026-09-09; the
+  [M2-015 Strategic Vocabulary Contract](../M2-015-STRATEGIC-VOCABULARY-CONTRACT.md)
+  records the separate `macro_path`/`package` target types, the approved keys,
+  v0 preservation, and v1 baseline migration.
 
 ### M2-007 — Add explainable draft-fit features
 
