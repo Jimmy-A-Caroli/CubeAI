@@ -1,0 +1,236 @@
+{
+  "artifact_type": "cubeai.strategic-affinity-assignment-set",
+  "schema_version": 1,
+  "assignment_set": {
+    "id": "modovintage-strategic-proposals-v1-2026-09-09-reviewed-5fc9a024f7cd",
+    "cube_version_id": "sha256:17a9b63fd0a596760fa1205b24b93216e89e899811f7e4c105ea4e3ca3acac70",
+    "vocabulary_version": "vintage-cube-strategic-v1",
+    "assignments": [
+      {
+        "target_id": "5d2cb3f44153591614458e5d:163",
+        "identity_scope": "cube_membership",
+        "target_type": "package",
+        "target": "reanimator",
+        "support_level": "strong",
+        "provenance": "human_annotated",
+        "review_status": "reviewed"
+      },
+      {
+        "target_id": "5d2cb3f44153591614458e5d:179",
+        "identity_scope": "cube_membership",
+        "target_type": "package",
+        "target": "reanimator",
+        "support_level": "strong",
+        "provenance": "human_annotated",
+        "review_status": "reviewed"
+      },
+      {
+        "target_id": "5d2cb3f44153591614458e5d:196",
+        "identity_scope": "cube_membership",
+        "target_type": "package",
+        "target": "reanimator",
+        "support_level": "strong",
+        "provenance": "human_annotated",
+        "review_status": "reviewed"
+      },
+      {
+        "target_id": "5d2cb3f44153591614458e5d:197",
+        "identity_scope": "cube_membership",
+        "target_type": "package",
+        "target": "reanimator",
+        "support_level": "strong",
+        "provenance": "human_annotated",
+        "review_status": "reviewed"
+      },
+      {
+        "target_id": "5d2cb3f44153591614458e5d:169",
+        "identity_scope": "cube_membership",
+        "target_type": "package",
+        "target": "reanimator",
+        "support_level": "strong",
+        "provenance": "human_annotated",
+        "review_status": "reviewed"
+      },
+      {
+        "target_id": "5d2cb3f44153591614458e5d:159",
+        "identity_scope": "cube_membership",
+        "target_type": "package",
+        "target": "reanimator",
+        "support_level": "strong",
+        "provenance": "human_annotated",
+        "review_status": "reviewed"
+      },
+      {
+        "target_id": "5d2cb3f44153591614458e5d:158",
+        "identity_scope": "cube_membership",
+        "target_type": "package",
+        "target": "reanimator",
+        "support_level": "strong",
+        "provenance": "human_annotated",
+        "review_status": "reviewed"
+      },
+      {
+        "target_id": "5d2cb3f44153591614458e5d:121",
+        "identity_scope": "cube_membership",
+        "target_type": "package",
+        "target": "artifacts",
+        "support_level": "strong",
+        "provenance": "human_annotated",
+        "review_status": "reviewed"
+      },
+      {
+        "target_id": "5d2cb3f44153591614458e5d:82",
+        "identity_scope": "cube_membership",
+        "target_type": "package",
+        "target": "artifacts",
+        "support_level": "strong",
+        "provenance": "human_annotated",
+        "review_status": "reviewed"
+      },
+      {
+        "target_id": "5d2cb3f44153591614458e5d:86",
+        "identity_scope": "cube_membership",
+        "target_type": "package",
+        "target": "artifacts",
+        "support_level": "strong",
+        "provenance": "human_annotated",
+        "review_status": "reviewed"
+      },
+      {
+        "target_id": "5d2cb3f44153591614458e5d:537",
+        "identity_scope": "cube_membership",
+        "target_type": "package",
+        "target": "artifacts",
+        "support_level": "strong",
+        "provenance": "human_annotated",
+        "review_status": "reviewed"
+      },
+      {
+        "target_id": "5d2cb3f44153591614458e5d:4",
+        "identity_scope": "cube_membership",
+        "target_type": "package",
+        "target": "artifacts",
+        "support_level": "supports",
+        "provenance": "human_annotated",
+        "review_status": "reviewed"
+      },
+      {
+        "target_id": "5d2cb3f44153591614458e5d:262",
+        "identity_scope": "cube_membership",
+        "target_type": "package",
+        "target": "cheat_creatures",
+        "support_level": "strong",
+        "provenance": "human_annotated",
+        "review_status": "reviewed"
+      },
+      {
+        "target_id": "5d2cb3f44153591614458e5d:245",
+        "identity_scope": "cube_membership",
+        "target_type": "package",
+        "target": "cheat_creatures",
+        "support_level": "strong",
+        "provenance": "human_annotated",
+        "review_status": "reviewed"
+      },
+      {
+        "target_id": "5d2cb3f44153591614458e5d:118",
+        "identity_scope": "cube_membership",
+        "target_type": "package",
+        "target": "cheat_creatures",
+        "support_level": "strong",
+        "provenance": "human_annotated",
+        "review_status": "reviewed"
+      },
+      {
+        "target_id": "5d2cb3f44153591614458e5d:312",
+        "identity_scope": "cube_membership",
+        "target_type": "package",
+        "target": "cheat_creatures",
+        "support_level": "strong",
+        "provenance": "human_annotated",
+        "review_status": "reviewed"
+      },
+      {
+        "target_id": "5d2cb3f44153591614458e5d:314",
+        "identity_scope": "cube_membership",
+        "target_type": "package",
+        "target": "cheat_creatures",
+        "support_level": "supports",
+        "provenance": "human_annotated",
+        "review_status": "reviewed"
+      },
+      {
+        "target_id": "5d2cb3f44153591614458e5d:262",
+        "identity_scope": "cube_membership",
+        "target_type": "package",
+        "target": "reanimator",
+        "support_level": "supports",
+        "provenance": "human_annotated",
+        "review_status": "reviewed"
+      },
+      {
+        "target_id": "5d2cb3f44153591614458e5d:238",
+        "identity_scope": "cube_membership",
+        "target_type": "macro_path",
+        "target": "aggro",
+        "support_level": "strong",
+        "provenance": "human_annotated",
+        "review_status": "reviewed"
+      },
+      {
+        "target_id": "5d2cb3f44153591614458e5d:248",
+        "identity_scope": "cube_membership",
+        "target_type": "macro_path",
+        "target": "aggro",
+        "support_level": "strong",
+        "provenance": "human_annotated",
+        "review_status": "reviewed"
+      },
+      {
+        "target_id": "5d2cb3f44153591614458e5d:39",
+        "identity_scope": "cube_membership",
+        "target_type": "macro_path",
+        "target": "aggro",
+        "support_level": "supports",
+        "provenance": "human_annotated",
+        "review_status": "reviewed"
+      },
+      {
+        "target_id": "5d2cb3f44153591614458e5d:50",
+        "identity_scope": "cube_membership",
+        "target_type": "macro_path",
+        "target": "control",
+        "support_level": "strong",
+        "provenance": "human_annotated",
+        "review_status": "reviewed"
+      },
+      {
+        "target_id": "5d2cb3f44153591614458e5d:99",
+        "identity_scope": "cube_membership",
+        "target_type": "macro_path",
+        "target": "control",
+        "support_level": "strong",
+        "provenance": "human_annotated",
+        "review_status": "reviewed"
+      },
+      {
+        "target_id": "5d2cb3f44153591614458e5d:537",
+        "identity_scope": "cube_membership",
+        "target_type": "macro_path",
+        "target": "big_mana",
+        "support_level": "supports",
+        "provenance": "human_annotated",
+        "review_status": "reviewed"
+      },
+      {
+        "target_id": "5d2cb3f44153591614458e5d:312",
+        "identity_scope": "cube_membership",
+        "target_type": "macro_path",
+        "target": "big_mana",
+        "support_level": "supports",
+        "provenance": "human_annotated",
+        "review_status": "reviewed"
+      }
+    ]
+  }
+}
