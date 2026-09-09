@@ -362,6 +362,53 @@ def test_collection_not_found_remains_explicit_and_does_not_fallback(
     assert result.printing is None
 
 
+def test_malformed_record_does_not_poison_other_exact_records_in_its_batch(
+    tmp_path: Path,
+) -> None:
+    response = _fixture_document()
+    bad_printing_id = "22222222-2222-4222-8222-222222222222"
+    malformed = dict(response["data"][0])
+    malformed["id"] = bad_printing_id
+    malformed["cmc"] = 0.5
+    response["data"].append(malformed)
+    resolver, _, _ = _resolver(tmp_path, [FakeResponse(200, _body(response))])
+
+    resolved, failed = resolver.resolve(
+        (
+            _candidate("valid"),
+            _candidate("malformed", printing_id=bad_printing_id),
+        )
+    ).resolutions
+
+    assert resolved.outcome is MetadataResolutionOutcome.RESOLVED
+    assert failed.outcome is MetadataResolutionOutcome.PROVIDER_CONTRACT_FAILURE
+    assert [diagnostic.code for diagnostic in failed.diagnostics] == [
+        MetadataDiagnosticCode.PROVIDER_RECORD_CONTRACT_FAILURE
+    ]
+    assert "cmc" in failed.diagnostics[0].message
+
+
+def test_face_with_null_provider_colors_preserves_optional_face_semantics(
+    tmp_path: Path,
+) -> None:
+    response = _fixture_document()
+    response["data"][0]["card_faces"] = [
+        {
+            "name": "Synthetic Face",
+            "oracle_id": ORACLE_ID,
+            "colors": None,
+            "type_line": "Artifact",
+        }
+    ]
+    resolver, _, _ = _resolver(tmp_path, [FakeResponse(200, _body(response))])
+
+    result = resolver.resolve((_candidate(),)).resolutions[0]
+
+    assert result.outcome is MetadataResolutionOutcome.RESOLVED
+    assert result.printing is not None
+    assert result.printing.faces[0].colors is None
+
+
 @pytest.mark.parametrize(
     "response",
     [

@@ -328,6 +328,7 @@ class SQLiteScryfallCache:
 class _CollectionLookup:
     printings: Mapping[str, ResolvedPrinting]
     not_found: frozenset[str]
+    record_failures: Mapping[str, MetadataDiagnostic]
     failure: MetadataResolutionOutcome | None = None
 
 
@@ -400,6 +401,13 @@ class ScryfallMetadataResolver:
                     for candidate in candidates_for_reference:
                         resolved[candidate.membership_key] = MetadataResolution(
                             candidate, lookup.failure
+                        )
+                elif reference in lookup.record_failures:
+                    for candidate in candidates_for_reference:
+                        resolved[candidate.membership_key] = MetadataResolution(
+                            candidate,
+                            MetadataResolutionOutcome.PROVIDER_CONTRACT_FAILURE,
+                            diagnostics=(lookup.record_failures[reference],),
                         )
                 elif reference in lookup.not_found:
                     for candidate in candidates_for_reference:
@@ -513,12 +521,12 @@ class ScryfallMetadataResolver:
         )
         document = self._request_json(request)
         if isinstance(document, MetadataResolutionOutcome):
-            return _CollectionLookup({}, frozenset(), document)
+            return _CollectionLookup({}, frozenset(), {}, document)
         try:
             return _parse_collection(document, references, self._now())
         except TypeError, ValueError, json.JSONDecodeError:
             return _CollectionLookup(
-                {}, frozenset(), MetadataResolutionOutcome.PROVIDER_CONTRACT_FAILURE
+                {}, frozenset(), {}, MetadataResolutionOutcome.PROVIDER_CONTRACT_FAILURE
             )
 
     def _request_json(
@@ -603,24 +611,44 @@ def _parse_collection(
         raise ValueError("collection response needs data and not_found arrays")
     requested = set(references)
     printings: dict[str, ResolvedPrinting] = {}
+    record_failures: dict[str, MetadataDiagnostic] = {}
     for row in data:
         if not isinstance(row, Mapping):
             raise ValueError("collection data entries must be objects")
-        printing = _parse_printing(row, fetched_at)
-        if printing.printing_id not in requested or printing.printing_id in printings:
+        reference = _normalise_uuid(row.get("id"))
+        if (
+            reference not in requested
+            or reference in printings
+            or reference in record_failures
+        ):
             raise ValueError("collection response returned an unexpected printing ID")
-        printings[printing.printing_id] = printing
+        try:
+            printing = _parse_printing(row, fetched_at)
+        except (TypeError, ValueError) as error:
+            record_failures[reference] = MetadataDiagnostic(
+                MetadataDiagnosticCode.PROVIDER_RECORD_CONTRACT_FAILURE,
+                f"exact provider record could not be parsed: {error}",
+            )
+            continue
+        if printing.printing_id != reference:
+            raise ValueError("collection response returned an inconsistent printing ID")
+        printings[reference] = printing
     missing: set[str] = set()
     for row in not_found:
         if not isinstance(row, Mapping):
             raise ValueError("collection not_found entries must be objects")
         reference = _normalise_uuid(row.get("id"))
-        if reference not in requested or reference in missing or reference in printings:
+        if (
+            reference not in requested
+            or reference in missing
+            or reference in printings
+            or reference in record_failures
+        ):
             raise ValueError("collection response returned an invalid not_found ID")
         missing.add(reference)
-    if set(printings) | missing != requested:
+    if set(printings) | set(record_failures) | missing != requested:
         raise ValueError("collection response omitted a requested printing ID")
-    return _CollectionLookup(printings, frozenset(missing))
+    return _CollectionLookup(printings, frozenset(missing), record_failures)
 
 
 def _parse_printing(
@@ -639,7 +667,11 @@ def _parse_printing(
                 _optional_text(raw_face.get("oracle_id"), "card_faces.oracle_id"),
                 _uri_pairs(raw_face.get("image_uris"), "card_faces.image_uris"),
                 _optional_card_text(raw_face.get("mana_cost"), "card_faces.mana_cost"),
-                _color_codes(raw_face.get("colors"), "card_faces.colors"),
+                (
+                    None
+                    if raw_face.get("colors") is None
+                    else _color_codes(raw_face.get("colors"), "card_faces.colors")
+                ),
                 _require_text(raw_face.get("type_line"), "card_faces.type_line"),
                 _optional_card_text(
                     raw_face.get("oracle_text"), "card_faces.oracle_text"

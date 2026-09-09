@@ -36,6 +36,7 @@ class MetadataResolutionOutcome(StrEnum):
 class MetadataDiagnosticCode(StrEnum):
     ORACLE_ID_MISMATCH = "oracle_id_mismatch"
     FACE_ORACLE_ID_MISMATCH = "face_oracle_id_mismatch"
+    PROVIDER_RECORD_CONTRACT_FAILURE = "provider_record_contract_failure"
 
 
 @dataclass(frozen=True, slots=True)
