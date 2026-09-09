@@ -314,12 +314,12 @@ def test_human_review_submission_is_deterministic_and_leaves_skipped_unknown() -
         )["artifact_filename"]
         == result["artifact_filename"]
     )
-    with pytest.raises(StrategicReviewError, match="not in this proposal"):
+    with pytest.raises(StrategicReviewError, match="not a cube membership"):
         service.submit(
             version,
             (
                 StrategicReviewDecision(
-                    "member-1", "cube_membership", "package", "artifacts", "strong"
+                    "not-a-member", "cube_membership", "package", "artifacts", "strong"
                 ),
             ),
         )

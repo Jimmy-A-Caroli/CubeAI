@@ -35,21 +35,35 @@ function draftKey(session: StrategicCurationSession): string {
 }
 
 function loadDraft(session: StrategicCurationSession): Decisions {
+  const initial: Decisions = Object.fromEntries(
+    session.cards.flatMap((card) =>
+      card.relations.flatMap((relation) =>
+        relation.current_support_level
+          ? [[proposalKey(relation), relation.current_support_level]]
+          : [],
+      ),
+    ),
+  );
   try {
     const raw = window.localStorage.getItem(draftKey(session));
-    if (!raw) return {};
+    if (!raw) return initial;
     const parsed: unknown = JSON.parse(raw);
     if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed))
-      return {};
-    const allowed = new Set(session.proposals.map(proposalKey));
-    return Object.fromEntries(
-      Object.entries(parsed).filter(
-        ([key, value]) =>
-          allowed.has(key) && supportLevels.includes(value as SupportLevel),
-      ),
+      return initial;
+    const allowed = new Set(
+      session.cards.flatMap((card) => card.relations.map(proposalKey)),
     );
+    return {
+      ...initial,
+      ...Object.fromEntries(
+        Object.entries(parsed).filter(
+          ([key, value]) =>
+            allowed.has(key) && supportLevels.includes(value as SupportLevel),
+        ),
+      ),
+    };
   } catch {
-    return {};
+    return initial;
   }
 }
 
@@ -71,6 +85,7 @@ export default function StrategicCurationPage({
   const [decisions, setDecisions] = useState<Decisions>({});
   const [targetFilter, setTargetFilter] = useState('all');
   const [stateFilter, setStateFilter] = useState('all');
+  const [cardIndex, setCardIndex] = useState(0);
   const [notice, setNotice] = useState('');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -102,24 +117,44 @@ export default function StrategicCurationPage({
     window.localStorage.setItem(draftKey(session), JSON.stringify(decisions));
   }, [decisions, session]);
 
-  const filtered = useMemo(
+  const relations = useMemo(
     () =>
-      session?.proposals.filter((proposal) => {
-        const selected = decisions[proposalKey(proposal)] !== undefined;
+      session?.cards.flatMap((card) =>
+        card.relations.map((relation) => ({ ...relation, card: card.card })),
+      ) ?? [],
+    [session],
+  );
+  const filteredCards = useMemo(
+    () =>
+      session?.cards.filter((card) => {
+        const fullyReviewed = card.relations.every(
+          (relation) => decisions[proposalKey(relation)] !== undefined,
+        );
         return (
-          (targetFilter === 'all' || proposal.target === targetFilter) &&
-          (stateFilter === 'all' || (stateFilter === 'reviewed') === selected)
+          (targetFilter === 'all' ||
+            card.relations.some(
+              (relation) => relation.target === targetFilter,
+            )) &&
+          (stateFilter === 'all' ||
+            (stateFilter === 'reviewed'
+              ? fullyReviewed
+              : stateFilter === 'unreviewed'
+                ? !fullyReviewed
+                : true))
         );
       }) ?? [],
     [decisions, session, stateFilter, targetFilter],
   );
   const targets = useMemo(
-    () => [...new Set(session?.proposals.map((item) => item.target) ?? [])],
-    [session],
+    () => [...new Set(relations.map((item) => item.target))],
+    [relations],
   );
   const reviewed = Object.keys(decisions).length;
 
-  const select = (proposal: StrategicProposal, level: SupportLevel | null) => {
+  const select = (
+    proposal: Omit<StrategicProposal, 'card'>,
+    level: SupportLevel | null,
+  ) => {
     const key = proposalKey(proposal);
     setDecisions((previous) => {
       const next = { ...previous };
@@ -138,22 +173,20 @@ export default function StrategicCurationPage({
     if (!session) return;
     setSubmitting(true);
     setError('');
-    const submitted: StrategicDecision[] = session.proposals.flatMap(
-      (proposal) => {
-        const support_level = decisions[proposalKey(proposal)];
-        return support_level
-          ? [
-              {
-                target_id: proposal.target_id,
-                identity_scope: proposal.identity_scope,
-                target_type: proposal.target_type,
-                target: proposal.target,
-                support_level,
-              },
-            ]
-          : [];
-      },
-    );
+    const submitted: StrategicDecision[] = relations.flatMap((proposal) => {
+      const support_level = decisions[proposalKey(proposal)];
+      return support_level
+        ? [
+            {
+              target_id: proposal.target_id,
+              identity_scope: proposal.identity_scope,
+              target_type: proposal.target_type,
+              target: proposal.target,
+              support_level,
+            },
+          ]
+        : [];
+    });
     try {
       const result = await api.submit(session, submitted);
       download(result.assignment_artifact, result.artifact_filename);
@@ -221,13 +254,13 @@ export default function StrategicCurationPage({
             onChange={(event) => setStateFilter(event.target.value)}
           >
             <option value="all">All</option>
-            <option value="unreviewed">Unreviewed</option>
-            <option value="reviewed">Reviewed</option>
+            <option value="unreviewed">Needs review</option>
+            <option value="reviewed">Fully reviewed</option>
           </select>
         </label>
         <p>
-          {reviewed} reviewed / {session.proposals.length - reviewed} unreviewed
-          proposals
+          {reviewed} reviewed / {session.target_cell_count - reviewed} reviewed
+          target cells
         </p>
       </div>
       <p aria-live="polite" className="curation__notice">
@@ -235,82 +268,133 @@ export default function StrategicCurationPage({
       </p>
       {error ? <p role="alert">{error}</p> : null}
       <div className="curation__list">
-        {filtered.map((proposal) => {
-          const key = proposalKey(proposal);
-          const selected = decisions[key];
-          return (
-            <article className="curation-card" key={key}>
-              <CardArt
-                card={{
-                  ...proposal.card,
-                  mana_cost:
-                    proposal.card.mana_value === null
-                      ? null
-                      : `{${proposal.card.mana_value}}`,
-                  oracle_text: null,
-                  power: null,
-                  toughness: null,
-                  loyalty: null,
-                }}
-                compact
-              />
-              <div>
-                <h2>{proposal.card.name}</h2>
-                <CardColours
-                  card={{
-                    ...proposal.card,
-                    mana_cost: null,
-                    oracle_text: null,
-                    power: null,
-                    toughness: null,
-                    loyalty: null,
-                  }}
-                />
-                <p>{proposal.card.type_line}</p>
-                <h3>
-                  {proposal.target_type}: {proposal.target}
-                </h3>
-                <p>
-                  Current proposal:{' '}
-                  <strong>{proposal.proposed_support_level}</strong>
-                </p>
-                <p>{proposal.rationale}</p>
-                <p>
-                  {proposal.evidence_sources.map((source) => (
-                    <a
-                      key={source.id}
-                      href={source.url}
-                      rel="noreferrer"
-                      target="_blank"
-                    >
-                      {source.id}
-                    </a>
-                  ))}
-                </p>
-                <fieldset>
-                  <legend>
-                    Review {proposal.card.name} for {proposal.target}
-                  </legend>
-                  {supportLevels.map((level) => (
-                    <label key={level}>
-                      <input
-                        checked={selected === level}
-                        name={key}
-                        onChange={() => select(proposal, level)}
-                        type="radio"
-                        value={level}
-                      />
-                      {level.toUpperCase()}
-                    </label>
-                  ))}
-                  <button onClick={() => select(proposal, null)} type="button">
-                    Skip / clear
-                  </button>
-                </fieldset>
-              </div>
-            </article>
-          );
-        })}
+        {filteredCards.length === 0 ? (
+          <p>No cards match these filters.</p>
+        ) : (
+          [filteredCards[Math.min(cardIndex, filteredCards.length - 1)]].map(
+            (card) => {
+              const proposal = { ...card.relations[0], card: card.card };
+              return (
+                <article className="curation-card" key={card.target_id}>
+                  <CardArt
+                    card={{
+                      ...proposal.card,
+                      mana_cost:
+                        proposal.card.mana_value === null
+                          ? null
+                          : `{${proposal.card.mana_value}}`,
+                      oracle_text: null,
+                      power: null,
+                      toughness: null,
+                      loyalty: null,
+                    }}
+                    compact
+                  />
+                  <div>
+                    <h2>{proposal.card.name}</h2>
+                    <CardColours
+                      card={{
+                        ...proposal.card,
+                        mana_cost: null,
+                        oracle_text: null,
+                        power: null,
+                        toughness: null,
+                        loyalty: null,
+                      }}
+                    />
+                    <p>{proposal.card.type_line}</p>
+                    {card.relations
+                      .filter(
+                        (relation) =>
+                          targetFilter === 'all' ||
+                          relation.target === targetFilter,
+                      )
+                      .map((relation) => {
+                        const relationKey = proposalKey(relation);
+                        const selected = decisions[relationKey];
+                        return (
+                          <fieldset key={relationKey}>
+                            <legend>
+                              Review {card.card.name} for {relation.target_type}
+                              : {relation.target}
+                            </legend>
+                            {relation.proposed_support_level ? (
+                              <p>
+                                Evidence proposal:{' '}
+                                <strong>
+                                  {relation.proposed_support_level}
+                                </strong>
+                                . {relation.rationale}
+                              </p>
+                            ) : (
+                              <p>
+                                No proposal: make an independent human review.
+                              </p>
+                            )}
+                            {relation.evidence_sources.map((source) => (
+                              <a
+                                key={source.id}
+                                href={source.url}
+                                rel="noreferrer"
+                                target="_blank"
+                              >
+                                {source.id}
+                              </a>
+                            ))}
+                            {supportLevels.map((level) => (
+                              <label key={level}>
+                                <input
+                                  checked={selected === level}
+                                  name={relationKey}
+                                  onChange={() => select(relation, level)}
+                                  type="radio"
+                                  value={level}
+                                />
+                                {level.toUpperCase()}
+                              </label>
+                            ))}
+                            <button
+                              onClick={() => select(relation, null)}
+                              type="button"
+                            >
+                              Skip / clear
+                            </button>
+                          </fieldset>
+                        );
+                      })}
+                  </div>
+                </article>
+              );
+            },
+          )
+        )}
+      </div>
+      <div className="curation__navigation">
+        <button
+          disabled={cardIndex === 0}
+          onClick={() => setCardIndex((value) => Math.max(0, value - 1))}
+          type="button"
+        >
+          Previous card
+        </button>
+        <span>
+          Card{' '}
+          {filteredCards.length === 0
+            ? 0
+            : Math.min(cardIndex + 1, filteredCards.length)}{' '}
+          of {filteredCards.length}
+        </span>
+        <button
+          disabled={cardIndex >= filteredCards.length - 1}
+          onClick={() =>
+            setCardIndex((value) =>
+              Math.min(filteredCards.length - 1, value + 1),
+            )
+          }
+          type="button"
+        >
+          Next card
+        </button>
       </div>
       <button
         className="curation__submit"

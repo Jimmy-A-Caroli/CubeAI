@@ -5,8 +5,9 @@ export type StrategicProposal = {
   identity_scope: 'cube_membership';
   target_type: 'macro_path' | 'package';
   target: string;
-  proposed_support_level: SupportLevel;
-  rationale: string;
+  proposed_support_level: SupportLevel | null;
+  current_support_level: SupportLevel | null;
+  rationale: string | null;
   evidence_sources: Array<{
     id: string;
     kind: string;
@@ -23,11 +24,18 @@ export type StrategicProposal = {
   };
 };
 
+export type StrategicCurationCard = {
+  target_id: string;
+  card: StrategicProposal['card'];
+  relations: Array<Omit<StrategicProposal, 'card'>>;
+};
+
 export type StrategicCurationSession = {
   proposal_set_id: string;
   cube_version_id: string;
   vocabulary_version: string;
-  proposals: StrategicProposal[];
+  target_cell_count: number;
+  cards: StrategicCurationCard[];
 };
 
 export type StrategicDecision = Pick<

@@ -12,23 +12,10 @@ const session: StrategicCurationSession = {
   proposal_set_id: 'proposals-1',
   cube_version_id: 'version-1',
   vocabulary_version: 'vintage-cube-strategic-v1',
-  proposals: [
+  target_cell_count: 8,
+  cards: [
     {
       target_id: 'member-1',
-      identity_scope: 'cube_membership',
-      target_type: 'package',
-      target: 'reanimator',
-      proposed_support_level: 'strong',
-      rationale: 'Explicit evidence.',
-      evidence_sources: [
-        {
-          id: 'guide',
-          kind: 'official',
-          url: 'https://example.test/guide',
-          published_on: 'undated',
-          currentness: 'current',
-        },
-      ],
       card: {
         name: 'Entomb',
         image_url: null,
@@ -36,6 +23,26 @@ const session: StrategicCurationSession = {
         colors: ['B'],
         type_line: 'Instant',
       },
+      relations: [
+        {
+          target_id: 'member-1',
+          identity_scope: 'cube_membership',
+          target_type: 'package',
+          target: 'reanimator',
+          proposed_support_level: 'strong',
+          rationale: 'Explicit evidence.',
+          evidence_sources: [
+            {
+              id: 'guide',
+              kind: 'official',
+              url: 'https://example.test/guide',
+              published_on: 'undated',
+              currentness: 'current',
+            },
+          ],
+          current_support_level: null,
+        },
+      ],
     },
   ],
 };
@@ -80,7 +87,7 @@ describe('StrategicCurationPage', () => {
     );
     fireEvent.click(screen.getByRole('button', { name: 'Skip / clear' }));
     expect(
-      screen.getByText('0 reviewed / 1 unreviewed proposals'),
+      screen.getByText('0 reviewed / 8 reviewed target cells'),
     ).toBeTruthy();
     fireEvent.click(screen.getByLabelText('NONE'));
     fireEvent.click(

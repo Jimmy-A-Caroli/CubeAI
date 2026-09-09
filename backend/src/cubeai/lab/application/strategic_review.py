@@ -56,33 +56,66 @@ class StrategicReviewDecision:
 @dataclass(frozen=True, slots=True)
 class StrategicReviewService:
     proposal_set: StrategicProposalSet
+    initial_assignments: StrategicAffinityAssignmentSet | None = None
 
     def session_document(
         self, cube_version: CubeVersion, metadata_lookup: CardMetadataLookup | None
     ) -> dict[str, object]:
         self._validate_version(cube_version)
-        cards = {card.id: card for card in cube_version.cards}
         sources = {item["id"]: item for item in self.proposal_set.evidence_sources}
-        proposals = []
-        for proposal in self.proposal_set.proposals:
-            card = cards[str(proposal["target_id"])]
+        proposal_by_key = {
+            self._proposal_key(proposal): proposal
+            for proposal in self.proposal_set.proposals
+        }
+        current_by_key = {
+            self._assignment_key(assignment): assignment
+            for assignment in self._initial_assignments(cube_version)
+        }
+        membership_cards = []
+        for card in cube_version.cards:
             printing = (
                 metadata_lookup.lookup_printing(card.printing.id)
                 if metadata_lookup is not None and card.printing is not None
                 else None
             )
-            proposals.append(
+            relations = []
+            for target_type, target in self._targets():
+                key = (
+                    card.id,
+                    AssignmentIdentityScope.CUBE_MEMBERSHIP.value,
+                    target_type.value,
+                    target.value,
+                )
+                proposal = proposal_by_key.get(key)
+                current = current_by_key.get(key)
+                relations.append(
+                    {
+                        "target_id": card.id,
+                        "identity_scope": AssignmentIdentityScope.CUBE_MEMBERSHIP.value,
+                        "target_type": target_type.value,
+                        "target": target.value,
+                        "current_support_level": (
+                            current.support_level.value if current is not None else None
+                        ),
+                        "proposed_support_level": (
+                            proposal["support_level"] if proposal is not None else None
+                        ),
+                        "rationale": proposal["rationale"]
+                        if proposal is not None
+                        else None,
+                        "evidence_sources": (
+                            [
+                                sources[source_id]
+                                for source_id in cast(list[str], proposal["source_ids"])
+                            ]
+                            if proposal is not None
+                            else []
+                        ),
+                    }
+                )
+            membership_cards.append(
                 {
-                    "target_id": proposal["target_id"],
-                    "identity_scope": proposal["identity_scope"],
-                    "target_type": proposal["target_type"],
-                    "target": proposal["target"],
-                    "proposed_support_level": proposal["support_level"],
-                    "rationale": proposal["rationale"],
-                    "evidence_sources": [
-                        sources[source_id]
-                        for source_id in cast(list[str], proposal["source_ids"])
-                    ],
+                    "target_id": card.id,
                     "card": {
                         "name": (
                             printing.name
@@ -100,31 +133,34 @@ class StrategicReviewService:
                         if printing is not None
                         else None,
                     },
+                    "relations": relations,
                 }
             )
         return {
             "proposal_set_id": self.proposal_set.id,
             "cube_version_id": cube_version.id,
             "vocabulary_version": self.proposal_set.vocabulary_version,
-            "proposals": proposals,
+            "target_cell_count": len(membership_cards) * len(self._targets()),
+            "cards": membership_cards,
         }
 
     def submit(
         self, cube_version: CubeVersion, decisions: tuple[StrategicReviewDecision, ...]
     ) -> dict[str, object]:
         self._validate_version(cube_version)
-        proposal_by_key = {
-            self._proposal_key(item): item for item in self.proposal_set.proposals
-        }
+        membership_ids = {card.id for card in cube_version.cards}
         keys = tuple(decision.key() for decision in decisions)
         if len(keys) != len(set(keys)):
             raise StrategicReviewError("submitted decisions must not repeat a target")
         assignments = []
         for decision in decisions:
-            proposal = proposal_by_key.get(decision.key())
-            if proposal is None:
+            if (
+                decision.target_id not in membership_ids
+                or decision.identity_scope
+                != AssignmentIdentityScope.CUBE_MEMBERSHIP.value
+            ):
                 raise StrategicReviewError(
-                    "submitted decision is not in this proposal set"
+                    "submitted decision target is not a cube membership"
                 )
             try:
                 target_type = StrategicTargetType(decision.target_type)
@@ -180,6 +216,37 @@ class StrategicReviewService:
             validate_proposal_set(self.proposal_set, cube_version)
         except ValueError as error:
             raise StrategicReviewError(str(error)) from error
+        try:
+            validate_strategic_assignment_set(
+                StrategicAffinityAssignmentSet(
+                    "initial-strategic-review",
+                    cube_version.id,
+                    self.proposal_set.vocabulary_version,
+                    self._initial_assignments(cube_version),
+                ),
+                cube_version,
+            )
+        except ValueError as error:
+            raise StrategicReviewError(str(error)) from error
+
+    def _initial_assignments(
+        self, cube_version: CubeVersion
+    ) -> tuple[StrategicAffinityAssignment, ...]:
+        if self.initial_assignments is None:
+            return ()
+        if self.initial_assignments.cube_version_id != cube_version.id:
+            raise StrategicReviewError(
+                "initial reviewed artifact is for another CubeVersion"
+            )
+        return self.initial_assignments.assignments
+
+    @staticmethod
+    def _targets() -> tuple[
+        tuple[StrategicTargetType, MacroPathKeyV1 | PackageKeyV1], ...
+    ]:
+        return tuple(
+            (StrategicTargetType.MACRO_PATH, target) for target in MacroPathKeyV1
+        ) + tuple((StrategicTargetType.PACKAGE, target) for target in PackageKeyV1)
 
     @staticmethod
     def _proposal_key(proposal: dict[str, object]) -> tuple[str, str, str, str]:
@@ -188,6 +255,17 @@ class StrategicReviewService:
             str(proposal["identity_scope"]),
             str(proposal["target_type"]),
             str(proposal["target"]),
+        )
+
+    @staticmethod
+    def _assignment_key(
+        assignment: StrategicAffinityAssignment,
+    ) -> tuple[str, str, str, str]:
+        return (
+            assignment.target_id,
+            assignment.identity_scope.value,
+            assignment.target_type.value,
+            assignment.target.value,
         )
 
     @staticmethod

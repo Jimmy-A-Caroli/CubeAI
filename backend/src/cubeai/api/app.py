@@ -46,6 +46,7 @@ from cubeai.lab.application.imports import CubeSource, ImportResult
 from cubeai.lab.application.metadata import MetadataResolver, ResolvedPrinting
 from cubeai.lab.application.repositories import DraftRepository
 from cubeai.lab.application.ratings import load_raw_ranking_v0_artifact
+from cubeai.lab.application.strategic_affinities import load_assignment_set
 from cubeai.lab.application.strategic_proposals import load_proposal_set
 from cubeai.lab.application.strategic_review import (
     StrategicReviewDecision,
@@ -680,7 +681,12 @@ def create_default_application(state_directory: Path) -> FastAPI:
             artifact_root
             / "strategic-affinity-proposals"
             / "modovintage-strategic-proposals-v1-2026-09-09.json"
-        )
+        ),
+        load_assignment_set(
+            artifact_root
+            / "strategic-affinities"
+            / "modovintage-strategic-proposals-v1-2026-09-09-reviewed-5fc9a024f7cd.json"
+        ),
     )
     return create_application(
         LocalApiServices(
