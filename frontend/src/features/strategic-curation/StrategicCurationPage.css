@@ -1,69 +1,284 @@
 .curation {
   display: grid;
-  gap: 1rem;
+  gap: 1.25rem;
+}
+.curation > header {
+  background: linear-gradient(120deg, #1d2140, #151d2b 70%);
+  border: 1px solid #3e4971;
+  border-radius: 1rem;
+  padding: 1.3rem 1.5rem;
+}
+.curation > header h1 {
+  margin: 0.2rem 0 0.45rem;
+}
+.curation > header p:last-child {
+  color: #c7cee6;
+  margin-bottom: 0;
+  max-width: 65ch;
 }
 .curation__filters {
   align-items: end;
+  background: #161d2d;
+  border: 1px solid #2f3b59;
+  border-radius: 0.8rem;
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
+  padding: 0.85rem 1rem;
 }
 .curation__filters label {
+  color: #bac4e0;
   display: grid;
+  font-size: 0.8rem;
+  font-weight: 700;
   gap: 0.35rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
-.curation__filters select,
-.curation-card button {
-  min-height: 2.5rem;
+.curation__filters select {
+  background: #0f1522;
+  border: 1px solid #4a5b83;
+  border-radius: 0.45rem;
+  color: #f1f4ff;
+  min-height: 2.55rem;
+  padding: 0 0.65rem;
+}
+.curation__filters p {
+  color: #aebce5;
+  font-weight: 650;
+  margin: 0 0 0.2rem auto;
+}
+.curation__notice {
+  color: #aebce5;
+  min-height: 1.5rem;
 }
 .curation__list {
   display: grid;
   gap: 1rem;
 }
 .curation-card {
-  background: #151d2b;
-  border: 1px solid #33435e;
-  border-radius: 0.7rem;
+  background: linear-gradient(145deg, #182033, #121825);
+  border: 1px solid #35435f;
+  border-radius: 1rem;
+  box-shadow: 0 1.25rem 3rem #05081455;
   display: grid;
-  gap: 1rem;
-  grid-template-columns: minmax(9rem, 14rem) 1fr;
-  padding: 1rem;
+  gap: 1.4rem;
+  grid-template-columns: minmax(10rem, 14rem) 1fr;
+  padding: 1.15rem;
 }
 .curation-card .card-art {
+  border-radius: 0.55rem;
+  box-shadow: 0 0.6rem 1.5rem #000a;
   width: 100%;
 }
-.curation-card h2,
-.curation-card h3,
-.curation-card p {
-  margin: 0.3rem 0;
+.curation-card h2 {
+  font-size: clamp(1.45rem, 3vw, 2rem);
+  margin: 0;
 }
-.curation-card fieldset {
-  display: flex;
-  flex-wrap: wrap;
+.curation-card > div > p {
+  color: #b6c1dc;
+  margin: 0.35rem 0;
+}
+.curation-target-group {
+  border: 0;
+  margin-top: 1.35rem;
+  padding: 0;
+}
+.curation-target-group > h3 {
+  color: #d4dcfa;
+  font-size: 0.78rem;
+  letter-spacing: 0.11em;
+  margin: 0 0 0.6rem;
+  text-transform: uppercase;
+}
+.curation-target-grid {
+  display: grid;
   gap: 0.65rem;
-  margin-top: 0.7rem;
+  grid-template-columns: repeat(auto-fit, minmax(15.5rem, 1fr));
 }
-.curation-card fieldset label {
+.curation-target {
+  background: #101725;
+  border: 1px solid #2b3955;
+  border-radius: 0.7rem;
+  display: grid;
+  gap: 0.65rem;
+  min-height: 10.5rem;
+  padding: 0.8rem;
+  transition:
+    border-color 0.16s ease,
+    transform 0.16s ease;
+}
+.curation-target:hover {
+  border-color: #657bb5;
+  transform: translateY(-1px);
+}
+.curation-target--none {
+  border-color: #62708c;
+}
+.curation-target--supports {
+  border-color: #4d91a7;
+}
+.curation-target--strong {
+  border-color: #a381e6;
+}
+.curation-target__heading {
   align-items: center;
   display: flex;
-  gap: 0.25rem;
-  min-height: 2.5rem;
+  gap: 0.5rem;
+  justify-content: space-between;
 }
-.curation-card a {
-  margin-right: 0.7rem;
+.curation-target h4 {
+  margin: 0;
+  text-transform: capitalize;
 }
-.curation__notice {
-  min-height: 1.5rem;
+.curation-target__state {
+  background: #232d43;
+  border-radius: 999px;
+  color: #b8c3dd;
+  font-size: 0.68rem;
+  font-weight: 750;
+  letter-spacing: 0.05em;
+  padding: 0.25rem 0.45rem;
+  text-transform: uppercase;
+}
+.curation-target--strong .curation-target__state {
+  background: #553c8a;
+  color: #fbf7ff;
+}
+.curation-target--supports .curation-target__state {
+  background: #244d60;
+  color: #e5fbff;
+}
+.curation-target--none .curation-target__state {
+  background: #3b465b;
+  color: #edf1fa;
+}
+.curation-target__hint {
+  color: #8492b1;
+  font-size: 0.86rem;
+  margin: 0;
+}
+.curation-evidence {
+  color: #c5d0e9;
+  font-size: 0.82rem;
+}
+.curation-evidence > span {
+  color: #9fabcb;
+  font-size: 0.68rem;
+  font-weight: 750;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+.curation-evidence strong {
+  color: #dbceff;
+  margin-left: 0.35rem;
+  text-transform: uppercase;
+}
+.curation-evidence p {
+  margin: 0.35rem 0;
+}
+.curation-evidence a {
+  color: #9cc7ff;
+  font-size: 0.78rem;
+}
+.curation-choice-row {
+  display: grid;
+  gap: 0.35rem;
+  grid-template-columns: repeat(3, 1fr) auto;
+  margin-top: auto;
+}
+.curation-choice,
+.curation-clear,
+.curation__navigation button,
+.curation__submit {
+  border-radius: 0.45rem;
+  cursor: pointer;
+  font: inherit;
+  min-height: 2.35rem;
+}
+.curation-choice {
+  background: #1d2638;
+  border: 1px solid #3a4968;
+  color: #ced8ef;
+  font-size: 0.72rem;
+  font-weight: 750;
+  padding: 0.25rem;
+  text-transform: uppercase;
+}
+.curation-choice:hover,
+.curation-choice:focus-visible {
+  border-color: #a994f2;
+  color: #fff;
+  outline: 2px solid transparent;
+}
+.curation-choice--selected {
+  background: #6545a5;
+  border-color: #bda9ff;
+  color: #fff;
+}
+.curation-clear {
+  background: transparent;
+  border: 1px solid #3a4968;
+  color: #9daccc;
+  padding: 0 0.55rem;
+}
+.curation-clear:disabled {
+  cursor: default;
+  opacity: 0.4;
+}
+.curation__navigation {
+  align-items: center;
+  display: flex;
+  gap: 0.8rem;
+  justify-content: center;
+}
+.curation__navigation span {
+  color: #afbbd7;
+  min-width: 8rem;
+  text-align: center;
+}
+.curation__navigation button,
+.curation__submit {
+  background: #292a50;
+  border: 1px solid #7787c5;
+  color: #f6f4ff;
+  padding: 0.4rem 0.8rem;
+}
+.curation__navigation button:disabled,
+.curation__submit:disabled {
+  cursor: default;
+  opacity: 0.45;
 }
 .curation__submit {
-  justify-self: start;
-  min-height: 2.75rem;
+  justify-self: center;
+  min-height: 2.8rem;
+  padding: 0.5rem 1.2rem;
 }
-@media (max-width: 42rem) {
+@media (max-width: 50rem) {
   .curation-card {
     grid-template-columns: 1fr;
   }
   .curation-card .card-art {
-    max-width: 17rem;
+    max-width: 15rem;
+  }
+  .curation__filters p {
+    margin-left: 0;
+    width: 100%;
+  }
+}
+@media (max-width: 32rem) {
+  .curation {
+    gap: 0.8rem;
+  }
+  .curation > header,
+  .curation-card {
+    border-radius: 0.7rem;
+    padding: 0.85rem;
+  }
+  .curation-target-grid {
+    grid-template-columns: 1fr;
+  }
+  .curation__navigation {
+    flex-wrap: wrap;
   }
 }

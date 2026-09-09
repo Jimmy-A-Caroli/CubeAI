@@ -77,7 +77,7 @@ describe('StrategicCurationPage', () => {
     });
     const view = render(<StrategicCurationPage api={client} />);
     await screen.findByRole('heading', { name: 'Entomb' });
-    fireEvent.click(screen.getByLabelText('STRONG'));
+    fireEvent.click(screen.getByRole('button', { name: 'strong' }));
     await waitFor(() =>
       expect(
         window.localStorage.getItem(
@@ -85,11 +85,11 @@ describe('StrategicCurationPage', () => {
         ),
       ).toContain('strong'),
     );
-    fireEvent.click(screen.getByRole('button', { name: 'Skip / clear' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Clear' }));
     expect(
       screen.getByText('0 reviewed / 8 reviewed target cells'),
     ).toBeTruthy();
-    fireEvent.click(screen.getByLabelText('NONE'));
+    fireEvent.click(screen.getByRole('button', { name: 'none' }));
     fireEvent.click(
       screen.getByRole('button', { name: 'Generate reviewed artifacts' }),
     );

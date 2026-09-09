@@ -303,65 +303,97 @@ export default function StrategicCurationPage({
                       }}
                     />
                     <p>{proposal.card.type_line}</p>
-                    {card.relations
-                      .filter(
+                    {(['macro_path', 'package'] as const).map((targetType) => {
+                      const relations = card.relations.filter(
                         (relation) =>
-                          targetFilter === 'all' ||
-                          relation.target === targetFilter,
-                      )
-                      .map((relation) => {
-                        const relationKey = proposalKey(relation);
-                        const selected = decisions[relationKey];
-                        return (
-                          <fieldset key={relationKey}>
-                            <legend>
-                              Review {card.card.name} for {relation.target_type}
-                              : {relation.target}
-                            </legend>
-                            {relation.proposed_support_level ? (
-                              <p>
-                                Evidence proposal:{' '}
-                                <strong>
-                                  {relation.proposed_support_level}
-                                </strong>
-                                . {relation.rationale}
-                              </p>
-                            ) : (
-                              <p>
-                                No proposal: make an independent human review.
-                              </p>
-                            )}
-                            {relation.evidence_sources.map((source) => (
-                              <a
-                                key={source.id}
-                                href={source.url}
-                                rel="noreferrer"
-                                target="_blank"
-                              >
-                                {source.id}
-                              </a>
-                            ))}
-                            {supportLevels.map((level) => (
-                              <label key={level}>
-                                <input
-                                  checked={selected === level}
-                                  name={relationKey}
-                                  onChange={() => select(relation, level)}
-                                  type="radio"
-                                  value={level}
-                                />
-                                {level.toUpperCase()}
-                              </label>
-                            ))}
-                            <button
-                              onClick={() => select(relation, null)}
-                              type="button"
-                            >
-                              Skip / clear
-                            </button>
-                          </fieldset>
-                        );
-                      })}
+                          relation.target_type === targetType &&
+                          (targetFilter === 'all' ||
+                            relation.target === targetFilter),
+                      );
+                      if (relations.length === 0) return null;
+                      return (
+                        <section
+                          className="curation-target-group"
+                          key={targetType}
+                          aria-labelledby={`${card.target_id}-${targetType}`}
+                        >
+                          <h3 id={`${card.target_id}-${targetType}`}>
+                            {targetType === 'macro_path'
+                              ? 'Macro paths'
+                              : 'Packages'}
+                          </h3>
+                          <div className="curation-target-grid">
+                            {relations.map((relation) => {
+                              const relationKey = proposalKey(relation);
+                              const selected = decisions[relationKey];
+                              return (
+                                <section
+                                  className={`curation-target${selected ? ` curation-target--${selected}` : ''}`}
+                                  key={relationKey}
+                                >
+                                  <div className="curation-target__heading">
+                                    <h4>{relation.target.replace('_', ' ')}</h4>
+                                    <span className="curation-target__state">
+                                      {selected ?? 'UNKNOWN'}
+                                    </span>
+                                  </div>
+                                  {relation.proposed_support_level ? (
+                                    <div className="curation-evidence">
+                                      <span>Evidence proposal</span>
+                                      <strong>
+                                        {relation.proposed_support_level}
+                                      </strong>
+                                      <p>{relation.rationale}</p>
+                                      {relation.evidence_sources.map(
+                                        (source) => (
+                                          <a
+                                            key={source.id}
+                                            href={source.url}
+                                            rel="noreferrer"
+                                            target="_blank"
+                                          >
+                                            View evidence
+                                          </a>
+                                        ),
+                                      )}
+                                    </div>
+                                  ) : (
+                                    <p className="curation-target__hint">
+                                      Independent human review
+                                    </p>
+                                  )}
+                                  <div
+                                    className="curation-choice-row"
+                                    role="group"
+                                    aria-label={`Review ${card.card.name} for ${relation.target}`}
+                                  >
+                                    {supportLevels.map((level) => (
+                                      <button
+                                        aria-pressed={selected === level}
+                                        className={`curation-choice${selected === level ? ' curation-choice--selected' : ''}`}
+                                        key={level}
+                                        onClick={() => select(relation, level)}
+                                        type="button"
+                                      >
+                                        {level}
+                                      </button>
+                                    ))}
+                                    <button
+                                      className="curation-clear"
+                                      disabled={!selected}
+                                      onClick={() => select(relation, null)}
+                                      type="button"
+                                    >
+                                      Clear
+                                    </button>
+                                  </div>
+                                </section>
+                              );
+                            })}
+                          </div>
+                        </section>
+                      );
+                    })}
                   </div>
                 </article>
               );
