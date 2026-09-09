@@ -1,0 +1,26 @@
+{
+  "assignment_set_id": "modovintage-strategic-affinities-v1-2026-09-09",
+  "cube_version_id": "sha256:17a9b63fd0a596760fa1205b24b93216e89e899811f7e4c105ea4e3ca3acac70",
+  "vocabulary_version": "vintage-cube-strategic-v1",
+  "membership_resolution": {
+    "total": 540,
+    "resolved_card_identities": 540,
+    "unresolved_or_custom": 0
+  },
+  "coverage": {
+    "total_memberships": 540,
+    "reviewed_memberships": 0,
+    "unknown_unreviewed_memberships": 540,
+    "explicit_none_assignments": 0,
+    "assignments_by_support_level": {"none": 0, "supports": 0, "strong": 0},
+    "reviewed_positive_assignments_by_target": {
+      "macro_path": {"aggro": 0, "control": 0, "midrange_value": 0, "big_mana": 0},
+      "package": {"reanimator": 0, "artifacts": 0, "cheat_creatures": 0, "lands_depths": 0}
+    },
+    "macro_path_positive_assignments": 0,
+    "package_positive_assignments": 0,
+    "multi_target_memberships": 0,
+    "assignments_by_provenance": {},
+    "unresolved_review_conflicts": 0
+  }
+}

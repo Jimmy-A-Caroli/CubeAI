@@ -6,14 +6,14 @@ behavior.
 
 ## Scope and currentness
 
-CubeAI's captured affinity baseline is
+The historical baseline remains
 `sha256:25eb8419430fc1ef659723c388caf17697c80054fd7e74a7e73fbb9411242c12`:
-540 memberships, 240 resolved identities, and 300 unresolved identities. The
-committed report deliberately does not retain its source card list. Therefore
-this document can verify a structure against the live official August 2026
-list, but calls that **CURRENT-BUT-NOT-EXACT** for the captured CubeVersion.
-It never converts an article, a list entry, or a named card below into an
-active M2-014 affinity.
+540 memberships, 240 resolved identities, and 300 unresolved identities. It
+is preserved as historical evidence. Recovery produced successor
+`sha256:17a9b63fd0a596760fa1205b24b93216e89e899811f7e4c105ea4e3ca3acac70`:
+540 memberships and 540 resolved identities. Exact membership is now checked
+against that successor before a source-assisted proposal is recorded; source
+claims still never become active strategic assignments automatically.
 
 Method: prefer dated MTGO curator material, use the official card list as a
 live membership cross-check, then use expert and community sources only to
@@ -80,7 +80,7 @@ then accepts, modifies, or rejects it before creating a `curator_defined` or
 
 ## Uncertainty
 
-The exact captured CubeVersion needs a successful full identity/list capture
-before card-level claims can be marked exact. Current-source examples above
-are intentionally small and never provide 540-card coverage. MTGO also rotates
-narrow packages, so a future CubeVersion must repeat this currentness check.
+The successor has a successful full identity capture, but current-source
+examples remain intentionally small and are proposals, not 540-card coverage.
+MTGO rotates narrow packages, so a future CubeVersion must repeat this
+currentness check.

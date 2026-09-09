@@ -44,9 +44,11 @@ active; no source tag, Oracle text, or inferred relationship is active input.
 `ramp` is not silently renamed to `big_mana`.
 
 The successor artifact uses the separate
-`cubeai.strategic-affinity-assignment-set` envelope. The existing v0 artifact
-remains preserved, and the regenerated all-UNKNOWN v1 artifact is bound to the
-same exact CubeVersion. No card relation migrated because v0 had none.
+`cubeai.strategic-affinity-assignment-set` envelope. The historical v1
+all-UNKNOWN artifact remains preserved at its original CubeVersion. The
+successor all-UNKNOWN baseline is separately bound to recovered CubeVersion
+`sha256:17a9b63fd0a596760fa1205b24b93216e89e899811f7e4c105ea4e3ca3acac70`.
+No card relation migrated because the historical artifact had none.
 
 ## Non-goals
 
