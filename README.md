@@ -6,8 +6,8 @@ The project is focused on the Cube loop: import a Cube, validate it, draft it, u
 
 ## Status
 
-CubeAI has formally completed and accepted the M0 Repository Foundation. The Alpha-0 CubeLab draft-core boundary and the Alpha-1
-M1 local-draft MVP. M1-001 through M1-018 provide a supported
+CubeAI has formally completed and accepted the M0 Repository Foundation and
+the Alpha-1 M1 local-draft MVP. M1-001 through M1-018 provide a supported
 CubeCobra read adapter, exact printing-ID Scryfall resolution with a local
 cache, immutable Cube versions, capacity validation, deterministic allocation,
 deterministic local draft state machine, raw-ranking Bot v0, local SQLite
@@ -31,8 +31,10 @@ provenance. The observation context is exposed through a completion-only API
 view; M2-009 deliberately adds no metrics API or analytics UI. M2-012 adds a
 completion-only Draft Inspector Foundation: factual decision replay, legal
 alternatives, prior pools, exact-instance wheel/seen facts, and recorded Bot
-v0 evidence. It does not score alternatives, infer reasoning, offer advice,
-or create review annotations. M2-013 adds an optional **Fast draft** action:
+v0 evidence. M2-011 adds a separate Human Review annotation layer for
+assessment, reasons, notes, and optional suggested ratings; these annotations
+never mutate recorded draft facts or Bot evidence. M2-013 adds an optional
+**Fast draft** action:
 one deterministic, immediately completed eight-Bot v0 draft for factual human
 inspection. It retains normal Bot provenance and is not a batch simulator,
 benchmark, or claim that the Bot choices are strategically sound. M2-010
@@ -95,9 +97,10 @@ CubeCobra import and exact-ID metadata resolution are bounded adapters.
 Deterministic local allocation/transitions, raw-ranking Bot v0, local SQLite
 save/resume, a focused import-to-human-draft UI, and an optional eight-Bot Fast
 draft are available through framework-independent CubeLab boundaries. Completed
-drafts can be reviewed through factual human/Bot histories and the Inspector;
-the latter shows recorded decision context and Bot evidence, not strategic
-judgment. The metadata cache retains canonical exact-printing image URLs but
+drafts can be reviewed through factual human/Bot histories, the Inspector, and
+separate Human Review annotations; annotations are local evidence only and do
+not rewrite draft events, CubeVersions, Bot provenance, or historical ratings.
+The metadata cache retains canonical exact-printing image URLs but
 not image bytes: the browser renders the final remote resource directly and
 falls back accessibly on absence or load failure. Offline image caching is not
 implemented, and the browser never calls provider APIs to resolve cards or
@@ -113,7 +116,7 @@ Run these commands from the repository root. The root runner uses only the
 accepted `uv` backend environment and `corepack`/npm frontend tools, executes
 child commands directly, and returns a failing child command's nonzero status.
 
-```powershell
+```sh
 uv --directory backend run --locked python ../scripts/cubeai.py setup
 uv --directory backend run --locked python ../scripts/cubeai.py format
 uv --directory backend run --locked python ../scripts/cubeai.py check
@@ -133,13 +136,13 @@ deterministic draft. It creates a temporary Scryfall cache by default and
 prints aggregate evidence only; it is intentionally outside the default
 offline test suite.
 
-```powershell
+```sh
 uv --directory backend run --locked python ../scripts/alpha_checkpoint_e.py
 ```
 
 To run the M0 connectivity slice, after `setup` run:
 
-```powershell
+```sh
 uv --directory backend run --locked python ../scripts/cubeai.py dev
 ```
 
@@ -158,7 +161,7 @@ cross-platform-enough entry points.
 
 For individual workspace validation, run:
 
-```powershell
+```sh
 uv --directory backend sync --locked --all-groups
 uv --directory backend run pytest -q tests
 uv --directory backend build
@@ -179,7 +182,7 @@ Before adding or upgrading a package, follow the reviewed
 policy documents the required approval evidence, lockfile-based inventories,
 license reports, failure behavior, and narrow temporary exceptions.
 
-```powershell
+```sh
 uv --directory backend tree --locked
 corepack npm --prefix frontend ls --package-lock-only --all
 
