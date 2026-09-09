@@ -62,7 +62,9 @@ PROPOSALS = (
     / "strategic-affinity-proposals"
     / "modovintage-strategic-proposals-v1-2026-09-09.json"
 )
-RECOVERED_VERSION_ID = "sha256:17a9b63fd0a596760fa1205b24b93216e89e899811f7e4c105ea4e3ca3acac70"
+RECOVERED_VERSION_ID = (
+    "sha256:17a9b63fd0a596760fa1205b24b93216e89e899811f7e4c105ea4e3ca3acac70"
+)
 
 
 def test_regenerated_baseline_is_empty_and_uses_successor_vocabulary() -> None:
@@ -218,9 +220,12 @@ def test_successor_baseline_keeps_all_memberships_unknown() -> None:
         version, assignment_set_id="modovintage-strategic-affinities-v1-2026-09-09"
     )
 
-    assert assignment_set_from_artifact(
-        strategic_assignment_artifact_document(assignment_set)
-    ) == assignment_set
+    assert (
+        assignment_set_from_artifact(
+            strategic_assignment_artifact_document(assignment_set)
+        )
+        == assignment_set
+    )
     report = strategic_coverage_report_document(assignment_set, version)
 
     assert report["cube_version_id"] == version.id

@@ -42,12 +42,20 @@ def proposal_set_from_artifact(document: object) -> StrategicProposalSet:
     envelope = _mapping(document, "artifact")
     if frozenset(envelope) != {"artifact_type", "schema_version", "proposal_set"}:
         raise ValueError("proposal artifact has missing or unknown keys")
-    if envelope["artifact_type"] != PROPOSAL_ARTIFACT_TYPE or envelope["schema_version"] != 1:
+    if (
+        envelope["artifact_type"] != PROPOSAL_ARTIFACT_TYPE
+        or envelope["schema_version"] != 1
+    ):
         raise ValueError("proposal artifact type or schema is unsupported")
     values = _mapping(envelope["proposal_set"], "proposal_set")
     required = {
-        "id", "cube_version_id", "vocabulary_version", "status", "proposed_by",
-        "evidence_sources", "proposals",
+        "id",
+        "cube_version_id",
+        "vocabulary_version",
+        "status",
+        "proposed_by",
+        "evidence_sources",
+        "proposals",
     }
     if frozenset(values) != required:
         raise ValueError("proposal_set has missing or unknown keys")
@@ -68,7 +76,9 @@ def proposal_set_from_artifact(document: object) -> StrategicProposalSet:
         if frozenset(item) != {"id", "kind", "url", "published_on", "currentness"}:
             raise ValueError("evidence_source has missing or unknown keys")
         source_id = _text(item["id"], "evidence_source.id")
-        if source_id in source_ids or not _text(item["url"], "evidence_source.url").startswith("https://"):
+        if source_id in source_ids or not _text(
+            item["url"], "evidence_source.url"
+        ).startswith("https://"):
             raise ValueError("evidence_source id or URL is invalid")
         _text(item["kind"], "evidence_source.kind")
         _text(item["published_on"], "evidence_source.published_on")
@@ -77,32 +87,63 @@ def proposal_set_from_artifact(document: object) -> StrategicProposalSet:
     parsed: list[dict[str, object]] = []
     for proposal in proposals:
         item = _mapping(proposal, "proposal")
-        required_proposal = {"target_id", "identity_scope", "target_type", "target", "support_level", "source_ids", "rationale"}
+        required_proposal = {
+            "target_id",
+            "identity_scope",
+            "target_type",
+            "target",
+            "support_level",
+            "source_ids",
+            "rationale",
+        }
         if frozenset(item) != required_proposal:
             raise ValueError("proposal has missing, unknown, or active-assignment keys")
         _text(item["target_id"], "proposal.target_id")
         try:
             AssignmentIdentityScope(cast(str, item["identity_scope"]))
             target_type = StrategicTargetType(cast(str, item["target_type"]))
-            (MacroPathKeyV1 if target_type is StrategicTargetType.MACRO_PATH else PackageKeyV1)(cast(str, item["target"]))
+            (
+                MacroPathKeyV1
+                if target_type is StrategicTargetType.MACRO_PATH
+                else PackageKeyV1
+            )(cast(str, item["target"]))
             AffinitySupportLevel(cast(str, item["support_level"]))
         except (TypeError, ValueError) as error:
-            raise ValueError("proposal has an invalid strategic contract value") from error
+            raise ValueError(
+                "proposal has an invalid strategic contract value"
+            ) from error
         references = item["source_ids"]
-        if not isinstance(references, list) or not references or not set(references) <= source_ids:
+        if (
+            not isinstance(references, list)
+            or not references
+            or not set(references) <= source_ids
+        ):
             raise ValueError("proposal source_ids must reference declared evidence")
         _text(item["rationale"], "proposal.rationale")
         parsed.append(item)
-    return StrategicProposalSet(cube_version_id, STRATEGIC_VOCABULARY_VERSION_V1, frozenset(source_ids), tuple(parsed))
+    return StrategicProposalSet(
+        cube_version_id,
+        STRATEGIC_VOCABULARY_VERSION_V1,
+        frozenset(source_ids),
+        tuple(parsed),
+    )
 
 
-def validate_proposal_set(proposal_set: StrategicProposalSet, cube_version: CubeVersion) -> None:
+def validate_proposal_set(
+    proposal_set: StrategicProposalSet, cube_version: CubeVersion
+) -> None:
     if proposal_set.cube_version_id != cube_version.id:
         raise ValueError("proposal set must bind to the exact CubeVersion")
     memberships = {card.id for card in cube_version.cards}
-    identities = {card.printing.card_identity.id for card in cube_version.cards if card.printing}
+    identities = {
+        card.printing.card_identity.id for card in cube_version.cards if card.printing
+    }
     for proposal in proposal_set.proposals:
-        valid = memberships if proposal["identity_scope"] == "cube_membership" else identities
+        valid = (
+            memberships
+            if proposal["identity_scope"] == "cube_membership"
+            else identities
+        )
         if proposal["target_id"] not in valid:
             raise ValueError("proposal target is absent from CubeVersion")
 

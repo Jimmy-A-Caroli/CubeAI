@@ -23,6 +23,7 @@ from cubeai.lab.domain.cube import CubeVersion
 from cubeai.lab.domain.strategic_vocabulary import (
     MacroPathKeyV1,
     PackageKeyV1,
+    StrategicAffinityAssignment,
     StrategicAffinityAssignmentSet,
     StrategicTargetType,
     validate_strategic_assignment_set,
@@ -77,7 +78,9 @@ def strategic_coverage_report_document(
     """Report strategic review state; absence remains UNKNOWN, never NONE."""
 
     validate_strategic_assignment_set(assignment_set, cube_version)
-    by_membership: dict[str, list[object]] = {card.id: [] for card in cube_version.cards}
+    by_membership: dict[str, list[StrategicAffinityAssignment]] = {
+        card.id: [] for card in cube_version.cards
+    }
     identities: dict[str, list[str]] = {}
     for card in cube_version.cards:
         if card.printing is not None:
@@ -165,7 +168,11 @@ def strategic_coverage_report_document(
                 for assignments in by_membership.values()
             ),
             "assignments_by_provenance": dict(
-                sorted(Counter(item.provenance.value for item in assignment_set.assignments).items())
+                sorted(
+                    Counter(
+                        item.provenance.value for item in assignment_set.assignments
+                    ).items()
+                )
             ),
             "unresolved_review_conflicts": sum(
                 any(
@@ -197,7 +204,9 @@ def strategic_curation_worklist_document(
 ) -> dict[str, object]:
     """Create local review context from normalized metadata, never proposals."""
 
-    by_membership = {item.candidate.membership_key: item for item in resolution.resolutions}
+    by_membership = {
+        item.candidate.membership_key: item for item in resolution.resolutions
+    }
     memberships = []
     for card in cube_version.cards:
         item = by_membership.get(card.id)
@@ -206,8 +215,12 @@ def strategic_curation_worklist_document(
         memberships.append(
             {
                 "membership_id": card.id,
-                "card_identity_id": card.printing.card_identity.id if card.printing else None,
-                "card_name": card.printing.card_identity.name if card.printing else None,
+                "card_identity_id": card.printing.card_identity.id
+                if card.printing
+                else None,
+                "card_name": card.printing.card_identity.name
+                if card.printing
+                else None,
                 "image_url": images.get("normal") or next(iter(images.values()), None),
                 "mana_value": printing.mana_value if printing is not None else None,
                 "colors": list(printing.colors) if printing is not None else None,
